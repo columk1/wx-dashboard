@@ -33,10 +33,6 @@ const LineChart = () => {
       .style('background', '#c5f6fa')
 
     // Set the scaling
-    // const xScale = d3
-    //   .scaleLinear()
-    //   .domain([0, data.length - 1])
-    //   .range([0, w])
     const start = new Date(data[0][0])
     const end = new Date(data[data.length - 1][0])
     console.log('Start, end', start, ' ', end)
