@@ -1,6 +1,9 @@
+'use client'
+
 import { useEffect, useRef, useState } from 'react'
 import * as d3 from 'd3'
-import testData from './testData.json'
+import testData from '@/app/lib/testData.json'
+import { fetchWindGraph } from '@/app/lib/actions'
 
 const LineChart = () => {
   const svgRef = useRef(null)
@@ -8,8 +11,9 @@ const LineChart = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      // const response = await fetch(import.meta.env.VITE_WINDGRAPH_URL)
+      // const response = await fetch(process.env.VITE_WINDGRAPH_URL)
       // const json = await response.json()
+      // const json = await fetchWindGraph()
       const json = testData
       console.log(json)
       setData(json.wind_avg_data.slice(0, -1) as number[][])
