@@ -1,0 +1,18 @@
+.container {
+  /* display: flex;
+  flex-direction: row; */
+  max-width: 100%;
+  max-height: 435px;
+  height: 300px;
+  margin-bottom: 5rem;
+  /* padding-top: 1em; */
+  overflow-x: scroll;
+  overflow-y: hidden;
+}
+
+.y-axis-wrapper {
+  background: white;
+  position: sticky;
+  left: 0;
+  z-index: 1003;
+}

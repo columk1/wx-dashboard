@@ -1,8 +1,11 @@
 import Image from 'next/image'
 import styles from './page.module.css'
-import LineChart from '@/app/ui/LineChart'
+// import LineChart from '@/app/ui/LineChart/LineChart'
+import WindGraph from '@/app/ui/LineChart/WindGraph'
 
 export default function Home() {
+  const date = new Date().toISOString().split('T')[0] // YYYY-MM-DD
+
   return (
     <main className={styles.main}>
       <div className={styles.description}>
@@ -88,9 +91,14 @@ export default function Home() {
           </h2>
           <p>Instantly deploy your Next.js site to a shareable URL with Vercel.</p>
         </a>
-        <LineChart />
-        {/* <img src={`https://canadarasp.com/windgrams-data/oneDay/${date}/hrdpswindgram20.png`} /> */}
       </div>
+      <WindGraph />
+      {/* <Image
+        src={`https://canadarasp.com/windgrams-data/oneDay/${date}/hrdpswindgram20.png`}
+        alt={'Rasp Windgram'}
+        width={400}
+        height={400}
+      /> */}
     </main>
   )
 }
