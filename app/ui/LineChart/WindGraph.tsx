@@ -47,17 +47,31 @@ const WindGraph = () => {
     containerRef.current && (containerRef.current.scrollLeft = containerRef?.current?.scrollWidth)
   })
 
+  const tickFormatter = (time: number) => {
+    const date = new Date(time)
+    const roundedHours = date.getHours() * 2 // Round to the nearest two-hour interval
+    date.setHours(roundedHours, 0, 0, 0) // Set minutes, seconds, and milliseconds to zero
+    return date.toLocaleTimeString([], { hour: '2-digit' }) + 'h'
+  }
+
   return data.length ? (
     <div ref={containerRef} className={styles.container}>
       {/* <ResponsiveContainer minWidth='1400px' height='100%'> */}
       <LineChart
         width={1400}
         height={300}
-        data={data.map((e, i) => ({ time: new Date(e[0]), value: e[1] }))}
+        data={data.map((e, i) => ({ time: e[0], value: e[1] }))}
         margin={{ top: 0, right: 30, bottom: 0, left: 20 }}
       >
         <CartesianGrid strokeDasharray='3 3' />
-        <XAxis dataKey='time' />
+        <XAxis
+          dataKey='time'
+          domain={['auto', 'auto']}
+          tickFormatter={tickFormatter}
+          interval={12}
+          type='number'
+          scale='time'
+        />
         <YAxis
           domain={[0, (dataMax: number) => Math.ceil(dataMax / 10) * 10]}
           padding={{ top: 0, bottom: 10 }}
