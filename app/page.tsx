@@ -1,7 +1,6 @@
 import Image from 'next/image'
 import styles from './page.module.css'
-// import LineChart from '@/app/ui/LineChart/LineChart'
-import WindGraph from '@/app/ui/LineChart/WindGraph'
+import WindGraph from '@/app/ui/WindGraph/WindGraph'
 
 export default function Home() {
   const date = new Date().toISOString().split('T')[0] // YYYY-MM-DD
@@ -9,39 +8,43 @@ export default function Home() {
   return (
     <main className={styles.main}>
       <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>app/page.tsx</code>
-        </p>
+        <p>Squamish Aviation Dashboard&nbsp;</p>
         <div>
           <a
             href='https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app'
             target='_blank'
             rel='noopener noreferrer'
           >
-            By{' '}
-            <Image
+            By columk
+            {/* <Image
               src='/vercel.svg'
               alt='Vercel Logo'
               className={styles.vercelLogo}
               width={100}
               height={24}
               priority
-            />
+            /> */}
           </a>
         </div>
       </div>
 
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src='/next.svg'
-          alt='Next.js Logo'
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
+      <WindGraph />
+
+      <iframe
+        width='450'
+        height='210'
+        src='https://chiefcam.com/embed/live'
+        frameBorder='0'
+        allow='autoplay; encrypted-media; fullscreen; picture-in-picture'
+        allowFullScreen
+      ></iframe>
+
+      <Image
+        src={`https://canadarasp.com/windgrams-data/oneDay/${date}/hrdpswindgram20.png`}
+        alt={'Rasp Windgram'}
+        width={400}
+        height={400}
+      />
 
       <div className={styles.grid}>
         <a
@@ -92,13 +95,6 @@ export default function Home() {
           <p>Instantly deploy your Next.js site to a shareable URL with Vercel.</p>
         </a>
       </div>
-      <WindGraph />
-      {/* <Image
-        src={`https://canadarasp.com/windgrams-data/oneDay/${date}/hrdpswindgram20.png`}
-        alt={'Rasp Windgram'}
-        width={400}
-        height={400}
-      /> */}
     </main>
   )
 }
