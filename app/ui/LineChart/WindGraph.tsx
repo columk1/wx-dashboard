@@ -84,14 +84,25 @@ const WindGraph = () => {
       >
         <CartesianGrid strokeDasharray='3 3' stroke='currentColor' opacity={0.3} />
         <Tooltip
-          formatter={(value) => value + 'km/h'}
           offset={50}
+          formatter={(value) => value + 'km/h'}
+          labelStyle={{ display: 'none' }}
           contentStyle={{
             padding: '0.5rem 0.75rem',
             fontSize: '0.9rem',
             backgroundColor: 'color-mix(in srgb, currentColor 90%, transparent)',
           }}
-          labelStyle={{ display: 'none' }}
+          itemStyle={{ padding: '0.15rem' }}
+          itemSorter={(item) => {
+            switch (item.dataKey) {
+              case 'gust':
+                return 0
+              case 'avg':
+                return 1
+              default:
+                return 2
+            }
+          }}
         />
         <XAxis
           xAxisId={0}
@@ -129,7 +140,7 @@ const WindGraph = () => {
           dataKey='avg'
           stroke='#1d91a0'
           dot={false}
-          activeDot={{ r: 8 }}
+          activeDot={{ strokeWidth: 1, r: 4 }}
           xAxisId={0}
         />
         <Line
@@ -137,7 +148,7 @@ const WindGraph = () => {
           dataKey='gust'
           stroke='#f84c56'
           dot={false}
-          activeDot={{ r: 8 }}
+          activeDot={{ strokeWidth: 1, r: 4 }}
           connectNulls={true}
         />
         <Line
@@ -145,7 +156,7 @@ const WindGraph = () => {
           dataKey='lull'
           stroke='#0f6b8a'
           dot={false}
-          activeDot={{ r: 8 }}
+          activeDot={{ strokeWidth: 1, r: 4 }}
           connectNulls={true}
         />
         {/* <Line dataKey='dir' hide={true} dot={false} xAxisId={1} /> */}
