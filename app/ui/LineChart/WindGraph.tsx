@@ -82,7 +82,7 @@ const WindGraph = () => {
         // data={data.wind_avg_data}
         margin={{ top: 0, right: 30, bottom: 30, left: 20 }}
       >
-        <CartesianGrid strokeDasharray='3 3' />
+        <CartesianGrid strokeDasharray='3 3' stroke='currentColor' opacity={0.3} />
         <XAxis
           xAxisId={0}
           dataKey='time'
@@ -151,15 +151,17 @@ const CustomXAxisTick = (props: any) => {
       // transform={`rotate(${dirArray[payload.index][1]})`}
       x={x}
       y={y}
-      stroke='#000'
-      fill='#000'
+      stroke='currentColor'
+      fill='#1d91a0'
       strokeWidth='0'
-      viewBox='0 0 512 512'
-      height='8'
-      width='8'
+      version='1.2'
+      baseProfile='tiny'
+      viewBox='0 0 24 24'
+      height='12'
+      width='12'
     >
-      <g transform={`rotate(${dirArray[payload.index][1] + 135} 270 270)`}>
-        <path d='M444.52 3.52L28.74 195.42c-47.97 22.39-31.98 92.75 19.19 92.75h175.91v175.91c0 51.17 70.36 67.17 92.75 19.19l191.9-415.78c15.99-38.39-25.59-79.97-63.97-63.97z'></path>
+      <g transform={`rotate(${dirArray[payload.index][1] + 135} 12 12)`}>
+        <path d='M10.368 19.102c.349 1.049 1.011 1.086 1.478.086l5.309-11.375c.467-1.002.034-1.434-.967-.967l-11.376 5.308c-1.001.467-.963 1.129.085 1.479l4.103 1.367 1.368 4.102z'></path>
       </g>
     </svg>
     // <g transform={`translate(${x},${y})`}>
