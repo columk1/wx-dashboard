@@ -74,15 +74,25 @@ const WindGraph = () => {
         height={300}
         data={data.wind_avg_data.map((e, i) => ({
           time: e[0],
-          avg: e[1],
-          gust: data.wind_gust_data[i][1],
-          lull: data.wind_lull_data[i][1],
+          avg: Math.round(e[1]),
+          gust: Math.round(data.wind_gust_data[i][1]),
+          lull: Math.round(data.wind_lull_data[i][1]),
           dir: data.wind_dir_data[i][1],
         }))}
         // data={data.wind_avg_data}
         margin={{ top: 0, right: 30, bottom: 30, left: 20 }}
       >
         <CartesianGrid strokeDasharray='3 3' stroke='currentColor' opacity={0.3} />
+        <Tooltip
+          formatter={(value) => value + 'km/h'}
+          offset={50}
+          contentStyle={{
+            padding: '0.5rem 0.75rem',
+            fontSize: '0.9rem',
+            backgroundColor: 'color-mix(in srgb, currentColor 90%, transparent)',
+          }}
+          labelStyle={{ display: 'none' }}
+        />
         <XAxis
           xAxisId={0}
           dataKey='time'
@@ -91,6 +101,8 @@ const WindGraph = () => {
           interval={12}
           type='number'
           scale='time'
+          axisLine={false}
+          orientation='top'
         />
         <XAxis
           xAxisId={1}
@@ -98,12 +110,20 @@ const WindGraph = () => {
           // tickFormatter={(time, index) => data.wind_dir_data[index][1].toString()}
           tickFormatter={(time) => ''}
           tick={<CustomXAxisTick dirArray={data.wind_dir_data} />}
+          axisLine={false}
+          tickLine={false}
+          mirror={true}
+          tickMargin={-8}
         />
         <YAxis
           domain={[0, (dataMax: number) => Math.ceil(dataMax / 10) * 10]}
-          padding={{ top: 0, bottom: 10 }}
+          padding={{ top: 0, bottom: 0 }}
         />
-        <Legend />
+        <Legend
+          align='right'
+          iconSize={14}
+          wrapperStyle={{ fontSize: '0.75rem', bottom: 16, padding: 2 }}
+        />
         <Line
           type='monotone'
           dataKey='avg'
