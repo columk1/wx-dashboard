@@ -77,14 +77,34 @@ const WindGraph = () => {
         margin={{ top: 0, right: 0, bottom: 30, left: 20 }}
       >
         <CartesianGrid strokeDasharray='3 3' stroke='currentColor' opacity={0.3} />
+        <Legend
+          align='right'
+          iconSize={8}
+          iconType='circle'
+          wrapperStyle={{
+            fontSize: '0.75rem',
+            bottom: 18,
+            right: 55,
+            padding: 2,
+          }}
+          formatter={(value) => value[0].toUpperCase() + value.slice(1)}
+        />
         <Tooltip
           offset={50}
-          formatter={(value) => value + 'km/h'}
-          labelStyle={{ display: 'none' }}
+          formatter={(value: number, name: string) => [
+            value + 'km/h',
+            name[0].toUpperCase() + name.slice(1),
+          ]}
+          label='time'
+          labelFormatter={(label) =>
+            new Date(label).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
+          }
+          labelStyle={{ display: 'block', color: 'rgb(var(--background-start-rgb))' }}
           contentStyle={{
             padding: '0.5rem 0.75rem',
             fontSize: '0.9rem',
             backgroundColor: 'color-mix(in srgb, currentColor 90%, transparent)',
+            borderRadius: '5px',
           }}
           itemStyle={{ padding: '0.15rem' }}
           itemSorter={(item) => {
@@ -98,6 +118,7 @@ const WindGraph = () => {
             }
           }}
         />
+        {/* Time X-Axis */}
         <XAxis
           xAxisId={0}
           dataKey='time'
@@ -109,6 +130,7 @@ const WindGraph = () => {
           axisLine={false}
           orientation='top'
         />
+        {/* Wind Direction X-Axis */}
         <XAxis
           xAxisId={1}
           dataKey='dir'
@@ -128,11 +150,6 @@ const WindGraph = () => {
             (_, index) => index * 20 // multiply each index by 20
           )}
           orientation='right'
-        />
-        <Legend
-          align='right'
-          iconSize={14}
-          wrapperStyle={{ fontSize: '0.75rem', bottom: 16, right: 55, padding: 2 }}
         />
         <Line
           type='monotone'
