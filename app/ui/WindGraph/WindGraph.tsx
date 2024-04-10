@@ -4,16 +4,8 @@ import styles from './WindGraph.module.css'
 import { useEffect, useRef, useState } from 'react'
 import testData from '@/app/lib/testData.json'
 import { fetchWindGraph } from '@/app/lib/actions'
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-} from 'recharts'
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts'
+import CustomXAxisTick from '@/app/ui/CustomXAxisTick'
 
 type ChartData = {
   wind_avg_data: number[][]
@@ -59,6 +51,9 @@ const WindGraph = () => {
     containerRef.current && (containerRef.current.scrollLeft = containerRef?.current?.scrollWidth)
   })
 
+  const maxGust =
+    data?.wind_gust_data.reduce((acc, curr) => Math.max(acc, curr[1]), -Infinity) || 40
+
   const tickFormatter = (time: number) => {
     const date = new Date(time)
     const roundedHours = date.getHours() * 2 // Round to the nearest two-hour interval
@@ -68,7 +63,6 @@ const WindGraph = () => {
 
   return data?.wind_avg_data.length ? (
     <div ref={containerRef} className={styles.container}>
-      {/* <ResponsiveContainer minWidth='1400px' height='100%'> */}
       <LineChart
         width={1600}
         height={300}
@@ -80,7 +74,7 @@ const WindGraph = () => {
           dir: data.wind_dir_data[i][1],
         }))}
         // data={data.wind_avg_data}
-        margin={{ top: 0, right: 30, bottom: 30, left: 20 }}
+        margin={{ top: 0, right: 0, bottom: 30, left: 20 }}
       >
         <CartesianGrid strokeDasharray='3 3' stroke='currentColor' opacity={0.3} />
         <Tooltip
@@ -129,11 +123,16 @@ const WindGraph = () => {
         <YAxis
           domain={[0, (dataMax: number) => Math.ceil(dataMax / 10) * 10]}
           padding={{ top: 0, bottom: 0 }}
+          ticks={Array.from(
+            { length: Math.ceil(maxGust / 20) }, // count multiples of 20
+            (_, index) => index * 20 // multiply each index by 20
+          )}
+          orientation='right'
         />
         <Legend
           align='right'
           iconSize={14}
-          wrapperStyle={{ fontSize: '0.75rem', bottom: 16, padding: 2 }}
+          wrapperStyle={{ fontSize: '0.75rem', bottom: 16, right: 55, padding: 2 }}
         />
         <Line
           type='monotone'
@@ -161,7 +160,6 @@ const WindGraph = () => {
         />
         {/* <Line dataKey='dir' hide={true} dot={false} xAxisId={1} /> */}
       </LineChart>
-      {/* </ResponsiveContainer> */}
     </div>
   ) : (
     // <div ref={containerRef} className={styles.container}>
@@ -169,37 +167,6 @@ const WindGraph = () => {
     //   <svg ref={svgRef} style={{ margin: '100px', display: 'block' }}></svg>
     // </div>
     <h1>No Data</h1>
-  )
-}
-
-const CustomXAxisTick = (props: any) => {
-  const { x, y, payload, dirArray } = props
-  console.log('payload', payload)
-
-  return (
-    // <g className='icon' style={{ color: 'rgb(0, 0, 0)', backgroundColor: 'rgb(255, 255, 255)' }}>
-    <svg
-      // transform={`rotate(${dirArray[payload.index][1]})`}
-      x={x}
-      y={y}
-      stroke='currentColor'
-      fill='#1d91a0'
-      strokeWidth='0'
-      version='1.2'
-      baseProfile='tiny'
-      viewBox='0 0 24 24'
-      height='12'
-      width='12'
-    >
-      <g transform={`rotate(${dirArray[payload.index][1] + 135} 12 12)`}>
-        <path d='M10.368 19.102c.349 1.049 1.011 1.086 1.478.086l5.309-11.375c.467-1.002.034-1.434-.967-.967l-11.376 5.308c-1.001.467-.963 1.129.085 1.479l4.103 1.367 1.368 4.102z'></path>
-      </g>
-    </svg>
-    // <g transform={`translate(${x},${y})`}>
-    //   <text textAnchor='end' fill='#666' transform={`rotate(${payload.value})`}>
-    //     {payload.value}
-    //   </text>
-    // </g>
   )
 }
 
