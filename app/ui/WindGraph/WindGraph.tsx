@@ -54,11 +54,20 @@ const WindGraph = () => {
   const maxGust =
     data?.wind_gust_data.reduce((acc, curr) => Math.max(acc, curr[1]), -Infinity) || 40
 
-  const tickFormatter = (time: number) => {
-    const date = new Date(time)
-    const roundedHours = date.getHours() * 2 // Round to the nearest two-hour interval
-    date.setHours(roundedHours, 0, 0, 0) // Set minutes, seconds, and milliseconds to zero
-    return date.toLocaleTimeString([], { hour: '2-digit' }) + 'h'
+  const getTimeTicks = () => {
+    const ONE_HOUR = 3600000
+    const startTime = data?.wind_avg_data[0][0] || 0
+    const endTime = data?.wind_avg_data[data?.wind_avg_data.length - 1][0] || 0
+
+    // Round the startTime up to the nearest whole hour
+    const firstHour = Math.ceil(startTime / ONE_HOUR) * ONE_HOUR
+
+    // Calculate the number of hours between the rounded start time and the end time
+    const hourlyTicks = Math.ceil((endTime - firstHour) / ONE_HOUR)
+
+    // Generate an array of timestamps for each hour
+    // return Array.from(Array(hourlyTicks).keys()).map((i) => firstHour + i * ONE_HOUR)
+    return Array.from({ length: hourlyTicks }, (_, i) => firstHour + i * ONE_HOUR)
   }
 
   return data?.wind_avg_data.length ? (
@@ -121,14 +130,17 @@ const WindGraph = () => {
         {/* Time X-Axis */}
         <XAxis
           xAxisId={0}
+          axisLine={false}
           dataKey='time'
           domain={['auto', 'auto']}
-          tickFormatter={tickFormatter}
-          interval={12}
-          type='number'
-          scale='time'
-          axisLine={false}
           orientation='top'
+          scale='time'
+          tickFormatter={(time) =>
+            new Date(time).toLocaleString('en-US', { hour: '2-digit', hour12: false }) + 'h'
+          }
+          // interval={23}
+          ticks={getTimeTicks()}
+          type='number'
         />
         {/* Wind Direction X-Axis */}
         <XAxis
