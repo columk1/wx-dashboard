@@ -13,9 +13,36 @@
   border-radius: var(--border-radius);
 }
 
+.container::-webkit-scrollbar {
+  width: 20px;
+}
+
+.container::-webkit-scrollbar-thumb {
+  background-color: rgba(var(--callout-border-rgb));
+  border: 4px solid transparent;
+  border-radius: 8px;
+  background-clip: padding-box;
+}
+
+.container::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 2px rgba(var(--callout-border-rgb));
+  background-color: rgba(var(--callout-border-rgb), 0.3);
+  border-radius: 10px;
+}
+
+.container::-webkit-scrollbar-thumb:hover {
+  background-color: #888;
+}
+
 .y-axis-wrapper {
   background: white;
   position: sticky;
   left: 0;
   z-index: 1003;
+}
+
+@media (max-width: 700px) {
+  .container {
+    margin-top: 40px;
+  }
 }
