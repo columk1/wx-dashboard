@@ -1,6 +1,7 @@
 import Image from 'next/image'
 import styles from './page.module.css'
-import WindGraph from '@/app/ui/WindGraph/WindGraph'
+import Wind from '@/app/ui/Wind/Wind'
+import GondolaWX from './ui/GondolaWX/GondolaWX'
 
 export default function Home() {
   const date = new Date().toISOString().split('T')[0] // YYYY-MM-DD
@@ -8,7 +9,7 @@ export default function Home() {
   return (
     <main className={styles.main}>
       <div className={styles.description}>
-        <p>Squamish Aviation Dashboard&nbsp;</p>
+        <p>Squamish Dashboard&nbsp;</p>
         {/* <div>
           <a
             href='https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app'
@@ -28,7 +29,7 @@ export default function Home() {
         </div> */}
       </div>
 
-      <WindGraph />
+      <Wind />
 
       <div className={styles.iFrameWrapper}>
         <iframe
@@ -47,6 +48,7 @@ export default function Home() {
         alt={'Rasp Windgram'}
         width={400}
         height={400}
+        style={{ borderRadius: '8px' }}
       />
 
       <div className={styles.grid}>
