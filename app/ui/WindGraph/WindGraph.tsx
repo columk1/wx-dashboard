@@ -14,10 +14,10 @@ type ChartData = {
   wind_dir_data: number[][]
 } | null
 
-const WindGraph = () => {
+const WindGraph = ({ data }: { data: ChartData }) => {
   const svgRef = useRef(null)
   const containerRef = useRef<HTMLDivElement>(null)
-  const [data, setData] = useState<ChartData>(null)
+  // const [data, setData] = useState<ChartData>(null)
   const [width, setWidth] = useState<number | null>(null)
   const [height, setHeight] = useState<number | null>(null)
 
@@ -28,24 +28,6 @@ const WindGraph = () => {
     const newHeight = containerRef?.current?.clientHeight
     newHeight && setHeight(newHeight)
   }
-
-  useEffect(() => {
-    const fetchData = async () => {
-      // const response = await fetch(process.env.VITE_WINDGRAPH_URL)
-      // const json = await response.json()
-      // const json = await fetchWindGraph()
-      const json = testData
-      console.log(json)
-      setData({
-        wind_avg_data: json.wind_avg_data.slice(0, -1) as number[][],
-        wind_gust_data: json.wind_gust_data.slice(0, -1) as number[][],
-        wind_lull_data: json.wind_lull_data.slice(0, -1) as number[][],
-        wind_dir_data: json.wind_dir_data.slice(0, -1) as number[][],
-      })
-    }
-
-    fetchData()
-  }, [])
 
   useEffect(() => {
     containerRef.current && (containerRef.current.scrollLeft = containerRef?.current?.scrollWidth)
