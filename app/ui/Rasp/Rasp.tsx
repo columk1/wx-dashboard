@@ -7,6 +7,7 @@ import { addDays, format } from 'date-fns'
 
 const sites = [
   ['Squamish', '20'],
+  ['Pemberton', '15'],
   ['Demon', '260'],
   ['Cloudburst', '146'],
   ['Tunnel', '231'],
@@ -31,7 +32,7 @@ const Rasp = () => {
         alt={'Rasp Windgram'}
         width={450}
         height={450}
-        style={{ display: 'block' }}
+        className={styles.raspImg}
       />
       <div className={styles.rasp}>
         {sites.map((e) => (
