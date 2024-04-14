@@ -2,14 +2,13 @@ import Image from 'next/image'
 import styles from './page.module.css'
 import Wind from '@/app/ui/Wind/Wind'
 import GondolaWX from './ui/GondolaWX/GondolaWX'
+import Rasp from './ui/Rasp/Rasp'
 
 export default function Home() {
-  const date = new Date().toISOString().split('T')[0] // YYYY-MM-DD
-
   return (
     <main className={styles.main}>
       <div className={styles.description}>
-        <p>Squamish Dashboard&nbsp;</p>
+        <p>Chicken Hub&nbsp;</p>
         {/* <div>
           <a
             href='https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app'
@@ -31,11 +30,12 @@ export default function Home() {
 
       <Wind />
 
+      {/* Chief Cam */}
       <div className={styles.iFrameWrapper}>
         <iframe
           className={styles.iFrame}
           width='450'
-          height='210'
+          height='211'
           src='https://chiefcam.com/embed/live'
           frameBorder='0'
           allow='autoplay; encrypted-media; fullscreen; picture-in-picture'
@@ -43,61 +43,55 @@ export default function Home() {
         ></iframe>
       </div>
 
-      <Image
-        src={`https://canadarasp.com/windgrams-data/oneDay/${date}/hrdpswindgram20.png`}
-        alt={'Rasp Windgram'}
-        width={400}
-        height={400}
-        style={{ borderRadius: '8px' }}
-      />
+      <Rasp />
 
       <div className={styles.grid}>
         <a
-          href='https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app'
+          href='https://www.windy.com/49.682/-123.144/airgram?clouds,49.653,-123.167,12'
           className={styles.card}
           target='_blank'
           rel='noopener noreferrer'
         >
           <h2>
-            Docs <span>-&gt;</span>
+            Windy <span>-&gt;</span>
           </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
+          <p>Squamish airgram with an extended forecast.</p>
         </a>
 
         <a
-          href='https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app'
+          href='https://www.windy.com/?42.864,-138.880,4,m:fjXac0Z'
           className={styles.card}
           target='_blank'
           rel='noopener noreferrer'
         >
           <h2>
-            Learn <span>-&gt;</span>
+            Windy <span>-&gt;</span>
           </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
+          <p>East Pacific Pressure Systems</p>
         </a>
 
         <a
-          href='https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app'
+          href='https://ocean.weather.gov/P_e_sfc_color.png'
           className={styles.card}
           target='_blank'
           rel='noopener noreferrer'
         >
           <h2>
-            Templates <span>-&gt;</span>
+            Surface Analysis <span>-&gt;</span>
           </h2>
-          <p>Explore starter templates for Next.js.</p>
+          <p>East Pacific</p>
         </a>
 
         <a
-          href='https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app'
+          href='https://whistlerpeak.com/temps/'
           className={styles.card}
           target='_blank'
           rel='noopener noreferrer'
         >
           <h2>
-            Deploy <span>-&gt;</span>
+            Whistler Peak<span>-&gt;</span>
           </h2>
-          <p>Instantly deploy your Next.js site to a shareable URL with Vercel.</p>
+          <p>Wind speed and cams</p>
         </a>
       </div>
     </main>
