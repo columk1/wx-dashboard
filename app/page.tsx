@@ -28,20 +28,20 @@ export default function Home() {
         </div> */}
       </div>
 
-      <Wind />
-
       {/* Chief Cam */}
       <div className={styles.iFrameWrapper}>
         <iframe
           className={styles.iFrame}
-          width='450'
-          height='211'
+          // width='450'
+          // height='211'
           src='https://chiefcam.com/embed/live'
           frameBorder='0'
           allow='autoplay; encrypted-media; fullscreen; picture-in-picture'
           allowFullScreen
         ></iframe>
       </div>
+
+      <Wind />
 
       <Rasp />
 
@@ -52,10 +52,10 @@ export default function Home() {
           target='_blank'
           rel='noopener noreferrer'
         >
-          <h2>
-            Windy <span>-&gt;</span>
-          </h2>
-          <p>Squamish airgram with an extended forecast.</p>
+          <h4>
+            Windy <span>&#12316;</span>
+          </h4>
+          <p>Squamish airgram extended forecast</p>
         </a>
 
         <a
@@ -64,9 +64,9 @@ export default function Home() {
           target='_blank'
           rel='noopener noreferrer'
         >
-          <h2>
-            Windy <span>-&gt;</span>
-          </h2>
+          <h4>
+            Windy <span>&#12316;</span>
+          </h4>
           <p>East Pacific Pressure Systems</p>
         </a>
 
@@ -76,10 +76,10 @@ export default function Home() {
           target='_blank'
           rel='noopener noreferrer'
         >
-          <h2>
-            Surface Analysis <span>-&gt;</span>
-          </h2>
-          <p>East Pacific</p>
+          <h4>
+            Ocean Weather <span>&#9678;</span>
+          </h4>
+          <p>Surface Analysis</p>
         </a>
 
         <a
@@ -88,9 +88,9 @@ export default function Home() {
           target='_blank'
           rel='noopener noreferrer'
         >
-          <h2>
-            Whistler Peak<span>-&gt;</span>
-          </h2>
+          <h4>
+            Whistler Peak<span>&nbsp;&#9968;</span>
+          </h4>
           <p>Wind speed and cams</p>
         </a>
       </div>
