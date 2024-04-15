@@ -1,4 +1,4 @@
-const Arrow = ({ size = 12, angle }: { size?: number; angle: number }) => {
+const Arrow = ({ size = '12', angle }: { size?: string; angle: number }) => {
   return (
     <svg
       // x={x}
