@@ -1,10 +1,15 @@
 .raspWrapper {
   overflow: hidden;
   border-radius: 8px;
+  width: min(450px, 100%);
+  max-width: 100%;
   /* border: 1px solid transparent; */
 }
 
 .raspImg {
+  max-width: 100%;
+  height: auto;
+  /* object-fit: contain; */
   display: block;
   border-radius: 8px 8px 0 0;
   border-top: 1px solid rgb(var(--border-rgb));
@@ -13,23 +18,27 @@
 }
 
 .rasp {
+  max-width: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  min-width: 450px;
+  flex-wrap: wrap;
+  /* min-width: 375px; */
 }
 
 .raspBtn {
+  flex: 1 1 10%;
   width: 100%;
   padding: 1rem;
   border: none;
   border-top: 1px solid rgb(var(--border-rgb));
   border-left: 1px solid rgb(var(--border-rgb));
   border-bottom: 1px solid rgb(var(--border-rgb));
-  background-color: rgba(var(--callout-rgb), 0.5);
+  background-color: rgba(var(--callout-rgb), 0.4);
   cursor: pointer;
+  transition: background-color, border 200ms;
   &.active {
-    background-color: rgba(var(--card-rgb), 0.4);
+    background-color: rgba(var(--card-rgb), 0.3);
     border-color: rgb(var(--card-rgb));
     & + .raspBtn {
       border-left: 1px solid rgb(var(--card-rgb));
@@ -46,13 +55,20 @@
     }
   }
   &:hover {
-    background-color: rgba(var(--card-rgb), 0.5);
+    background-color: rgba(var(--card-rgb), 0.4);
     border-color: rgb(var(--card-rgb));
     & + .raspBtn {
       border-left: 1px solid rgb(var(--card-rgb));
     }
   }
   &:active {
-    background-color: rgba(var(--card-rgb), 0.4);
+    background-color: rgba(var(--card-rgb), 0.3);
+  }
+}
+
+@media (max-width: 500px) {
+  .raspBtn {
+    font-size: calc(0.6rem + 0.5vw);
+    padding: 1rem 0.5rem;
   }
 }
