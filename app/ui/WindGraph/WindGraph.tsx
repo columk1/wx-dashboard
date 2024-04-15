@@ -65,7 +65,7 @@ const WindGraph = ({ data }: { data: ChartData }) => {
           dir: data.wind_dir_data[i][1],
         }))}
         // data={data.wind_avg_data}
-        margin={{ top: 0, right: 0, bottom: 30, left: 20 }}
+        margin={{ top: 0, right: -10, bottom: 30, left: 20 }}
       >
         <CartesianGrid strokeDasharray='3 3' stroke='currentColor' opacity={0.3} />
         <Legend
@@ -74,9 +74,9 @@ const WindGraph = ({ data }: { data: ChartData }) => {
           iconType='circle'
           wrapperStyle={{
             fontSize: '0.75rem',
-            bottom: 18,
-            right: 55,
-            padding: 2,
+            bottom: 20,
+            right: 50,
+            padding: 4,
           }}
           formatter={(value) => value[0].toUpperCase() + value.slice(1)}
         />
