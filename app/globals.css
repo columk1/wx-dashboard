@@ -95,6 +95,12 @@ a {
   text-decoration: none;
 }
 
+button {
+  display: block;
+  cursor: pointer;
+  border: none;
+}
+
 /* g {
   fill: rgb(var(--foreground-rgb));
 } */
