@@ -2,8 +2,6 @@
 
 import styles from './WindGraph.module.css'
 import { useEffect, useRef, useState } from 'react'
-import testData from '@/app/lib/testData.json'
-import { fetchWindGraph } from '@/app/lib/actions'
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts'
 import CustomXAxisTick from '@/app/ui/CustomXAxisTick'
 
@@ -15,19 +13,7 @@ type ChartData = {
 } | null
 
 const WindGraph = ({ data }: { data: ChartData }) => {
-  const svgRef = useRef(null)
   const containerRef = useRef<HTMLDivElement>(null)
-  // const [data, setData] = useState<ChartData>(null)
-  const [width, setWidth] = useState<number | null>(null)
-  const [height, setHeight] = useState<number | null>(null)
-
-  const getSvgContainerSize = () => {
-    const newWidth = containerRef?.current?.clientWidth
-    newWidth && setWidth(newWidth)
-
-    const newHeight = containerRef?.current?.clientHeight
-    newHeight && setHeight(newHeight)
-  }
 
   useEffect(() => {
     containerRef.current && (containerRef.current.scrollLeft = containerRef?.current?.scrollWidth)
@@ -55,6 +41,7 @@ const WindGraph = ({ data }: { data: ChartData }) => {
   return data?.wind_avg_data.length ? (
     <div ref={containerRef} className={styles.container}>
       <LineChart
+        id='wind-graph'
         width={1600}
         height={300}
         data={data.wind_avg_data.map((e, i) => ({
@@ -120,7 +107,6 @@ const WindGraph = ({ data }: { data: ChartData }) => {
           tickFormatter={(time) =>
             new Date(time).toLocaleString('en-US', { hour: '2-digit', hour12: false }) + 'h'
           }
-          // interval={23}
           ticks={getTimeTicks()}
           type='number'
         />
@@ -128,7 +114,6 @@ const WindGraph = ({ data }: { data: ChartData }) => {
         <XAxis
           xAxisId={1}
           dataKey='dir'
-          // tickFormatter={(time, index) => data.wind_dir_data[index][1].toString()}
           tickFormatter={(time) => ''}
           tick={<CustomXAxisTick dirArray={data.wind_dir_data} />}
           axisLine={false}
@@ -152,6 +137,7 @@ const WindGraph = ({ data }: { data: ChartData }) => {
           dot={false}
           activeDot={{ strokeWidth: 1, r: 4 }}
           xAxisId={0}
+          isAnimationActive={false}
         />
         <Line
           type='monotone'
@@ -160,6 +146,7 @@ const WindGraph = ({ data }: { data: ChartData }) => {
           dot={false}
           activeDot={{ strokeWidth: 1, r: 4 }}
           connectNulls={true}
+          isAnimationActive={false}
         />
         <Line
           type='monotone'
@@ -168,15 +155,11 @@ const WindGraph = ({ data }: { data: ChartData }) => {
           dot={false}
           activeDot={{ strokeWidth: 1, r: 4 }}
           connectNulls={true}
+          isAnimationActive={false}
         />
-        {/* <Line dataKey='dir' hide={true} dot={false} xAxisId={1} /> */}
       </LineChart>
     </div>
   ) : (
-    // <div ref={containerRef} className={styles.container}>
-    //   <h2>Line Chart</h2>
-    //   <svg ref={svgRef} style={{ margin: '100px', display: 'block' }}></svg>
-    // </div>
     <h1>No Data</h1>
   )
 }
