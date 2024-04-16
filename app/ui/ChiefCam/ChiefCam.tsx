@@ -21,7 +21,6 @@ const ChiefCam = () => {
         // height='211'
         src='https://chiefcam.com/embed/live'
         allow='autoplay; encrypted-media; fullscreen; picture-in-picture'
-        allowFullScreen
         style={{ visibility: 'hidden' }}
       ></iframe>
     </div>
