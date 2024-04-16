@@ -12,7 +12,7 @@ const fetchData = async (endpoint?: string, revalidateLifetime = 0, tags?: strin
   }
 }
 
-const fetchWindGraph = async () => fetchData(process.env.WINDGRAPH_URL)
-const fetchGondolaData = async () => fetchData(process.env.GONDOLA_API_URL, 10)
+const fetchWindGraph = async () => fetchData(process.env.SPIT_WINDMETER_API)
+const fetchGondolaData = async () => fetchData(process.env.GONDOLA_WINDMETER_API, 10)
 
 export { fetchWindGraph, fetchGondolaData }
