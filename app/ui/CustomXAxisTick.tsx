@@ -14,7 +14,6 @@ type CustomXAxisTickProps = {
 
 const CustomXAxisTick = (props: CustomXAxisTickProps) => {
   const { x, y, payload, dirArray } = props
-  console.log('payload', payload)
 
   return payload ? (
     <svg

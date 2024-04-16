@@ -9,7 +9,7 @@ type WindData = {
 } | null
 
 const WXCard = ({ title, data }: { title: string; data: WindData }) => {
-  console.log(data?.windDirectionText)
+  // console.log(data?.windDirectionText)
   return (
     <div className={styles.card}>
       <div className={styles.titleContainer}>
@@ -21,7 +21,6 @@ const WXCard = ({ title, data }: { title: string; data: WindData }) => {
           <Arrow size={'2em'} angle={data?.windDirection || 0} />
         </div>
         <div className={styles.windSpeedContainer}>
-          {/* <p className={styles.item}>Avg</p> */}
           <p className={styles.avg}>
             {data?.windSpeed}
             <small className={styles.small}>km/h</small>
