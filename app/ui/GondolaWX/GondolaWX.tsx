@@ -1,10 +1,9 @@
 'use client'
 
 import { fetchGondolaData } from '@/app/lib/actions'
-import { useEffect, useMemo, useState } from 'react'
-import Arrow from '@/app/ui/Arrow'
-import styles from './GondolaWX.module.css'
+import { useEffect, useState } from 'react'
 import WXCard from '@/app/ui/WXCard/WXCard'
+import testData from '@/app/lib/testData.json'
 
 type WindData = {
   windDirection: number
@@ -15,6 +14,7 @@ type WindData = {
 
 const GondolaWX = () => {
   const [data, setData] = useState<WindData>(null)
+  // const [loading, setLoading] = useState(true)
 
   // Get wind direction in string format, e.g. 'WNW' from angle.
   const getWindDirectionText = (windDirection: number) => {
@@ -25,20 +25,21 @@ const GondolaWX = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const json = await fetchGondolaData()
-      console.log(json)
+      const json =
+        process.env.NODE_ENV === 'development' ? testData.gondola : await fetchGondolaData()
+      // console.log(json)
       setData({
         windDirection: Math.round(json.observations[0].winddir),
         windSpeed: Math.round(json.observations[0].metric.windSpeed),
         windGusts: Math.round(json.observations[0].metric.windGust),
         windDirectionText: getWindDirectionText(json.observations[0].winddir),
       })
+      // setLoading(false)
     }
-
     fetchData()
-    // TODO: Set interval in production
-    // const interval = setInterval(fetchData, 10000)
-    // return () => clearInterval(interval)
+
+    const interval = setInterval(fetchData, 10000)
+    return () => clearInterval(interval)
   }, [])
 
   return <WXCard title='Gondola' data={data} />
