@@ -1,8 +1,8 @@
 import Image from 'next/image'
 import styles from './page.module.css'
 import Wind from '@/app/ui/Wind/Wind'
-import GondolaWX from './ui/GondolaWX/GondolaWX'
 import Rasp from './ui/Rasp/Rasp'
+import { addDays, format } from 'date-fns'
 
 export default function Home() {
   return (
@@ -35,7 +35,6 @@ export default function Home() {
           // width='450'
           // height='211'
           src='https://chiefcam.com/embed/live'
-          frameBorder='0'
           allow='autoplay; encrypted-media; fullscreen; picture-in-picture'
           allowFullScreen
         ></iframe>
@@ -47,15 +46,27 @@ export default function Home() {
 
       <div className={styles.grid}>
         <a
+          href='https://us-west1-rugged-nimbus-347223.cloudfunctions.net/wind?spot=1436'
+          className={styles.card}
+          target='_blank'
+          rel='noopener noreferrer'
+        >
+          <h4>
+            Spit <span>📈</span>
+          </h4>
+          <p>Wind meter</p>
+        </a>
+
+        <a
           href='https://www.windy.com/49.682/-123.144/airgram?clouds,49.653,-123.167,12'
           className={styles.card}
           target='_blank'
           rel='noopener noreferrer'
         >
           <h4>
-            Windy <span>&#12316;</span>
+            Windy <span>🪂</span>
           </h4>
-          <p>Squamish airgram extended forecast</p>
+          <p>Squamish airgram</p>
         </a>
 
         <a
@@ -65,9 +76,21 @@ export default function Home() {
           rel='noopener noreferrer'
         >
           <h4>
-            Windy <span>&#12316;</span>
+            Windy <span>🌪</span>
           </h4>
-          <p>East Pacific Pressure Systems</p>
+          <p>Pressure Systems</p>
+        </a>
+
+        <a
+          href='https://canadarasp.com/windgrams/?region=1&location=0&plotType=1'
+          className={styles.card}
+          target='_blank'
+          rel='noopener noreferrer'
+        >
+          <h4>
+            Rasp<span>&nbsp;🌞</span>
+          </h4>
+          <p>Windgrams</p>
         </a>
 
         <a
@@ -77,7 +100,7 @@ export default function Home() {
           rel='noopener noreferrer'
         >
           <h4>
-            Ocean Weather <span>&#9678;</span>
+            Ocean Weather <span>🌀</span>
           </h4>
           <p>Surface Analysis</p>
         </a>
@@ -89,9 +112,36 @@ export default function Home() {
           rel='noopener noreferrer'
         >
           <h4>
-            Whistler Peak<span>&nbsp;&#9968;</span>
+            Whistler Peak<span>&nbsp;🏔</span>
           </h4>
-          <p>Wind speed and cams</p>
+          <p>Weather and cams</p>
+        </a>
+
+        <a
+          href='https://xcfind.paraglide.us/map.html?id=114'
+          className={styles.card}
+          target='_blank'
+          rel='noopener noreferrer'
+        >
+          <h4>
+            XC Find<span>&nbsp;📍</span>
+          </h4>
+          <p>Western Canada</p>
+        </a>
+
+        <a
+          href={`https://www.xcontest.org/canada/en/flights/#filter[date]=${format(
+            addDays(new Date(), -1),
+            'yyyy-MM-dd'
+          )}@flights[sort]=reg`}
+          className={styles.card}
+          target='_blank'
+          rel='noopener noreferrer'
+        >
+          <h4>
+            XContest<span>&nbsp;🏆</span>
+          </h4>
+          <p>Yesterday's flights</p>
         </a>
       </div>
     </main>
