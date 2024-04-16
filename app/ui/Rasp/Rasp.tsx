@@ -15,25 +15,38 @@ const sites = [
 
 const Rasp = () => {
   const [site, setSite] = useState('20')
-  const [period, setPeriod] = useState('oneDay')
+  const [period, setPeriod] = useState('today')
 
   const today = format(new Date(), 'yyyy-MM-dd')
   const tomorrow = format(addDays(new Date(), 1), 'yyyy-MM-dd')
 
+  const getNextPeriod = (currentPeriod: string) => {
+    if (currentPeriod === 'twoDay') {
+      return 'today'
+    }
+    if (currentPeriod === 'today') {
+      return 'tomorrow'
+    }
+    return 'twoDay'
+  }
+
   return (
     <div className={styles.raspWrapper}>
-      <Image
-        src={
-          period === 'oneDay'
-            ? `https://canadarasp.com/windgrams-data/oneDay/${today}/hrdpswindgram${site}.png`
-            : `https://canadarasp.com/windgrams-data/twoDay/hrdpswindgram${site}.png`
-        }
-        // src={`https://canadarasp.com/windgrams-data/twoDay/hrdpswindgram${site}.png`}
-        alt={'Rasp Windgram'}
-        width={450}
-        height={450}
-        className={styles.raspImg}
-      />
+      <button onClick={() => setPeriod((prev) => getNextPeriod(prev))}>
+        <Image
+          src={
+            period === 'today'
+              ? `https://canadarasp.com/windgrams-data/oneDay/${today}/hrdpswindgram${site}.png`
+              : period === 'tomorrow'
+              ? `https://canadarasp.com/windgrams-data/oneDay/${tomorrow}/hrdpswindgram${site}.png`
+              : `https://canadarasp.com/windgrams-data/twoDay/hrdpswindgram${site}.png`
+          }
+          alt={'Rasp Windgram'}
+          width={450}
+          height={450}
+          className={styles.raspImg}
+        />
+      </button>
       <div className={styles.rasp}>
         {sites.map((e) => (
           <button
