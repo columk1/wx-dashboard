@@ -1,5 +1,37 @@
 {
-  "gondola": {},
+  "gondola": {
+    "observations": [
+      {
+        "stationID": "ISQUAM29",
+        "obsTimeUtc": "2024-04-16T06:32:26Z",
+        "obsTimeLocal": "2024-04-15 23:32:26",
+        "neighborhood": "Squamish-Lillooet Regional District",
+        "softwareType": "AMBWeatherV4.3.4",
+        "country": "CA",
+        "solarRadiation": 0,
+        "lon": -123.131041,
+        "realtimeFrequency": null,
+        "epoch": 1713249146,
+        "lat": 49.671017,
+        "uv": 0,
+        "winddir": 80,
+        "humidity": 85,
+        "qcStatus": -1,
+        "metric": {
+          "temp": 0.2,
+          "heatIndex": 0.2,
+          "dewpt": -2,
+          "windChill": -1.8,
+          "windSpeed": 6.1,
+          "windGust": 13,
+          "pressure": 922.42,
+          "precipRate": 0,
+          "precipTotal": 0,
+          "elev": 876
+        }
+      }
+    ]
+  },
   "wind": {
     "air_temp_data": null,
     "wet_bulb_globe_temp_data": null,
