@@ -13,52 +13,58 @@ const sites = [
   ['Tunnel', '231'],
 ]
 
+const today = `oneDay/${format(new Date(), 'yyyy-MM-dd')}`
+const tomorrow = `oneDay/${format(addDays(new Date(), 1), 'yyyy-MM-dd')}`
+const twoDay = 'twoDay'
+
+const periods = [today, tomorrow, twoDay]
+
 const Rasp = () => {
   const [site, setSite] = useState('20')
-  const [period, setPeriod] = useState('today')
+  const [periodIndex, setPeriodIndex] = useState(0)
 
-  const today = format(new Date(), 'yyyy-MM-dd')
-  const tomorrow = format(addDays(new Date(), 1), 'yyyy-MM-dd')
+  const period = periods[periodIndex]
 
-  const getNextPeriod = (currentPeriod: string) => {
-    if (currentPeriod === 'twoDay') {
-      return 'today'
-    }
-    if (currentPeriod === 'today') {
-      return 'tomorrow'
-    }
-    return 'twoDay'
-  }
+  const getNextPeriod = (currentIndex: number) => (currentIndex + 1) % periods.length
+
+  const cyclePeriod = () => setPeriodIndex((prev) => getNextPeriod(prev))
+
+  const src = `https://canadarasp.com/windgrams-data/${period}/hrdpswindgram${site}.png`
 
   return (
-    <div className={styles.raspWrapper}>
-      <button onClick={() => setPeriod((prev) => getNextPeriod(prev))}>
-        <Image
-          src={
-            period === 'today'
-              ? `https://canadarasp.com/windgrams-data/oneDay/${today}/hrdpswindgram${site}.png`
-              : period === 'tomorrow'
-              ? `https://canadarasp.com/windgrams-data/oneDay/${tomorrow}/hrdpswindgram${site}.png`
-              : `https://canadarasp.com/windgrams-data/twoDay/hrdpswindgram${site}.png`
-          }
-          alt={'Rasp Windgram'}
-          width={450}
-          height={450}
-          className={styles.raspImg}
-        />
-      </button>
-      <div className={styles.rasp}>
-        {sites.map((e) => (
-          <button
-            key={e[1]}
-            onClick={() => setSite(e[1])}
-            className={`${styles.raspBtn} ${site === e[1] ? styles.active : ''}`}
-          >
-            <p>{e[0]}</p>
-          </button>
-        ))}
+    <>
+      <div className={styles.raspWrapper}>
+        <button onClick={cyclePeriod}>
+          <Image
+            src={src}
+            alt={'Rasp Windgram'}
+            width={450}
+            height={450}
+            className={styles.raspImg}
+          />
+          <Image
+            src={`https://canadarasp.com/windgrams-data/${getNextPeriod(
+              periodIndex
+            )}/hrdpswindgram${site}.png`}
+            alt={'Preload Next Rasp Windgram'}
+            width={450}
+            height={450}
+            className={styles.raspImg + ' sr-only'}
+          />
+        </button>
+        <div className={styles.rasp}>
+          {sites.map((e) => (
+            <button
+              key={e[1]}
+              onClick={() => setSite(e[1])}
+              className={`${styles.raspBtn} ${site === e[1] ? styles.active : ''}`}
+            >
+              <p>{e[0]}</p>
+            </button>
+          ))}
+        </div>
       </div>
-    </div>
+    </>
   )
 }
 
