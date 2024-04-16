@@ -1,0 +1,17 @@
+.iFrameWrapper {
+  display: block;
+  overflow: hidden;
+  width: 100%;
+  max-width: 450px;
+  aspect-ratio: 2.12 / 1;
+  border-radius: 12px;
+  border: 1px solid rgba(var(--callout-border-rgb), 0.3);
+  background-color: rgba(var(--callout-border-rgb), 0.3);
+}
+
+.iFrame {
+  width: 100%;
+  height: 100%;
+  border-radius: 10px;
+  border: none;
+}

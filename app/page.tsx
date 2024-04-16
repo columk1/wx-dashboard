@@ -1,49 +1,29 @@
-import Image from 'next/image'
 import styles from './page.module.css'
 import Wind from '@/app/ui/Wind/Wind'
 import Rasp from './ui/Rasp/Rasp'
 import { addDays, format } from 'date-fns'
+import { Suspense } from 'react'
+import Loading from '@/app/ui/Loading/Loading'
+import ChiefCam from '@/app/ui/ChiefCam/ChiefCam'
 
 export default function Home() {
   return (
     <main className={styles.main}>
       <div className={styles.description}>
-        <p>Chicken Hub&nbsp;</p>
-        {/* <div>
-          <a
-            href='https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app'
-            target='_blank'
-            rel='noopener noreferrer'
-          >
-            By columk
-            <Image
-              src='/vercel.svg'
-              alt='Vercel Logo'
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div> */}
+        <p>Chief Lap Copilot&nbsp;</p>
       </div>
 
       {/* Chief Cam */}
-      <div className={styles.iFrameWrapper}>
-        <iframe
-          className={styles.iFrame}
-          // width='450'
-          // height='211'
-          src='https://chiefcam.com/embed/live'
-          allow='autoplay; encrypted-media; fullscreen; picture-in-picture'
-          allowFullScreen
-        ></iframe>
-      </div>
+      <ChiefCam />
+      {/* Wind cards and wind graph */}
+      <Suspense fallback={<Loading />}>
+        <Wind />
+      </Suspense>
 
-      <Wind />
-
+      {/* Canada Rasp Windgram selector */}
       <Rasp />
 
+      {/* External Links */}
       <div className={styles.grid}>
         <a
           href='https://us-west1-rugged-nimbus-347223.cloudfunctions.net/wind?spot=1436'
