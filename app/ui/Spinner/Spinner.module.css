@@ -1,0 +1,24 @@
+.spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  margin: 0 auto;
+}
+
+.svg {
+  width: 2rem;
+  height: 2rem;
+  color: rgb(var(--foreground-rgb));
+  fill: rgb(var(--card-rgb));
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
