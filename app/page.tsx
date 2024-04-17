@@ -2,9 +2,28 @@ import styles from './page.module.css'
 import Wind from '@/app/ui/Wind/Wind'
 import Rasp from './ui/Rasp/Rasp'
 import { addDays, format } from 'date-fns'
-import { Suspense } from 'react'
-import Loading from '@/app/ui/Loading/Loading'
 import ChiefCam from '@/app/ui/ChiefCam/ChiefCam'
+import { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Chief Lap Copilot',
+  // icons: [
+  //   {
+  //     rel: 'icon',
+  //     type: 'image/x-icon',
+  //     url: '/favicon.ico',
+  //     media: '(prefers-color-scheme: light)',
+  //   },
+  //   {
+  //     rel: 'icon',
+  //     type: 'image/png',
+  //     url: '/favicon-dark.png',
+  //     media: '(prefers-color-scheme: dark)',
+  //   },
+  // ],
+  description: 'A dashboard for local pilots.',
+  metadataBase: new URL('https://chieflap.vercel.app'),
+}
 
 export default function Home() {
   return (
@@ -16,9 +35,7 @@ export default function Home() {
       {/* Chief Cam */}
       <ChiefCam />
       {/* Wind cards and wind graph */}
-      <Suspense fallback={<Loading />}>
-        <Wind />
-      </Suspense>
+      <Wind />
 
       {/* Canada Rasp Windgram selector */}
       <Rasp />
