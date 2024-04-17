@@ -1,14 +1,8 @@
 import Arrow from '@/app/ui/Arrow'
 import styles from '@/app/ui/WXCard/WXCard.module.css'
+import { WXCardData } from '@/app/lib/definitions'
 
-type WindData = {
-  windDirection: number
-  windSpeed: number
-  windGusts: number
-  windDirectionText: string
-} | null
-
-const WXCard = ({ title, data }: { title: string; data: WindData }) => {
+const WXCard = ({ title, data }: { title: string; data: WXCardData }) => {
   // console.log(data?.windDirectionText)
   return (
     <div className={styles.card}>
