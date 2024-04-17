@@ -4,13 +4,15 @@ import testData from '@/app/lib/testData.json'
 import WXCard from '@/app/ui/WXCard/WXCard'
 import styles from './Wind.module.css'
 import { fetchWindGraph } from '@/app/lib/actions'
+import WindGraph from '@/app/ui/WindGraph/WindGraph'
 import dynamic from 'next/dynamic'
-import { useEffect, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import { ChartData, WXCardData } from '@/app/lib/definitions'
+import Spinner from '@/app/ui/Spinner/Spinner'
 
-const WindGraph = dynamic(() => import('@/app/ui/WindGraph/WindGraph'), {
-  ssr: false,
-})
+// const WindGraph = dynamic(() => import('@/app/ui/WindGraph/WindGraph'), {
+//   ssr: false,
+// })
 
 const getWindDirectionText = (windDirection: number) => {
   // prettier-ignore
@@ -64,6 +66,7 @@ const Wind = () => {
       <div className={styles.flexContainer}>
         <WXCard
           title='Spit'
+          url='https://us-west1-rugged-nimbus-347223.cloudfunctions.net/wind?spot=1436'
           data={
             spitData && {
               windSpeed: Math.round(spitData?.wind_avg_data[spitData?.wind_avg_data.length - 1][1]),
@@ -75,7 +78,11 @@ const Wind = () => {
             }
           }
         />
-        <WXCard title='Gondola' data={gondolaData} />
+        <WXCard
+          title='Gondola'
+          url='https://www.seatoskygondola.com/weather-and-cams/'
+          data={gondolaData}
+        />
       </div>
       <WindGraph data={spitData} />
     </>
