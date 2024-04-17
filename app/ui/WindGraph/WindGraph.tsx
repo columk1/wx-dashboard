@@ -1,28 +1,24 @@
 'use client'
 
 import styles from './WindGraph.module.css'
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts'
 import CustomXAxisTick from '@/app/ui/CustomXAxisTick'
-
-type ChartData = {
-  wind_avg_data: number[][]
-  wind_gust_data: number[][]
-  wind_lull_data: number[][]
-  wind_dir_data: number[][]
-} | null
+import Spinner from '@/app/ui/Spinner/Spinner'
+import { ChartData } from '@/app/lib/definitions'
 
 const WindGraph = ({ data }: { data: ChartData }) => {
   const containerRef = useRef<HTMLDivElement>(null)
+  // const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     containerRef.current && (containerRef.current.scrollLeft = containerRef?.current?.scrollWidth)
-  })
+  }, [data])
 
   const maxGust =
     data?.wind_gust_data.reduce((acc, curr) => Math.max(acc, curr[1]), -Infinity) || 40
 
-  const getTimeTicks = () => {
+  const getTimeTicks = useCallback(() => {
     const ONE_HOUR = 3600000
     const startTime = data?.wind_avg_data[0][0] || 0
     const endTime = data?.wind_avg_data[data?.wind_avg_data.length - 1][0] || 0
@@ -36,9 +32,13 @@ const WindGraph = ({ data }: { data: ChartData }) => {
     // Generate an array of timestamps for each hour
     // return Array.from(Array(hourlyTicks).keys()).map((i) => firstHour + i * ONE_HOUR)
     return Array.from({ length: hourlyTicks }, (_, i) => firstHour + i * ONE_HOUR)
-  }
+  }, [data])
 
-  return data?.wind_avg_data.length ? (
+  return !data ? (
+    <div style={{ height: '300px', width: '100%' }}>
+      <Spinner />
+    </div>
+  ) : (
     <div ref={containerRef} className={styles.container}>
       <LineChart
         id='wind-graph'
@@ -159,8 +159,6 @@ const WindGraph = ({ data }: { data: ChartData }) => {
         />
       </LineChart>
     </div>
-  ) : (
-    <h1>No Data</h1>
   )
 }
 
