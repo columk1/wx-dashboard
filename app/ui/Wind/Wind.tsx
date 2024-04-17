@@ -1,7 +1,6 @@
 'use client'
 
 import testData from '@/app/lib/testData.json'
-import GondolaWX from '@/app/ui/GondolaWX/GondolaWX'
 import WXCard from '@/app/ui/WXCard/WXCard'
 import styles from './Wind.module.css'
 import { fetchWindGraph } from '@/app/lib/actions'
