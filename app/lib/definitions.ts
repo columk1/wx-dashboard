@@ -7,8 +7,8 @@ export type ChartData = {
 } | null
 
 export type WXCardData = {
-  windDirection: number
+  windDirection?: number
   windSpeed: number
   windGusts: number
-  windDirectionText: string
+  windDirectionText?: string
 } | null

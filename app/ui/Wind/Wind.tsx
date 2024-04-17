@@ -46,14 +46,20 @@ const Wind = () => {
     const fetchData = async () => {
       const json =
         process.env.NODE_ENV === 'development' ? testData.gondola : await fetchGondolaData()
+      const newWindDirection = Math.round(json.observations[0].winddir)
       // console.log(json)
       if (!json) return
-      setGondolaData({
-        windDirection: Math.round(json.observations[0].winddir),
+
+      // Update state. Sometimes direction data is missing from the API response
+      setGondolaData((prev) => ({
+        ...prev,
+        ...(typeof newWindDirection === 'number' && {
+          windDirection: newWindDirection,
+          windDirectionText: getWindDirectionText(newWindDirection),
+        }),
         windSpeed: Math.round(json.observations[0].metric.windSpeed),
         windGusts: Math.round(json.observations[0].metric.windGust),
-        windDirectionText: getWindDirectionText(json.observations[0].winddir),
-      })
+      }))
       // setLoading(false)
     }
     fetchData()
