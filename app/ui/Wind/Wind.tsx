@@ -3,7 +3,7 @@
 import testData from '@/app/lib/testData.json'
 import WXCard from '@/app/ui/WXCard/WXCard'
 import styles from './Wind.module.css'
-import { fetchWindGraph } from '@/app/lib/actions'
+import { fetchWindGraph, fetchGondolaData } from '@/app/lib/actions'
 import WindGraph from '@/app/ui/WindGraph/WindGraph'
 import dynamic from 'next/dynamic'
 import { Suspense, useEffect, useState } from 'react'
@@ -44,7 +44,8 @@ const Wind = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const json = process.env.NODE_ENV === 'development' ? testData.gondola : await fetchData()
+      const json =
+        process.env.NODE_ENV === 'development' ? testData.gondola : await fetchGondolaData()
       // console.log(json)
       if (!json) return
       setGondolaData({
