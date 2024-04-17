@@ -1,11 +1,7 @@
 .container {
-  /* display: flex;
-  flex-direction: row; */
   max-width: 100%;
-  min-width: 450px;
   max-height: 435px;
   height: 300px;
-  /* padding-top: 1em; */
   overflow-x: scroll;
   overflow-y: hidden;
   background-color: rgba(var(--callout-rgb), 0.5);
@@ -41,8 +37,16 @@
   z-index: 1003;
 }
 
+.fallback {
+  height: 300px;
+  width: 100%;
+  background-color: rgba(var(--callout-rgb), 0.5);
+  border: 1px solid rgba(var(--callout-border-rgb), 0.3);
+  border-radius: var(--border-radius);
+}
+
 @media (max-width: 700px) {
   .container {
-    max-width: 100%;
+    max-width: 450px;
   }
 }

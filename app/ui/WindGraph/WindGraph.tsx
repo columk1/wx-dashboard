@@ -35,7 +35,7 @@ const WindGraph = ({ data }: { data: ChartData }) => {
   }, [data])
 
   return !data ? (
-    <div style={{ height: '300px', width: '100%' }}>
+    <div className={styles.fallback}>
       <Spinner />
     </div>
   ) : (
