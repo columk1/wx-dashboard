@@ -1,0 +1,50 @@
+[
+  {
+    "name": "Spit",
+    "url": "https://us-west1-rugged-nimbus-347223.cloudfunctions.net/wind?spot=1436",
+    "emoji": "📈",
+    "description": "Wind Meter"
+  },
+  {
+    "name": "Windy",
+    "url": "https://www.windy.com/49.682/-123.144/airgram?clouds,49.653,-123.167,12",
+    "emoji": "🪂",
+    "description": "Squamish Airgram"
+  },
+  {
+    "name": "Windy",
+    "url": "https://www.windy.com/?42.864,-138.880,4,m:fjXac0Z",
+    "emoji": "🌪",
+    "description": "Pressure Systems"
+  },
+  {
+    "name": "Rasp",
+    "url": "https://canadarasp.com/windgrams/?region=1&location=0&plotType=1",
+    "emoji": "🌞",
+    "description": "Windgrams"
+  },
+  {
+    "name": "Ocean Weather",
+    "url": "https://ocean.weather.gov/P_e_sfc_color.png",
+    "emoji": "🌀",
+    "description": "Surface Analysis"
+  },
+  {
+    "name": "Whistler Peak",
+    "url": "https://whistlerpeak.com/temps/",
+    "emoji": "🏔",
+    "description": "Weather and Cams"
+  },
+  {
+    "name": "XC Find",
+    "url": "https://xcfind.paraglide.us/map.html?id=114",
+    "emoji": "📍",
+    "description": "Western Canada"
+  },
+  {
+    "name": "XContest",
+    "url": "https://www.xcontest.org/canada/en/flights/#filter[date]={{yesterdayDate}}@flights[sort]=reg",
+    "emoji": "🏆",
+    "description": "Yesterday's Flights"
+  }
+]
