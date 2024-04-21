@@ -2,7 +2,7 @@
 
 import Image from 'next/image'
 import styles from './Rasp.module.css'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { addDays, format } from 'date-fns'
 
 const sites = [
@@ -13,8 +13,9 @@ const sites = [
   ['Tunnel', '231'],
 ]
 
-const today = `oneDay/${format(new Date(), 'yyyy-MM-dd')}`
-const tomorrow = `oneDay/${format(addDays(new Date(), 1), 'yyyy-MM-dd')}`
+const now = new Date()
+const today = `oneDay/${format(now, 'yyyy-MM-dd')}`
+const tomorrow = `oneDay/${format(addDays(now, 1), 'yyyy-MM-dd')}`
 const twoDay = 'twoDay'
 
 const periods = [today, tomorrow, twoDay]
@@ -22,6 +23,11 @@ const periods = [today, tomorrow, twoDay]
 const Rasp = () => {
   const [siteIndex, setSiteIndex] = useState(0)
   const [periodIndex, setPeriodIndex] = useState(0)
+
+  useEffect(() => {
+    const currentDate = new Date()
+    if (currentDate.getDate() !== now.getDate()) setPeriodIndex((prev) => prev)
+  }, [])
 
   const period = periods[periodIndex]
 
