@@ -24,7 +24,7 @@ export default function Home() {
       <section className={styles.section}>
         <ul className={styles.grid}>
           {links.map((link) => (
-            <li key={link.name} className={styles.card}>
+            <li key={link.url} className={styles.card}>
               <a href={link.url} target='_blank' rel='noopener noreferrer'>
                 <h4>
                   {link.name} <span>{link.emoji}</span>
