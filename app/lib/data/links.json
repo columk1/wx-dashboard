@@ -46,5 +46,11 @@
     "url": "https://www.xcontest.org/canada/en/flights/#filter[date]={{yesterdayDate}}@flights[sort]=reg",
     "emoji": "🏆",
     "description": "Yesterday's Flights"
+  },
+  {
+    "name": "Tides",
+    "url": "https://www.tideschart.com/Canada/British-Columbia/Metro-Vancouver-Regional-District/Lions-Bay/Weekly/",
+    "emoji": "🌊",
+    "description": "Lion's Bay"
   }
 ]
