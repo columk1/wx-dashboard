@@ -1,14 +1,13 @@
 'use client'
 
-import testData from '@/app/lib/testData.json'
+import testData from '@/app/lib/data/testData.json'
 import WXCard from '@/app/ui/WXCard/WXCard'
 import styles from './Wind.module.css'
 import { fetchWindGraph, fetchGondolaData } from '@/app/lib/actions'
 import WindGraph from '@/app/ui/WindGraph/WindGraph'
 import dynamic from 'next/dynamic'
-import { Suspense, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { ChartData, WXCardData } from '@/app/lib/definitions'
-import Spinner from '@/app/ui/Spinner/Spinner'
 
 // const WindGraph = dynamic(() => import('@/app/ui/WindGraph/WindGraph'), {
 //   ssr: false,
