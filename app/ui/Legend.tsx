@@ -91,7 +91,7 @@ const Legend = () => {
           </span>
         </li>
         <li
-          className='recharts-legend-item legend-item-2'
+          className='recharts-legend-item'
           style={{ display: 'inline-block', marginRight: '10px' }}
         >
           <svg
