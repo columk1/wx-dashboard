@@ -9,6 +9,7 @@ const sites = [
   ['Squamish', '20'],
   ['Pemberton', '15'],
   ['Demon', '260'],
+  ['Mamquam', '14'],
   ['Cloudburst', '146'],
   ['Tunnel', '231'],
 ]
@@ -21,9 +22,14 @@ const periods = [
   ['Two Day', 'twoDay'],
 ]
 
+const getNextIndex = (array: any[], currentIndex: number) => (currentIndex + 1) % array.length
+
+const getNextItem = (array: any[], currentIndex: number) => array[(currentIndex + 1) % array.length]
+
 const Rasp = () => {
   const [siteIndex, setSiteIndex] = useState(0)
   const [periodIndex, setPeriodIndex] = useState(0)
+  const [imageError, setImageError] = useState(false)
 
   useEffect(() => {
     const currentDate = new Date()
@@ -32,18 +38,13 @@ const Rasp = () => {
 
   const period = periods[periodIndex][1]
 
-  const getNextIndex = (array: any[], currentIndex: number) => (currentIndex + 1) % array.length
-
-  const getNextItem = (array: any[], currentIndex: number) =>
-    array[(currentIndex + 1) % array.length]
-
   const cyclePeriod = () => setPeriodIndex((prev) => getNextIndex(periods, prev))
 
   const src = `https://canadarasp.com/windgrams-data/${period}/hrdpswindgram${sites[siteIndex][1]}.png`
 
   return (
     <>
-      <div className={styles.raspWrapper}>
+      <div className={styles.raspWrapper} onClick={() => setImageError(false)}>
         <div className={styles.periodBtns}>
           {periods.map((e, i) => (
             <button
@@ -56,14 +57,19 @@ const Rasp = () => {
           ))}
         </div>
         <button onClick={cyclePeriod}>
-          <Image
-            src={src}
-            alt={'Rasp Windgram'}
-            width={450}
-            height={450}
-            className={styles.raspImg}
-            priority
-          />
+          {imageError ? (
+            <div className={styles.error}>Keep Parawaiting</div>
+          ) : (
+            <Image
+              src={src}
+              alt={'Rasp Windgram'}
+              width={450}
+              height={450}
+              className={styles.raspImg}
+              priority
+              onError={() => setImageError(true)}
+            />
+          )}
           {/* Preload next period of current site */}
           <Image
             src={`https://canadarasp.com/windgrams-data/${

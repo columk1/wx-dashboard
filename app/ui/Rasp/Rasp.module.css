@@ -11,6 +11,7 @@
   height: auto;
   display: block;
   /* border-radius: 8px 8px 0 0; */
+  margin-top: -1px;
   border-top: 1px solid transparent;
   border-left: 1px solid rgb(var(--card-rgb));
   border-right: 1px solid rgb(var(--card-rgb));
@@ -45,6 +46,7 @@
 .periodBtn {
   width: 100%;
   padding: 0.5rem;
+  font-size: 0.7rem;
   border: none;
   border-top: 1px solid rgb(var(--border-rgb));
   border-left: 1px solid rgb(var(--border-rgb));
@@ -84,7 +86,8 @@
 .raspBtn {
   flex: 1 1 10%;
   width: 100%;
-  padding: 1rem;
+  padding: 1rem 0.9rem;
+  font-size: 0.65rem;
   border: none;
   border-top: 1px solid rgb(var(--border-rgb));
   border-left: 1px solid rgb(var(--border-rgb));
@@ -121,9 +124,20 @@
   }
 }
 
+.error {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 450px;
+  height: 450px;
+  background-color: rgb(var(--callout-rgb));
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
 @media (max-width: 500px) {
   .raspBtn {
-    font-size: calc(0.6rem + 0.5vw);
-    padding: 1rem 0.5rem;
+    font-size: calc(0.5rem + 0.5vw);
+    padding: 1rem 0.25rem;
   }
 }
