@@ -1,7 +1,7 @@
 'use client'
 
 import styles from './WindGraph.module.css'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts'
 import Legend from '@/app/ui/Legend'
 import CustomXAxisTick from '@/app/ui/CustomXAxisTick'
@@ -10,13 +10,10 @@ import { ChartData } from '@/app/lib/definitions'
 
 const WindGraph = ({ data }: { data: ChartData }) => {
   const containerRef = useRef<HTMLDivElement>(null)
-  const yAxisRef = useRef<SVGElement>(null)
   // const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     containerRef.current && (containerRef.current.scrollLeft = containerRef?.current?.scrollWidth)
-    const yAxis = document.querySelector('.recharts-yAxis')
-    yAxis instanceof SVGElement && (yAxis.style.transform = `translateX(0px)`)
   }, [data])
 
   const maxGust =
@@ -60,6 +57,7 @@ const WindGraph = ({ data }: { data: ChartData }) => {
           margin={{ top: 0, right: -10, bottom: 30, left: 20 }}
         >
           <CartesianGrid strokeDasharray='3 3' stroke='currentColor' opacity={0.3} />
+          {/* Legend which was generated and then customized and placed outside of the chart */}
           {/* <Legend
             align='right'
             iconSize={8}
@@ -110,10 +108,11 @@ const WindGraph = ({ data }: { data: ChartData }) => {
             orientation='top'
             scale='time'
             tickFormatter={(time) =>
-              new Date(time).toLocaleString('en-US', { hour: '2-digit', hour12: false }) + 'h'
+              new Date(time).toLocaleString('en-US', { hour: 'numeric', hour12: true })
             }
             ticks={getTimeTicks()}
             type='number'
+            style={{ fontSize: '0.8rem' }}
           />
           {/* Wind Direction X-Axis */}
           <XAxis
@@ -133,7 +132,16 @@ const WindGraph = ({ data }: { data: ChartData }) => {
               { length: Math.ceil(maxGust / 20) }, // count multiples of 20
               (_, index) => index * 20 // multiply each index by 20
             )}
+            label={{
+              value: 'km/h',
+              angle: -90,
+              position: 'outsideLeft',
+              dx: 5,
+              style: { fontSize: '0.8rem' },
+            }}
+            width={70}
             orientation='right'
+            style={{ fontSize: '0.9rem' }}
           />
           <Line
             type='monotone'
