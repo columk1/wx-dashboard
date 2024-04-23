@@ -129,7 +129,7 @@ const WindGraph = ({ data }: { data: ChartData }) => {
             domain={[0, (dataMax: number) => Math.ceil(dataMax / 10) * 10]}
             padding={{ top: 0, bottom: 0 }}
             ticks={Array.from(
-              { length: Math.ceil(maxGust / 20) }, // count multiples of 20
+              { length: Math.ceil((maxGust + 10) / 20) }, // count multiples of 20
               (_, index) => index * 20 // multiply each index by 20
             )}
             label={{
