@@ -43,9 +43,9 @@
   },
   {
     "name": "XContest",
-    "url": "https://www.xcontest.org/canada/en/flights/#filter[date]={{yesterdayDate}}@flights[sort]=reg",
+    "url": "https://www.xcontest.org/world/en/flights/#filter[country]=CA@flights[sort]=reg",
     "emoji": "🏆",
-    "description": "Yesterday's Flights"
+    "description": "Canada Flights"
   },
   {
     "name": "Tides",
