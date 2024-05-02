@@ -61,6 +61,7 @@ body {
 }
 
 body {
+  font-family: var(--font-inter);
   color: rgb(var(--foreground-rgb));
   background: linear-gradient(to bottom, transparent, rgb(var(--background-end-rgb)))
     rgb(var(--background-start-rgb));
