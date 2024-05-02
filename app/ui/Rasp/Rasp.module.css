@@ -12,7 +12,8 @@
   display: block;
   /* border-radius: 8px 8px 0 0; */
   margin-top: -1px;
-  border-top: 1px solid transparent;
+  background: url('/windgram-placeholder.jpg');
+  border-top: 1px solid rgb(109, 109, 255);
   border-left: 1px solid rgb(var(--card-rgb));
   border-right: 1px solid rgb(var(--card-rgb));
   transition: border 700ms;
