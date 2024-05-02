@@ -4,6 +4,7 @@ import Image from 'next/image'
 import styles from './Rasp.module.css'
 import { useEffect, useState } from 'react'
 import { addDays, format } from 'date-fns'
+import { toZonedTime } from 'date-fns-tz'
 
 const sites = [
   ['Squamish', '20'],
@@ -14,33 +15,33 @@ const sites = [
   ['Tunnel', '231'],
 ]
 
-const now = new Date()
-
-const periods = [
-  ['Today', `oneDay/${format(now, 'yyyy-MM-dd')}`],
-  ['Tomorrow', `oneDay/${format(addDays(now, 1), 'yyyy-MM-dd')}`],
-  ['Two Day', 'twoDay'],
-]
-
-const getNextIndex = (array: any[], currentIndex: number) => (currentIndex + 1) % array.length
-
 const getNextItem = (array: any[], currentIndex: number) => array[(currentIndex + 1) % array.length]
 
+const getPacificTimestamp = () => toZonedTime(Date.now(), 'America/Los_Angeles')
+
+const getTimeSuffix = (date: Date) =>
+  date.getDay() + date.getHours() > 6 && date.getHours() < 19 ? 'am' : 'pm'
+
 const Rasp = () => {
+  // Get the current timestamp in Pacific Time
+  const nowPT = getPacificTimestamp()
+
+  const periods = [
+    ['Today', `oneDay/${format(nowPT, 'yyyy-MM-dd')}`],
+    ['Tomorrow', `oneDay/${format(addDays(nowPT, 1), 'yyyy-MM-dd')}`],
+    ['Two Day', 'twoDay'],
+  ]
+
   const [siteIndex, setSiteIndex] = useState(0)
   const [periodIndex, setPeriodIndex] = useState(0)
+  const period = periods[periodIndex][1]
   const [imageError, setImageError] = useState(false)
 
-  useEffect(() => {
-    const currentDate = new Date()
-    if (currentDate.getDate() !== now.getDate()) setPeriodIndex((prev) => prev)
-  }, [])
+  const src = `https://canadarasp.com/windgrams-data/${periods[periodIndex][1]}/hrdpswindgram${
+    sites[siteIndex][1]
+  }.png?${getTimeSuffix(nowPT)}`
 
-  const period = periods[periodIndex][1]
-
-  const cyclePeriod = () => setPeriodIndex((prev) => getNextIndex(periods, prev))
-
-  const src = `https://canadarasp.com/windgrams-data/${period}/hrdpswindgram${sites[siteIndex][1]}.png`
+  const cyclePeriod = () => setPeriodIndex((prev) => (prev + 1) % periods.length)
 
   return (
     <>
@@ -61,6 +62,7 @@ const Rasp = () => {
             <div className={styles.error}>Keep Parawaiting</div>
           ) : (
             <Image
+              key={src}
               src={src}
               alt={'Rasp Windgram'}
               width={450}
