@@ -2,7 +2,7 @@
 
 import Image from 'next/image'
 import styles from './Rasp.module.css'
-import { useEffect, useState } from 'react'
+import { useEffect, useReducer, useState } from 'react'
 import { addDays, format } from 'date-fns'
 import { toZonedTime } from 'date-fns-tz'
 
@@ -37,11 +37,18 @@ const Rasp = () => {
   const period = periods[periodIndex][1]
   const [imageError, setImageError] = useState(false)
 
-  const src = `https://canadarasp.com/windgrams-data/${periods[periodIndex][1]}/hrdpswindgram${
-    sites[siteIndex][1]
-  }.png?${getTimeSuffix(nowPT)}`
+  const [src, setSrc] = useState('')
 
   const cyclePeriod = () => setPeriodIndex((prev) => (prev + 1) % periods.length)
+
+  // Set the src on the client to prevent pre-rendering on the server
+  useEffect(() => {
+    setSrc(
+      `https://canadarasp.com/windgrams-data/${periods[periodIndex][1]}/hrdpswindgram${
+        sites[siteIndex][1]
+      }.png?${getTimeSuffix(nowPT)}`
+    )
+  }, [siteIndex, periodIndex])
 
   return (
     <>
@@ -61,37 +68,36 @@ const Rasp = () => {
           {imageError ? (
             <div className={styles.error}>Keep Parawaiting</div>
           ) : (
-            <Image
-              key={src}
-              src={src}
-              alt={'Rasp Windgram'}
-              width={450}
-              height={450}
-              className={styles.raspImg}
-              priority
-              onError={() => setImageError(true)}
-            />
+            src && (
+              <Image
+                src={src}
+                alt={'Rasp Windgram'}
+                width={450}
+                height={450}
+                className={styles.raspImg}
+                priority
+                onError={() => setImageError(true)}
+              />
+            )
           )}
           {/* Preload next period of current site */}
           <Image
             src={`https://canadarasp.com/windgrams-data/${
               getNextItem(periods, periodIndex)[1]
-            }/hrdpswindgram${sites[siteIndex][1]}.png`}
+            }/hrdpswindgram${sites[siteIndex][1]}.png?${getTimeSuffix(nowPT)}`}
             alt={'Preload Next Rasp Windgram'}
             width={450}
             height={450}
-            loading='eager'
             className={styles.raspImg + ' sr-only'}
           />
           {/* Preload next site with current period */}
           <Image
             src={`https://canadarasp.com/windgrams-data/${period}/hrdpswindgram${
               getNextItem(sites, siteIndex)[1]
-            }.png`}
+            }.png?${getTimeSuffix(nowPT)}`}
             alt={'Preload Next Rasp Windgram'}
             width={450}
             height={450}
-            loading='eager'
             className={styles.raspImg + ' sr-only'}
           />
         </button>
