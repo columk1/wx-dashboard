@@ -119,7 +119,7 @@ const WindGraph = ({ data }: { data: ChartData }) => {
             xAxisId={1}
             dataKey='dir'
             tickFormatter={(time) => ''}
-            tick={<CustomXAxisTick dirArray={data.wind_dir_data} />}
+            tick={<CustomXAxisTick directionArray={data.wind_dir_data} />}
             axisLine={false}
             tickLine={false}
             mirror={true}
