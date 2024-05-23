@@ -10,7 +10,7 @@ const sites = [
   ['Squamish', '20'],
   ['Pemberton', '15'],
   ['Demon', '260'],
-  ['Mamquam', '14'],
+  ['Mamquam', '137'],
   ['Cloudburst', '146'],
   ['Tunnel', '231'],
 ]
