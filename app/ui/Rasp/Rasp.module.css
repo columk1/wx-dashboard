@@ -85,7 +85,7 @@
 }
 
 .raspBtn {
-  flex: 1 1 10%;
+  flex: 1 1 20%;
   width: 100%;
   padding: 1rem 0.9rem;
   font-size: 0.65rem;
@@ -103,11 +103,15 @@
       border-left: 1px solid rgb(var(--card-rgb));
     }
   }
-  &:first-of-type {
+  &:nth-of-type(11) {
     border-radius: 0 0 0 8px;
   }
   &:last-of-type {
     border-radius: 0 0 8px 0;
+  }
+  &:last-of-type,
+  &:nth-of-type(5),
+  &:nth-of-type(10) {
     border-right: 1px solid rgb(var(--border-rgb));
     &.active {
       border-right: 1px solid rgb(var(--card-rgb));
