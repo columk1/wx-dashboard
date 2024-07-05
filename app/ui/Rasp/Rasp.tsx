@@ -5,24 +5,7 @@ import styles from './Rasp.module.css'
 import { useEffect, useReducer, useState } from 'react'
 import { addDays, format } from 'date-fns'
 import { toZonedTime } from 'date-fns-tz'
-
-const sites = [
-  ['Squamish', '20'],
-  ['Pemberton', '15'],
-  ['Whistler', '1'],
-  ['Demon', '260'],
-  ['Mamquam', '137'],
-  ['Cloudburst', '146'],
-  ['Tantalus', '6'],
-  ['Tunnel', '231'],
-  ['Brunswick', '20'],
-  ['Seymour', '9'],
-  ['Miller', '189'],
-  ['Spindrift', '3'],
-  ['Duffey L.', '10'],
-  ['Woodside', '0'],
-  ['Bridal', '1'],
-]
+import sites from '@/app/lib/data/raspSites.json'
 
 const getNextItem = (array: any[], currentIndex: number) => array[(currentIndex + 1) % array.length]
 
