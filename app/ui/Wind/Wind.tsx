@@ -9,9 +9,8 @@ import dynamic from 'next/dynamic'
 import { useEffect, useState } from 'react'
 import { ChartData, WXCardData } from '@/app/lib/definitions'
 
-// const WindGraph = dynamic(() => import('@/app/ui/WindGraph/WindGraph'), {
-//   ssr: false,
-// })
+const SPIT_INTERVAL = 120000 // 2 minutes
+const MAX_INTERVAL = 300000 // 5 minutes
 
 const getWindDirectionText = (windDirection: number) => {
   // prettier-ignore
@@ -19,11 +18,27 @@ const getWindDirectionText = (windDirection: number) => {
   return directions[Math.round(windDirection / 22.5)]
 }
 
+const isStale = (lastUpdate: number, interval: number) => {
+  if (lastUpdate && Date.now() - lastUpdate > interval) {
+    return true
+  }
+  return false
+}
+
 const Wind = () => {
   const [spitData, setSpitData] = useState<ChartData>(null)
   const [gondolaData, setGondolaData] = useState<WXCardData>(null)
 
   useEffect(() => {
+    const lastSpitUpdate = spitData?.wind_avg_data[spitData?.wind_avg_data.length - 1][0]
+
+    // Method to ensure we re-fetch if the max interval has passed (called when focus is back on the page)
+    const fetchIfStale = () => {
+      if (lastSpitUpdate && !isStale(lastSpitUpdate, MAX_INTERVAL)) return
+
+      fetchData()
+    }
+
     const fetchData = async () => {
       const json = process.env.NODE_ENV === 'development' ? testData.wind : await fetchWindGraph()
 
@@ -35,10 +50,16 @@ const Wind = () => {
         last_wind_dir_text: json.last_ob_dir_txt as string,
       })
     }
-    fetchData()
 
-    const interval = setInterval(fetchData, 120000)
-    return () => clearInterval(interval)
+    fetchIfStale()
+
+    const interval = setInterval(fetchData, SPIT_INTERVAL)
+    window.addEventListener('focus', fetchIfStale)
+
+    return () => {
+      clearInterval(interval)
+      window.removeEventListener('focus', fetchIfStale)
+    }
   }, [])
 
   useEffect(() => {
@@ -46,7 +67,6 @@ const Wind = () => {
       const json =
         process.env.NODE_ENV === 'development' ? testData.gondola : await fetchGondolaData()
       const newWindDirection = Math.round(json.observations[0].winddir)
-      // console.log(json)
       if (!json) return
 
       // Update state. Sometimes direction data is missing from the API response
