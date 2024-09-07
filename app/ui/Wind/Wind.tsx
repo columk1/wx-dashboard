@@ -3,7 +3,7 @@
 import testData from '@/app/lib/data/testData.json'
 import WXCard from '@/app/ui/WXCard/WXCard'
 import styles from './Wind.module.css'
-import { fetchWindGraph, fetchGondolaData } from '@/app/lib/actions'
+import { fetchWindGraph, fetchGondolaData, fetchVcliffeData } from '@/app/lib/actions'
 import WindGraph from '@/app/ui/WindGraph/WindGraph'
 import dynamic from 'next/dynamic'
 import { useEffect, useState } from 'react'
@@ -28,7 +28,9 @@ const isStale = (lastUpdate: number, interval: number) => {
 const Wind = () => {
   const [spitData, setSpitData] = useState<ChartData>(null)
   const [gondolaData, setGondolaData] = useState<WXCardData>(null)
+  const [vcliffeData, setVcliffeData] = useState<WXCardData>(null)
 
+  // Spit wind data
   useEffect(() => {
     const lastSpitUpdate = spitData?.wind_avg_data[spitData?.wind_avg_data.length - 1][0]
 
@@ -62,6 +64,7 @@ const Wind = () => {
     }
   }, [])
 
+  // Gondola wind data
   useEffect(() => {
     const fetchData = async () => {
       const json =
@@ -83,7 +86,32 @@ const Wind = () => {
     }
     fetchData()
 
-    const interval = setInterval(fetchData, 10000)
+    const interval = setInterval(fetchData, 10000) // 10 seconds
+    return () => clearInterval(interval)
+  }, [])
+
+  // Valleycliffe wind data
+  useEffect(() => {
+    const fetchData = async () => {
+      const json =
+        process.env.NODE_ENV === 'development' ? testData.valleycliffe : await fetchVcliffeData()
+      const data = json.current_conditions
+      const newWindDirection = Math.round(data.wind_direction)
+      if (!json) return
+
+      setVcliffeData((prev) => ({
+        ...prev,
+        ...(typeof newWindDirection === 'number' && {
+          windDirection: newWindDirection,
+          windDirectionText: getWindDirectionText(newWindDirection),
+        }),
+        windSpeed: Math.round(data.wind_avg),
+        windGusts: Math.round(data.wind_gust),
+      }))
+      // setLoading(false)
+    }
+    fetchData()
+    const interval = setInterval(fetchData, 150000) // 2.5 minutes
     return () => clearInterval(interval)
   }, [])
 
@@ -97,6 +125,7 @@ const Wind = () => {
             spitData && {
               windSpeed: Math.round(spitData?.wind_avg_data[spitData?.wind_avg_data.length - 1][1]),
               windDirection: spitData?.wind_dir_data[spitData?.wind_avg_data.length - 1][1],
+              windLull: Math.round(spitData?.wind_lull_data[spitData?.wind_avg_data.length - 1][1]),
               windGusts: Math.round(
                 spitData?.wind_gust_data[spitData?.wind_avg_data.length - 1][1]
               ),
@@ -108,6 +137,11 @@ const Wind = () => {
           title='Gondola'
           url='https://www.seatoskygondola.com/weather-and-cams/'
           data={gondolaData}
+        />
+        <WXCard
+          title='Valleycliffe'
+          url='https://tempestwx.com/station/101122/graph/258849/wind/2'
+          data={vcliffeData}
         />
       </div>
       <WindGraph data={spitData} />

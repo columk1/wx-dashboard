@@ -13,5 +13,7 @@ const fetchData = async (endpoint?: string) => {
 
 const fetchWindGraph = async () => fetchData(`${process.env.SPIT_WINDMETER_API}&_=${Date.now()}`)
 const fetchGondolaData = async () => fetchData(process.env.GONDOLA_WINDMETER_API)
+const fetchVcliffeData = async () =>
+  fetchData(`${process.env.VALLEYCLIFFE_WINDMETER_API}&_=${Date.now()}`)
 
-export { fetchWindGraph, fetchGondolaData }
+export { fetchWindGraph, fetchGondolaData, fetchVcliffeData }
