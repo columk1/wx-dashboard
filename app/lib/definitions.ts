@@ -10,5 +10,6 @@ export type WXCardData = {
   windDirection?: number
   windSpeed: number
   windGusts: number
+  windLull?: number
   windDirectionText?: string
 } | null

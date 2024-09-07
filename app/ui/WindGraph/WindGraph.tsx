@@ -1,7 +1,7 @@
 'use client'
 
 import styles from './WindGraph.module.css'
-import { useCallback, useEffect, useRef } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts'
 import Legend from '@/app/ui/Legend'
 import CustomXAxisTick from '@/app/ui/CustomXAxisTick'
@@ -10,11 +10,14 @@ import { ChartData } from '@/app/lib/definitions'
 
 const WindGraph = ({ data }: { data: ChartData }) => {
   const containerRef = useRef<HTMLDivElement>(null)
+  const [_, rerender] = useState(false)
   // const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     containerRef.current && (containerRef.current.scrollLeft = containerRef?.current?.scrollWidth)
   }, [data])
+
+  setTimeout(() => rerender(true), 50)
 
   const maxGust =
     data?.wind_gust_data.reduce((acc, curr) => Math.max(acc, curr[1]), -Infinity) || 40
@@ -71,7 +74,8 @@ const WindGraph = ({ data }: { data: ChartData }) => {
             formatter={(value) => value[0].toUpperCase() + value.slice(1)}
           /> */}
           <Tooltip
-            offset={50}
+            // offset={50}
+            defaultIndex={data.wind_avg_data.length - 1}
             formatter={(value: number, name: string) => [
               value + 'km/h',
               name[0].toUpperCase() + name.slice(1),

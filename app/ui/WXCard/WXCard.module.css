@@ -1,15 +1,14 @@
 .container {
   width: 100%;
-  height: 112px;
 }
 
 .card {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  /* gap: 0.25rem; */
   width: 100%;
   height: 100%;
-  padding: 0.75rem;
+  padding: 0.25rem 0.75rem;
   border: 1px solid rgba(var(--card-border-rgb), 0.3);
   border-radius: 10px;
   color: rgb(var(--card-border-rgb));
@@ -21,7 +20,7 @@
 .flexContainer {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 1rem;
 }
 
 .titleContainer {
@@ -37,44 +36,52 @@
 
 .title {
   margin: 0;
-  font-size: 1.3rem;
+  font-size: 0.7rem;
 }
 
 .directionText {
+  font-size: 2.5rem;
   font-weight: 400;
-}
-
-.gustContainer {
-  display: flex;
-  flex-direction: column;
-}
-
-.item {
-  font-size: 1rem;
 }
 
 .windSpeedContainer {
   width: 100%;
   display: flex;
   gap: 0.5rem;
-  align-items: end;
+  align-items: center;
   justify-content: space-between;
 }
 
 .avg {
-  font-size: 3.2rem;
+  font-size: 2.5rem;
   line-height: 0.96;
 }
 
+.gustContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.item {
+  font-size: 0.75rem;
+}
+
 .gust {
-  font-size: 1.5rem;
+  font-size: 1.4rem;
 }
 
 .small {
   font-size: 0.75rem;
 }
 
-@media (max-width: 500px) {
+.spinnerContainer {
+  width: 20px;
+  height: 50%;
+  margin: 0 auto;
+}
+
+/* @media (max-width: 500px) {
   .container {
     height: 106px;
   }
@@ -83,20 +90,16 @@
   }
   .card {
     padding: 0.75rem;
-    /* border: 1px solid rgb(var(--border-rgb)); */
   }
   .arrowBorder {
     font-size: 0.9rem;
     border-width: 2px;
-    /* display: none; */
-    /* transform: scale(0.5); */
   }
   .title {
     margin: 0;
     font-size: 1.2rem;
   }
   .windSpeedContainer {
-    /* flex-direction: column; */
     align-items: end;
     gap: 0.5rem;
   }
@@ -115,7 +118,6 @@
   }
 
   .small {
-    /* display: none; */
     font-size: 0.6rem;
   }
-}
+} */
