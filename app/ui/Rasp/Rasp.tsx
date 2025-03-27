@@ -1,6 +1,5 @@
 'use client'
 
-import Image from 'next/image'
 import styles from './Rasp.module.css'
 import { useEffect, useReducer, useState } from 'react'
 import { addDays, format } from 'date-fns'
@@ -35,11 +34,7 @@ const Rasp = () => {
 
   // Set the src on the client to prevent pre-rendering on the server
   useEffect(() => {
-    setSrc(
-      `https://canadarasp.com/windgrams-data/${periods[periodIndex][1]}/hrdpswindgram${
-        sites[siteIndex][1]
-      }.png?${getTimeSuffix(nowPT)}`
-    )
+    setSrc(`/api/windgrams?period=${period}&site=${sites[siteIndex][1]}`)
   }, [siteIndex, periodIndex])
 
   return (
@@ -61,36 +56,29 @@ const Rasp = () => {
             <div className={styles.error}>Keep Parawaiting</div>
           ) : (
             src && (
-              <Image
+              <img
                 src={src}
                 alt={'Rasp Windgram'}
+                className={styles.raspImg}
                 width={450}
                 height={450}
-                className={styles.raspImg}
-                priority
                 onError={() => setImageError(true)}
               />
             )
           )}
           {/* Preload next period of current site */}
-          <Image
-            src={`https://canadarasp.com/windgrams-data/${
-              getNextItem(periods, periodIndex)[1]
-            }/hrdpswindgram${sites[siteIndex][1]}.png?${getTimeSuffix(nowPT)}`}
-            alt={'Preload Next Rasp Windgram'}
-            width={450}
-            height={450}
-            className={styles.raspImg + ' sr-only'}
+          <link
+            rel="preload"
+            as="image"
+            // href={`https://canadarasp.com/windgrams-data/${getNextItem(periods, periodIndex)[1]}/hrdpswindgram${sites[siteIndex][1]}.png?${getTimeSuffix(nowPT)}`}
+            href={`/api/windgrams?period=${getNextItem(periods, periodIndex)[1]}&site=${sites[siteIndex][1]}`}
           />
           {/* Preload next site with current period */}
-          <Image
-            src={`https://canadarasp.com/windgrams-data/${period}/hrdpswindgram${
-              getNextItem(sites, siteIndex)[1]
-            }.png?${getTimeSuffix(nowPT)}`}
-            alt={'Preload Next Rasp Windgram'}
-            width={450}
-            height={450}
-            className={styles.raspImg + ' sr-only'}
+          <link
+            rel="preload"
+            as="image"
+            href={`/api/windgrams?period=${periods[periodIndex][1]}&site=${getNextItem(sites, siteIndex)[1]}`}
+          // href={`https://canadarasp.com/windgrams-data/${period}/hrdpswindgram${getNextItem(sites, siteIndex)[1]}.png?${getTimeSuffix(nowPT)}`}
           />
         </button>
         <div className={styles.btnContainer}>

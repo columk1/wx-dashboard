@@ -6,11 +6,9 @@
   margin: 1rem 0;
 }
 
-.raspImg {
-  max-width: 100%;
-  height: auto;
-  display: block;
-  /* border-radius: 8px 8px 0 0; */
+.imgShared {
+  width: 450px;
+  height: 450px;
   margin-top: -1px;
   background: url('/windgram-placeholder.jpg');
   border-top: 1px solid rgb(109, 109, 255);
@@ -22,6 +20,24 @@
     border-left: 1px solid rgb(var(--card-border-rgb));
     border-right: 1px solid rgb(var(--card-border-rgb));
   }
+}
+
+.raspImg {
+  composes: imgShared;
+  max-width: 100%;
+  height: auto;
+  display: block;
+  /* border-radius: 8px 8px 0 0; */
+}
+
+.error {
+  composes: imgShared;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+  background-color: rgb(var(--callout-rgb));
 }
 
 .btnContainer {
@@ -128,17 +144,6 @@
   &:active {
     background-color: rgba(var(--card-rgb), 0.3);
   }
-}
-
-.error {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 450px;
-  height: 450px;
-  background-color: rgb(var(--callout-rgb));
-  font-size: 1.5rem;
-  font-weight: bold;
 }
 
 @media (max-width: 500px) {
