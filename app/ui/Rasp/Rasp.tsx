@@ -35,7 +35,7 @@ const Rasp = () => {
   // Set the src on the client to prevent pre-rendering on the server
   useEffect(() => {
     setSrc(`/api/windgrams?period=${period}&site=${sites[siteIndex][1]}`)
-  }, [siteIndex, periodIndex])
+  }, [siteIndex, period])
 
   return (
     <>
@@ -56,6 +56,7 @@ const Rasp = () => {
             <div className={styles.error}>Keep Parawaiting</div>
           ) : (
             src && (
+              // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={src}
                 alt={'Rasp Windgram'}
