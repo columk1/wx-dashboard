@@ -1,23 +1,30 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { setImage, getImage } from '@/app/lib/image-cache'
 
-// This is the update time we will check against: 6 AM and 6 PM
+// This is the update time we will check against: 6 AM and 6 PM Pacific Time
 const nextUpdateTime = () => {
   const now = new Date()
   const nextUpdate = new Date(now)
   const hours = now.getHours()
 
-  // If it's after 6pm but before 6am, we'll set the next update to 6 AM tomorrow.
-  if (hours >= 18) {
-    nextUpdate.setHours(6, 0, 0, 0) // 6 AM next day
-  } else if (hours < 6) {
-    nextUpdate.setHours(6, 0, 0, 0) // 6 AM today
+  // If it's before 02:00 UTC (6am PT), schedule update at 02:00 UTC today.
+  if (hours < 2) {
+    nextUpdate.setHours(2, 0, 0, 0)
+  }
+  // If it's between 02:00 and 13:00 UTC (6pm PT), schedule update at 13:00 UTC today.
+  else if (hours < 13) {
+    nextUpdate.setHours(13, 0, 0, 0)
+  }
+  // Otherwise, schedule update at 02:00 UTC on the next day.
+  else {
+    nextUpdate.setDate(nextUpdate.getDate() + 1)
+    nextUpdate.setHours(2, 0, 0, 0)
   }
 
   return nextUpdate.getTime()
 }
 
-export async function GET(req: NextRequest, res: NextResponse): Promise<Response> {
+export async function GET(req: NextRequest): Promise<Response> {
   const searchParams = new URLSearchParams(req.url.split('?')[1])
   const period = searchParams.get('period')
   const site = searchParams.get('site')
@@ -36,7 +43,7 @@ export async function GET(req: NextRequest, res: NextResponse): Promise<Response
 
     const currentUpdateTime = nextUpdateTime()
 
-    // Check if the cache is still valid or needs to be updated (at 6 AM or 6 PM)
+    // Check if the cache is still valid or needs to be updated
     if (cachedImage && Date.now() < currentUpdateTime) {
       // Cache is still valid, serve it
       return new Response(cachedImage, {
