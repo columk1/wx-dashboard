@@ -90,30 +90,30 @@ const Wind = () => {
     return () => clearInterval(interval)
   }, [])
 
-  // Valleycliffe wind data
-  useEffect(() => {
-    const fetchData = async () => {
-      const json =
-        process.env.NODE_ENV === 'development' ? testData.valleycliffe : await fetchVcliffeData()
-      const data = json.current_conditions
-      const newWindDirection = Math.round(data.wind_direction)
-      if (!json) return
+  // TODO: Valleycliffe wind data (currently offline, uncomment when back online)
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     const json =
+  //       process.env.NODE_ENV === 'development' ? testData.valleycliffe : await fetchVcliffeData()
+  //     const data = json.current_conditions
+  //     const newWindDirection = Math.round(data.wind_direction)
+  //     if (!json) return
 
-      setVcliffeData((prev) => ({
-        ...prev,
-        ...(typeof newWindDirection === 'number' && {
-          windDirection: newWindDirection,
-          windDirectionText: getWindDirectionText(newWindDirection),
-        }),
-        windSpeed: Math.round(data.wind_avg),
-        windGusts: Math.round(data.wind_gust),
-      }))
-      // setLoading(false)
-    }
-    fetchData()
-    const interval = setInterval(fetchData, 150000) // 2.5 minutes
-    return () => clearInterval(interval)
-  }, [])
+  //     setVcliffeData((prev) => ({
+  //       ...prev,
+  //       ...(typeof newWindDirection === 'number' && {
+  //         windDirection: newWindDirection,
+  //         windDirectionText: getWindDirectionText(newWindDirection),
+  //       }),
+  //       windSpeed: Math.round(data.wind_avg),
+  //       windGusts: Math.round(data.wind_gust),
+  //     }))
+  //     // setLoading(false)
+  //   }
+  //   fetchData()
+  //   const interval = setInterval(fetchData, 150000) // 2.5 minutes
+  //   return () => clearInterval(interval)
+  // }, [])
 
   return (
     <>
@@ -138,11 +138,11 @@ const Wind = () => {
           url='https://www.seatoskygondola.com/weather-and-cams/'
           data={gondolaData}
         />
-        <WXCard
+        {/* <WXCard
           title='Valleycliffe'
           url='https://tempestwx.com/station/101122/graph/258849/wind/2'
           data={vcliffeData}
-        />
+        /> */}
       </div>
       <WindGraph data={spitData} />
     </>
