@@ -29,16 +29,17 @@ const Rasp = () => {
   const period = periods[periodIndex][1]
   const site = sites[siteIndex][1]
 
-  const src = `https://canadarasp.com/windgrams-data/${period}/hrdpswindgram${site}.png`
+  const [src, setSrc] = useState<string | null>(null)
+  // const src = `https://canadarasp.com/windgrams-data/${period}/hrdpswindgram${site}.png`
   // const [src, setSrc] = useState(`https://canadarasp.com/windgrams-data/${period}/hrdpswindgram${site}.png`)
 
   const cyclePeriod = () => setPeriodIndex((prev) => (prev + 1) % periods.length)
 
   // Set the src on the client to prevent pre-rendering on the server (for caching/timing consistency)
-  // useEffect(() => {
-  //   // setSrc(`/api/windgrams?period=${period}&site=${sites[siteIndex][1]}`)
-  //   setSrc(`https://canadarasp.com/windgrams-data/${period}/hrdpswindgram${site}.png`)
-  // }, [site, period])
+  useEffect(() => {
+    //   // setSrc(`/api/windgrams?period=${period}&site=${sites[siteIndex][1]}`)
+    setSrc(`https://canadarasp.com/windgrams-data/${period}/hrdpswindgram${site}.png`)
+  }, [site, period])
 
   return (
     <>

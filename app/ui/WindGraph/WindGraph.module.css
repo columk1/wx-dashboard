@@ -40,10 +40,11 @@
   left: 0;
   z-index: 1003;
 }
-
+/* Aligns with the graph component with the same border, margin is added to cover full height of component */
 .fallback {
   height: 300px;
   width: 100%;
+  margin-bottom: 23px;
   background-color: rgba(var(--callout-rgb), 0.5);
   border: 1px solid rgba(var(--callout-border-rgb), 0.3);
   border-radius: var(--border-radius);
