@@ -1,7 +1,7 @@
 [
   {
     "name": "Spit",
-    "url": "https://us-west1-rugged-nimbus-347223.cloudfunctions.net/wind?spot=1436",
+    "url": "https://rugged-nimbus-599635289503.us-west1.run.app/?spot=1436",
     "emoji": "📈",
     "description": "Wind Meter"
   },
