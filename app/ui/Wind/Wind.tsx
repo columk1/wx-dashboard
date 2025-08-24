@@ -120,7 +120,7 @@ const Wind = () => {
       <div className={styles.flexContainer}>
         <WXCard
           title='Spit'
-          url='https://us-west1-rugged-nimbus-347223.cloudfunctions.net/wind?spot=1436'
+          url='https://rugged-nimbus-599635289503.us-west1.run.app/?spot=1436'
           data={
             spitData && {
               windSpeed: Math.round(spitData?.wind_avg_data[spitData?.wind_avg_data.length - 1][1]),
