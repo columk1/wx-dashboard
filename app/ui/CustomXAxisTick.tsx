@@ -1,3 +1,5 @@
+import type { WindGraphPoint } from '@/app/lib/definitions'
+
 type CustomXAxisTickProps = {
   x?: number
   y?: number
@@ -9,7 +11,7 @@ type CustomXAxisTickProps = {
     tickCoord: number
     value: number
   }
-  directionArray: number[][]
+  directionArray: WindGraphPoint[]
   size?: number
 }
 
@@ -29,7 +31,7 @@ const CustomXAxisTick = (props: CustomXAxisTickProps) => {
       height={size}
       width={size}
     >
-      <g transform={`rotate(${directionArray[payload.index][1] + 135} ${size} ${size})`}>
+      <g transform={`rotate(${directionArray[payload.index].dir + 135} ${size} ${size})`}>
         <path d='M10.368 19.102c.349 1.049 1.011 1.086 1.478.086l5.309-11.375c.467-1.002.034-1.434-.967-.967l-11.376 5.308c-1.001.467-.963 1.129.085 1.479l4.103 1.367 1.368 4.102z'></path>
       </g>
     </svg>

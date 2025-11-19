@@ -7,7 +7,15 @@ import { fetchWindGraph, fetchGondolaData, fetchVcliffeData } from '@/app/lib/ac
 import WindGraph from '@/app/ui/WindGraph/WindGraph'
 import dynamic from 'next/dynamic'
 import { useEffect, useState } from 'react'
-import { ChartData, WXCardData } from '@/app/lib/definitions'
+import {
+  WXCardData,
+  SpitWindApiResponse,
+  WindDataPoint,
+  WindDataSeries,
+  GondolaApiResponse,
+  WindGraphData,
+  WindGraphPoint,
+} from '@/app/lib/definitions'
 
 const SPIT_INTERVAL = 120000 // 2 minutes
 const MAX_INTERVAL = 300000 // 5 minutes
@@ -25,14 +33,79 @@ const isStale = (lastUpdate: number, interval: number) => {
   return false
 }
 
-const Wind = () => {
-  const [spitData, setSpitData] = useState<ChartData>(null)
-  const [gondolaData, setGondolaData] = useState<WXCardData>(null)
-  const [vcliffeData, setVcliffeData] = useState<WXCardData>(null)
+const trimLast = <T,>(data: T[]): T[] => data.slice(0, -1)
 
+const normalizeSeries = (series: SpitWindApiResponse['wind_avg_data']): WindDataSeries => {
+  let lastValue = 0
+  let lastTimestamp = 0
+
+  return trimLast(series).map(([timestamp, value]): WindDataPoint => {
+    const nextTimestamp = timestamp ?? lastTimestamp
+    const nextValue = value ?? lastValue
+    lastTimestamp = nextTimestamp
+    lastValue = nextValue
+    return [nextTimestamp, nextValue]
+  })
+}
+
+const buildSpitSeries = (json: SpitWindApiResponse): WindGraphPoint[] => {
+  const wind_avg = normalizeSeries(json.wind_avg_data)
+  const wind_gust = normalizeSeries(json.wind_gust_data)
+  const wind_lull = normalizeSeries(json.wind_lull_data)
+  const wind_dir = normalizeSeries(json.wind_dir_data)
+
+  return wind_avg.map(([time, avg], index) => ({
+    time,
+    avg: Math.round(avg),
+    gust: Math.round(wind_gust[index][1]),
+    lull: Math.round(wind_lull[index][1]),
+    dir: wind_dir[index][1],
+  }))
+}
+
+const getSpitCardData = (spitData: WindGraphData): WXCardData => {
+  if (!spitData || spitData.length === 0) return null
+
+  const lastPoint = spitData[spitData.length - 1]
+
+  return {
+    windSpeed: lastPoint.avg,
+    windDirection: lastPoint.dir,
+    windLull: lastPoint.lull,
+    windGusts: lastPoint.gust,
+    windDirectionText: getWindDirectionText(lastPoint.dir),
+  }
+}
+
+const getGondolaCardData = (
+  json: GondolaApiResponse,
+  prev: WXCardData
+): WXCardData => {
+  const observation = json.observations[0]
+  const newWindDirection = Math.round(observation.winddir)
+
+  return {
+    ...(prev || {}),
+    ...(typeof newWindDirection === 'number' && {
+      windDirection: newWindDirection,
+      windDirectionText: getWindDirectionText(newWindDirection),
+    }),
+    windSpeed: Math.round(observation.metric.windSpeed),
+    windGusts: Math.round(observation.metric.windGust),
+  }
+}
+
+const devSpitData: SpitWindApiResponse = testData.wind
+const devGondolaData: GondolaApiResponse = testData.gondola
+
+const Wind = () => {
+  const [spitData, setSpitData] = useState<WindGraphData>(null)
+  const [gondolaData, setGondolaData] = useState<WXCardData>(null)
+  // const [vcliffeData, setVcliffeData] = useState<WXCardData>(null)
+
+  const lastSpitUpdate = spitData?.[spitData.length - 1]?.time
   // Spit wind data
   useEffect(() => {
-    const lastSpitUpdate = spitData?.wind_avg_data[spitData?.wind_avg_data.length - 1][0]
 
     // Method to ensure we re-fetch if the max interval has passed (called when focus is back on the page)
     const fetchIfStale = () => {
@@ -42,15 +115,19 @@ const Wind = () => {
     }
 
     const fetchData = async () => {
-      const json = process.env.NODE_ENV === 'development' ? testData.wind : await fetchWindGraph()
+      const json =
+        process.env.NODE_ENV === 'development' ? devSpitData : await fetchWindGraph()
 
-      setSpitData({
-        wind_avg_data: json.wind_avg_data.slice(0, -1) as number[][],
-        wind_gust_data: json.wind_gust_data.slice(0, -1) as number[][],
-        wind_lull_data: json.wind_lull_data.slice(0, -1) as number[][],
-        wind_dir_data: json.wind_dir_data.slice(0, -1) as number[][],
-        last_wind_dir_text: json.last_ob_dir_txt as string,
-      })
+      if (!json) return
+
+      const series = buildSpitSeries(json)
+
+      setSpitData(series)
+      const lastPoint = series[series.length - 1]
+      const windSpeed = `${lastPoint.avg} km/h`
+      if (typeof window !== 'undefined') {
+        document.title = `${windSpeed} | Chief Lap Copilot`
+      }
     }
 
     fetchIfStale()
@@ -62,26 +139,17 @@ const Wind = () => {
       clearInterval(interval)
       window.removeEventListener('focus', fetchIfStale)
     }
-  }, [])
+  }, [lastSpitUpdate])
 
   // Gondola wind data
   useEffect(() => {
     const fetchData = async () => {
-      const json =
-        process.env.NODE_ENV === 'development' ? testData.gondola : await fetchGondolaData()
-      const newWindDirection = Math.round(json.observations[0].winddir)
-      if (!json) return
+      const json: GondolaApiResponse | null =
+        process.env.NODE_ENV === 'development' ? devGondolaData : await fetchGondolaData()
 
+      if (!json) return
       // Update state. Sometimes direction data is missing from the API response
-      setGondolaData((prev) => ({
-        ...prev,
-        ...(typeof newWindDirection === 'number' && {
-          windDirection: newWindDirection,
-          windDirectionText: getWindDirectionText(newWindDirection),
-        }),
-        windSpeed: Math.round(json.observations[0].metric.windSpeed),
-        windGusts: Math.round(json.observations[0].metric.windGust),
-      }))
+      setGondolaData((prev) => getGondolaCardData(json, prev))
       // setLoading(false)
     }
     fetchData()
@@ -117,21 +185,12 @@ const Wind = () => {
 
   return (
     <>
+      {typeof window !== 'undefined' && <title>{document?.title}</title>}
       <div className={styles.flexContainer}>
         <WXCard
           title='Spit'
           url='https://rugged-nimbus-599635289503.us-west1.run.app/?spot=1436'
-          data={
-            spitData && {
-              windSpeed: Math.round(spitData?.wind_avg_data[spitData?.wind_avg_data.length - 1][1]),
-              windDirection: spitData?.wind_dir_data[spitData?.wind_avg_data.length - 1][1],
-              windLull: Math.round(spitData?.wind_lull_data[spitData?.wind_avg_data.length - 1][1]),
-              windGusts: Math.round(
-                spitData?.wind_gust_data[spitData?.wind_avg_data.length - 1][1]
-              ),
-              windDirectionText: spitData?.last_wind_dir_text,
-            }
-          }
+          data={getSpitCardData(spitData)}
         />
         <WXCard
           title='Gondola'

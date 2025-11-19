@@ -6,9 +6,9 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts'
 import Legend from '@/app/ui/Legend'
 import CustomXAxisTick from '@/app/ui/CustomXAxisTick'
 import Spinner from '@/app/ui/Spinner/Spinner'
-import { ChartData } from '@/app/lib/definitions'
+import type { WindGraphData } from '@/app/lib/definitions'
 
-const WindGraph = ({ data }: { data: ChartData }) => {
+const WindGraph = ({ data }: { data: WindGraphData }) => {
   const containerRef = useRef<HTMLDivElement>(null)
   const [_, rerender] = useState(false)
   // const [loading, setLoading] = useState(true)
@@ -19,13 +19,12 @@ const WindGraph = ({ data }: { data: ChartData }) => {
 
   setTimeout(() => rerender(true), 50)
 
-  const maxGust =
-    data?.wind_gust_data.reduce((acc, curr) => Math.max(acc, curr[1]), -Infinity) || 40
+  const maxGust = data?.reduce((acc, curr) => Math.max(acc, curr.gust), -Infinity) || 40
 
   const getTimeTicks = useCallback(() => {
     const ONE_HOUR = 3600000
-    const startTime = data?.wind_avg_data[0][0] || 0
-    const endTime = data?.wind_avg_data[data?.wind_avg_data.length - 1][0] || 0
+    const startTime = data?.[0]?.time || 0
+    const endTime = data?.[data.length - 1]?.time || 0
 
     // Round the startTime up to the nearest whole hour
     const firstHour = Math.ceil(startTime / ONE_HOUR) * ONE_HOUR
@@ -38,7 +37,7 @@ const WindGraph = ({ data }: { data: ChartData }) => {
     return Array.from({ length: hourlyTicks }, (_, i) => firstHour + i * ONE_HOUR)
   }, [data])
 
-  return !data ? (
+  return !data || data.length === 0 ? (
     <div className={styles.fallback}>
       <Spinner />
     </div>
@@ -49,13 +48,7 @@ const WindGraph = ({ data }: { data: ChartData }) => {
           id='wind-graph'
           width={1600}
           height={300}
-          data={data.wind_avg_data.map((e, i) => ({
-            time: e[0],
-            avg: Math.round(e[1]),
-            gust: Math.round(data.wind_gust_data[i][1]),
-            lull: Math.round(data.wind_lull_data[i][1]),
-            dir: data.wind_dir_data[i][1],
-          }))}
+          data={data}
           // data={data.wind_avg_data}
           margin={{ top: 0, right: -10, bottom: 30, left: 20 }}
         >
@@ -75,7 +68,7 @@ const WindGraph = ({ data }: { data: ChartData }) => {
           /> */}
           <Tooltip
             // offset={50}
-            defaultIndex={data.wind_avg_data.length - 1}
+            defaultIndex={data.length - 1}
             formatter={(value: number, name: string) => [
               value + 'km/h',
               name[0].toUpperCase() + name.slice(1),
@@ -123,7 +116,7 @@ const WindGraph = ({ data }: { data: ChartData }) => {
             xAxisId={1}
             dataKey='dir'
             tickFormatter={(time) => ''}
-            tick={<CustomXAxisTick directionArray={data.wind_dir_data} />}
+            tick={<CustomXAxisTick directionArray={data} />}
             axisLine={false}
             tickLine={false}
             mirror={true}
