@@ -1,14 +1,13 @@
 'use client'
 import WXCard from '@/app/ui/WXCard/WXCard'
 import styles from './Wind.module.css'
-import { fetchVcliffeData } from '@/app/lib/actions'
+// import { fetchVcliffeData } from '@/app/lib/actions'
 import WindGraph from '@/app/ui/WindGraph/WindGraph'
-import dynamic from 'next/dynamic'
 import { useEffect, useState } from 'react'
 import { WXCardData, WindGraphData } from '@/app/lib/definitions'
 import { getWindDirectionText } from '@/app/lib/utils/wind'
 
-const SPIT_INTERVAL = 120000 // 2 minutes
+const SPIT_INTERVAL = 30000 // 30 seconds
 const MAX_INTERVAL = 300000 // 5 minutes
 
 const isStale = (lastUpdate: number, interval: number) => {
@@ -40,7 +39,6 @@ const Wind = () => {
   const lastSpitUpdate = spitData?.[spitData.length - 1]?.time
   // Spit wind data
   useEffect(() => {
-
     // Method to ensure we re-fetch if the max interval has passed (called when focus is back on the page)
     const fetchIfStale = () => {
       if (lastSpitUpdate && !isStale(lastSpitUpdate, MAX_INTERVAL)) return
@@ -89,31 +87,32 @@ const Wind = () => {
     return () => clearInterval(interval)
   }, [])
 
-  // TODO: Valleycliffe wind data (currently offline, uncomment when back online)
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     const json =
-  //       process.env.NODE_ENV === 'development' ? testData.valleycliffe : await fetchVcliffeData()
-  //     const data = json.current_conditions
-  //     const newWindDirection = Math.round(data.wind_direction)
-  //     if (!json) return
+  /*
+  TODO: Valleycliffe wind data (currently offline, uncomment when back online)
+  useEffect(() => {
+    const fetchData = async () => {
+      const json =
+        process.env.NODE_ENV === 'development' ? testData.valleycliffe : await fetchVcliffeData()
+      const data = json.current_conditions
+      const newWindDirection = Math.round(data.wind_direction)
+      if (!json) return
 
-  //     setVcliffeData((prev) => ({
-  //       ...prev,
-  //       ...(typeof newWindDirection === 'number' && {
-  //         windDirection: newWindDirection,
-  //         windDirectionText: getWindDirectionText(newWindDirection),
-  //       }),
-  //       windSpeed: Math.round(data.wind_avg),
-  //       windGusts: Math.round(data.wind_gust),
-  //     }))
-  //     // setLoading(false)
-  //   }
-  //   fetchData()
-  //   const interval = setInterval(fetchData, 150000) // 2.5 minutes
-  //   return () => clearInterval(interval)
-  // }, [])
-
+      setVcliffeData((prev) => ({
+        ...prev,
+        ...(typeof newWindDirection === 'number' && {
+          windDirection: newWindDirection,
+          windDirectionText: getWindDirectionText(newWindDirection),
+        }),
+        windSpeed: Math.round(data.wind_avg),
+        windGusts: Math.round(data.wind_gust),
+      }))
+      // setLoading(false)
+    }
+    fetchData()
+    const interval = setInterval(fetchData, 150000) // 2.5 minutes
+    return () => clearInterval(interval)
+  }, [])
+*/
   return (
     <>
       {typeof window !== 'undefined' && <title>{document?.title}</title>}

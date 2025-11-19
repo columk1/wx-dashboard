@@ -9,6 +9,7 @@ import type {
 } from '@/app/lib/definitions'
 import testData from '@/app/lib/data/testData.json'
 import { fetchData } from '@/app/lib/services/apiClient'
+import { revalidateTag, unstable_cache } from 'next/cache'
 
 const trimLast = <T>(data: T[]): T[] => data.slice(0, -1)
 
@@ -40,14 +41,33 @@ const buildSpitSeries = (json: SpitWindApiResponse): WindGraphPoint[] => {
   }))
 }
 
-const fetchSpitData = async () =>
-  fetchData<SpitWindApiResponse>(`${process.env.SPIT_WINDMETER_API}&_=${Date.now()}`)
+const fetchSpitData = async () => {
+  console.log('>>> CACHE MISS: Fetching fresh data from external spit API <<<')
+  return fetchData<SpitWindApiResponse>(`${process.env.SPIT_WINDMETER_API}&_=${Date.now()}`)
+}
+
+const getCachedSpitData = unstable_cache(fetchSpitData, ['spit-data-store'], {
+  tags: ['spit'],
+})
 
 export async function GET() {
+  const now = Date.now()
+  let currentData = await getCachedSpitData()
+
+  const lastTimestamp =
+    currentData?.wind_avg_data?.[currentData?.wind_avg_data?.length - 1]?.[0] || 0
+  console.log(`Last timestamp: ${lastTimestamp}`, `Current time: ${now}`)
+
+  if (now > lastTimestamp + 300000) {
+    console.log(`Cache is stale. Data timestamp ${lastTimestamp}, current time ${now} / 1000`)
+    revalidateTag('spit', { expire: 0 })
+    currentData = await getCachedSpitData()
+  } else {
+    console.log('>>> CACHE HIT: Using cached spit data <<<')
+  }
+
   const json: SpitWindApiResponse | null =
-    process.env.NODE_ENV === 'development'
-      ? (testData.wind as SpitWindApiResponse)
-      : await fetchSpitData()
+    process.env.NODE_ENV === 'development' ? (testData.wind as SpitWindApiResponse) : currentData
 
   if (!json) {
     return NextResponse.json({ error: 'Failed to fetch Spit data' }, { status: 500 })
