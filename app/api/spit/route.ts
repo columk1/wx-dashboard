@@ -54,9 +54,19 @@ export async function GET() {
   const now = Date.now()
   let currentData = await getCachedSpitData()
 
+  const lastObTimeString = currentData?.last_ob_time_local
+  const tzOffset = currentData?.tz_offset
+
   const lastTimestamp =
-    currentData?.wind_avg_data?.[currentData?.wind_avg_data?.length - 1]?.[0] || 0
-  console.log(`Last timestamp: ${lastTimestamp}`, `Current time: ${now}`)
+    lastObTimeString && tzOffset
+      ? new Date(`${lastObTimeString?.replace(' ', 'T')}-0${Math.abs(tzOffset)}:00`).getTime()
+      : 0
+  // currentData?.wind_avg_data?.[currentData?.wind_avg_data?.length - 1]?.[0] || 0
+
+  console.log(
+    `[DEBUG] Last Observation Time (UTC): ${new Date(lastTimestamp).toISOString()}`,
+    `[DEBUG] Server Current Time (UTC):  ${new Date(now).toISOString()}`
+  )
 
   if (now > lastTimestamp + 300000) {
     console.log(`Cache is stale. Data timestamp ${lastTimestamp}, current time ${now} / 1000`)

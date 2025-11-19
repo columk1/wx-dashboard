@@ -27,7 +27,15 @@ export type SpitWindApiResponse = {
   wind_gust_data: WindDataSeriesRaw
   wind_lull_data: WindDataSeriesRaw
   wind_dir_data: WindDataSeriesRaw
+  current_time_epoch_utc: number
+  last_ob_time_local: string
+  last_ob_avg: number
+  last_ob_gust: number
+  last_ob_lull: number
+  last_ob_dir: number
   last_ob_dir_txt: string
+  last_ob_wind_desc: string
+  tz_offset: number
 }
 
 export type GondolaObservation = {
