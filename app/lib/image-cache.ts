@@ -1,4 +1,4 @@
-export const imageCache = new Map<string, { data: Buffer; timestamp: number }>()
+export const imageCache = new Map<string, { data: ArrayBuffer; timestamp: number }>()
 
 const CACHE_TTL = 12 * 60 * 60 * 1000 // 48 hours TTL in ms
 
@@ -6,7 +6,7 @@ const isCacheExpired = (timestamp: number): boolean => {
   return Date.now() - timestamp > CACHE_TTL
 }
 
-export const setImage = (key: string, imageData: Buffer): void => {
+export const setImage = (key: string, imageData: ArrayBuffer): void => {
   imageCache.set(key, {
     data: imageData,
     timestamp: Date.now(),
@@ -28,7 +28,7 @@ if (Math.random() < 0.05) {
   cleanupCache()
 }
 
-export const getImage = (key: string): Buffer | null => {
+export const getImage = (key: string): ArrayBuffer | null => {
   const cached = imageCache.get(key)
   if (cached && !isCacheExpired(cached.timestamp)) {
     randomCleanup() // Randomly trigger a cache cleanup instead of running a cron

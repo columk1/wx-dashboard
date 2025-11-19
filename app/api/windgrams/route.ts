@@ -92,12 +92,12 @@ export async function GET(req: NextRequest): Promise<Response> {
 }
 
 // Function to fetch new image from the server
-async function fetchNewImage(imageUrl: string): Promise<Buffer | null> {
+async function fetchNewImage(imageUrl: string): Promise<ArrayBuffer | null> {
   const response = await fetch(imageUrl)
 
   if (response.ok) {
     const imageBuffer = await response.arrayBuffer()
-    return Buffer.from(imageBuffer)
+    return imageBuffer
   }
 
   return null // No new image found
