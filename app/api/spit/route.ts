@@ -52,7 +52,7 @@ const getCachedSpitData = unstable_cache(fetchSpitData, ['spit-data-store'], {
 
 export async function GET() {
   const now = Date.now()
-  let currentData = await getCachedSpitData()
+  const currentData = await getCachedSpitData()
 
   const lastObTimeString = currentData?.last_ob_time_local
   const tzOffset = currentData?.tz_offset
@@ -69,11 +69,10 @@ export async function GET() {
   )
 
   if (now > lastTimestamp + 300000) {
-    console.log(`Cache is stale. Data timestamp ${lastTimestamp}, current time ${now} / 1000`)
     revalidateTag('spit', { expire: 0 })
-    currentData = await getCachedSpitData()
+    console.log('[DEBUG] Cache is stale. Revalidating...')
   } else {
-    console.log('>>> CACHE HIT: Using cached spit data <<<')
+    console.log('[DEBUG] CACHE HIT: Using cached data')
   }
 
   const json: SpitWindApiResponse | null =
