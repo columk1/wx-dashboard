@@ -1,18 +1,7 @@
 'use server'
 
 import type { GondolaApiResponse, SpitWindApiResponse } from '@/app/lib/definitions'
-
-const fetchData = async <T>(endpoint?: string): Promise<T | null> => {
-  if (!endpoint) return null
-  try {
-    const response = await fetch(endpoint)
-    if (!response.ok) console.log(response.statusText)
-    return (await response.json()) as T
-  } catch (error) {
-    console.log(error)
-    return null
-  }
-}
+import { fetchData } from '@/app/lib/services/apiClient'
 
 const fetchWindGraph = async () =>
   fetchData<SpitWindApiResponse>(`${process.env.SPIT_WINDMETER_API}&_=${Date.now()}`)

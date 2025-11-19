@@ -1,66 +1,21 @@
 'use client'
-
-import testData from '@/app/lib/data/testData.json'
 import WXCard from '@/app/ui/WXCard/WXCard'
 import styles from './Wind.module.css'
-import { fetchWindGraph, fetchGondolaData, fetchVcliffeData } from '@/app/lib/actions'
+import { fetchVcliffeData } from '@/app/lib/actions'
 import WindGraph from '@/app/ui/WindGraph/WindGraph'
 import dynamic from 'next/dynamic'
 import { useEffect, useState } from 'react'
-import {
-  WXCardData,
-  SpitWindApiResponse,
-  WindDataPoint,
-  WindDataSeries,
-  GondolaApiResponse,
-  WindGraphData,
-  WindGraphPoint,
-} from '@/app/lib/definitions'
+import { WXCardData, WindGraphData } from '@/app/lib/definitions'
+import { getWindDirectionText } from '@/app/lib/utils/wind'
 
 const SPIT_INTERVAL = 120000 // 2 minutes
 const MAX_INTERVAL = 300000 // 5 minutes
-
-const getWindDirectionText = (windDirection: number) => {
-  // prettier-ignore
-  const directions = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW']
-  return directions[Math.round(windDirection / 22.5)]
-}
 
 const isStale = (lastUpdate: number, interval: number) => {
   if (lastUpdate && Date.now() - lastUpdate > interval) {
     return true
   }
   return false
-}
-
-const trimLast = <T,>(data: T[]): T[] => data.slice(0, -1)
-
-const normalizeSeries = (series: SpitWindApiResponse['wind_avg_data']): WindDataSeries => {
-  let lastValue = 0
-  let lastTimestamp = 0
-
-  return trimLast(series).map(([timestamp, value]): WindDataPoint => {
-    const nextTimestamp = timestamp ?? lastTimestamp
-    const nextValue = value ?? lastValue
-    lastTimestamp = nextTimestamp
-    lastValue = nextValue
-    return [nextTimestamp, nextValue]
-  })
-}
-
-const buildSpitSeries = (json: SpitWindApiResponse): WindGraphPoint[] => {
-  const wind_avg = normalizeSeries(json.wind_avg_data)
-  const wind_gust = normalizeSeries(json.wind_gust_data)
-  const wind_lull = normalizeSeries(json.wind_lull_data)
-  const wind_dir = normalizeSeries(json.wind_dir_data)
-
-  return wind_avg.map(([time, avg], index) => ({
-    time,
-    avg: Math.round(avg),
-    gust: Math.round(wind_gust[index][1]),
-    lull: Math.round(wind_lull[index][1]),
-    dir: wind_dir[index][1],
-  }))
 }
 
 const getSpitCardData = (spitData: WindGraphData): WXCardData => {
@@ -76,27 +31,6 @@ const getSpitCardData = (spitData: WindGraphData): WXCardData => {
     windDirectionText: getWindDirectionText(lastPoint.dir),
   }
 }
-
-const getGondolaCardData = (
-  json: GondolaApiResponse,
-  prev: WXCardData
-): WXCardData => {
-  const observation = json.observations[0]
-  const newWindDirection = Math.round(observation.winddir)
-
-  return {
-    ...(prev || {}),
-    ...(typeof newWindDirection === 'number' && {
-      windDirection: newWindDirection,
-      windDirectionText: getWindDirectionText(newWindDirection),
-    }),
-    windSpeed: Math.round(observation.metric.windSpeed),
-    windGusts: Math.round(observation.metric.windGust),
-  }
-}
-
-const devSpitData: SpitWindApiResponse = testData.wind
-const devGondolaData: GondolaApiResponse = testData.gondola
 
 const Wind = () => {
   const [spitData, setSpitData] = useState<WindGraphData>(null)
@@ -115,12 +49,9 @@ const Wind = () => {
     }
 
     const fetchData = async () => {
-      const json =
-        process.env.NODE_ENV === 'development' ? devSpitData : await fetchWindGraph()
-
-      if (!json) return
-
-      const series = buildSpitSeries(json)
+      const res = await fetch('/api/spit')
+      if (!res.ok) return
+      const series = await res.json()
 
       setSpitData(series)
       const lastPoint = series[series.length - 1]
@@ -144,12 +75,12 @@ const Wind = () => {
   // Gondola wind data
   useEffect(() => {
     const fetchData = async () => {
-      const json: GondolaApiResponse | null =
-        process.env.NODE_ENV === 'development' ? devGondolaData : await fetchGondolaData()
+      const res = await fetch('/api/gondola')
+      if (!res.ok) return
+      const data: WXCardData = await res.json()
 
-      if (!json) return
       // Update state. Sometimes direction data is missing from the API response
-      setGondolaData((prev) => getGondolaCardData(json, prev))
+      setGondolaData(data)
       // setLoading(false)
     }
     fetchData()
