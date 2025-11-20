@@ -69,7 +69,6 @@ const WindGraph = ({ data }: { data: WindGraphData }) => {
               value + 'km/h',
               name[0].toUpperCase() + name.slice(1),
             ]}
-            label='time'
             labelFormatter={(label) =>
               new Date(label).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
             }
