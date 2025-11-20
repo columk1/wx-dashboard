@@ -1,8 +1,8 @@
 'use client'
 
 import styles from './Rasp.module.css'
-import { useEffect, useMemo, useReducer, useState } from 'react'
-import { addDays, format } from 'date-fns'
+import { useEffect, useMemo, useState, startTransition, ViewTransition } from 'react'
+import { addDays, format, previousDay } from 'date-fns'
 import { toZonedTime } from 'date-fns-tz'
 import sites from '@/app/lib/data/raspSites.json'
 
@@ -23,8 +23,8 @@ const preloadImages = (srcs: string[]) => {
 const Rasp = () => {
   const [siteIndex, setSiteIndex] = useState(0)
   const [periodIndex, setPeriodIndex] = useState(0)
-  const [src, setSrc] = useState<string | null>(null)
   const [imageError, setImageError] = useState(false)
+  // const [src, setSrc] = useState<string | null>(null)
 
   const nowPT = getPacificTimestamp()
 
@@ -37,13 +37,44 @@ const Rasp = () => {
   const period = periods[periodIndex][1]
   const site = sites[siteIndex][1]
 
+  const src = `https://canadarasp.com/windgrams-data/${period}/hrdpswindgram${site}.png`
 
-  const cyclePeriod = () => setPeriodIndex((prev) => (prev + 1) % periods.length)
+  const cyclePeriod = () => {
+    startTransition(() => {
+      updateImage((periodIndex + 1) % periods.length, siteIndex)
+    })
+  }
+
+  const handlePeriodSelection = (index: number) => {
+    startTransition(() => {
+      updateImage(index, siteIndex)
+    })
+  }
+
+  const handleSiteSelection = (index: number) => {
+    startTransition(() => {
+      updateImage(periodIndex, index)
+    })
+  }
+
+  const updateImage = (newPeriodIndex: number, newSiteIndex: number) => {
+    const newPeriod = periods[newPeriodIndex][1]
+    const newSite = sites[newSiteIndex][1]
+    const newSrc = `https://canadarasp.com/windgrams-data/${newPeriod}/hrdpswindgram${newSite}.png`
+    const img = new Image()
+    img.src = newSrc
+    img.onload = () => {
+      startTransition(() => {
+        setPeriodIndex(newPeriodIndex)
+        setSiteIndex(newSiteIndex)
+      })
+    }
+  }
 
   // Set the src on the client to prevent pre-rendering on the server (for caching/timing consistency)
-  useEffect(() => {
-    setSrc(`https://canadarasp.com/windgrams-data/${period}/hrdpswindgram${site}.png`)
-  }, [site, period])
+  // useEffect(() => {
+  //   setSrc(`https://canadarasp.com/windgrams-data/${period}/hrdpswindgram${site}.png`)
+  // }, [site, period])
 
 
   // Preload next site and next period of to pre-empt RASP navigation
@@ -62,7 +93,7 @@ const Rasp = () => {
           {periods.map((e, i) => (
             <button
               key={e[0]}
-              onClick={() => setPeriodIndex(i)}
+              onClick={() => handlePeriodSelection(i)}
               className={`${styles.periodBtn} ${periodIndex === i ? styles.active : ''}`}
             >
               {e[0]}
@@ -75,15 +106,18 @@ const Rasp = () => {
               <div className={styles.error}>Keep Parawaiting</div>
             ) : (
               src && (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={src}
-                  alt={'Rasp Windgram'}
-                  className={styles.raspImg}
-                  width={450}
-                  height={450}
-                  onError={() => setImageError(true)}
-                />
+                <ViewTransition name="rasp-image">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    key={src}
+                    src={src}
+                    alt={'Rasp Windgram'}
+                    className={styles.raspImg}
+                    width={450}
+                    height={450}
+                    onError={() => setImageError(true)}
+                  />
+                </ViewTransition>
               )
             )}
           </div>
@@ -93,7 +127,7 @@ const Rasp = () => {
             {sites.map((e, i) => (
               <button
                 key={e[0]}
-                onClick={() => setSiteIndex(i)}
+                onClick={() => handleSiteSelection(i)}
                 className={`${styles.raspBtn} ${siteIndex === i ? styles.active : ''}`}
               >
                 <p>{e[0]}</p>
