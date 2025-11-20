@@ -42,6 +42,9 @@ const buildSpitSeries = (json: SpitWindApiResponse): WindGraphPoint[] => {
 }
 
 const fetchSpitData = async () => {
+  if (process.env.NODE_ENV === 'development') {
+    return testData.wind
+  }
   console.log('>>> CACHE MISS: Fetching fresh data from external spit API <<<')
   return fetchData<SpitWindApiResponse>(`${process.env.SPIT_WINDMETER_API}&_=${Date.now()}`)
 }
@@ -61,7 +64,6 @@ export async function GET() {
     lastObTimeString && tzOffset
       ? new Date(`${lastObTimeString?.replace(' ', 'T')}-0${Math.abs(tzOffset)}:00`).getTime()
       : 0
-  // currentData?.wind_avg_data?.[currentData?.wind_avg_data?.length - 1]?.[0] || 0
 
   console.log(
     `[DEBUG] Last Observation Time (UTC): ${new Date(lastTimestamp).toISOString()}`,
@@ -75,8 +77,7 @@ export async function GET() {
     console.log('[DEBUG] CACHE HIT: Using cached data')
   }
 
-  const json: SpitWindApiResponse | null =
-    process.env.NODE_ENV === 'development' ? (testData.wind as SpitWindApiResponse) : currentData
+  const json: SpitWindApiResponse | null = currentData
 
   if (!json) {
     return NextResponse.json({ error: 'Failed to fetch Spit data' }, { status: 500 })
