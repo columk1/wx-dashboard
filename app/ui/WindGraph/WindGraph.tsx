@@ -10,14 +10,10 @@ import type { WindGraphData } from '@/app/lib/definitions'
 
 const WindGraph = ({ data }: { data: WindGraphData }) => {
   const containerRef = useRef<HTMLDivElement>(null)
-  const [_, rerender] = useState(false)
-  // const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     containerRef.current && (containerRef.current.scrollLeft = containerRef?.current?.scrollWidth)
   }, [data])
-
-  setTimeout(() => rerender(true), 50)
 
   const maxGust = data?.reduce((acc, curr) => Math.max(acc, curr.gust), -Infinity) || 40
 
@@ -173,15 +169,6 @@ const WindGraph = ({ data }: { data: WindGraphData }) => {
       <Legend />
     </div>
   )
-}
-
-// Override console.error
-// This is a hack to suppress the warning about missing defaultProps in recharts library as of version 2.12
-// @link https://github.com/recharts/recharts/issues/3615
-const error = console.error
-console.error = (...args: any) => {
-  if (/defaultProps/.test(args[0])) return
-  error(...args)
 }
 
 export default WindGraph
