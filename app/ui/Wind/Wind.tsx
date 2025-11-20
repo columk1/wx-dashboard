@@ -44,14 +44,11 @@ const Wind = () => {
   useEffect(() => {
     const lastPoint = spitData?.[spitData?.length - 1]
     const windSpeed = `${lastPoint?.avg} km/h`
-    if (typeof window !== 'undefined') {
-      document.title = `${windSpeed} | Chief Lap Copilot`
-    }
+    document.title = `${windSpeed} | Chief Lap Copilot`
   }, [spitData])
 
   return (
     <>
-      {typeof window !== 'undefined' && <title>{document?.title}</title>}
       <div className={styles.flexContainer}>
         <WXCard
           title='Spit'
