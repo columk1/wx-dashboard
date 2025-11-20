@@ -12,15 +12,18 @@ export type WindGraphPoint = {
   dir: number
 }
 
-export type WindGraphData = WindGraphPoint[] | null
+export type WindGraphData = WindGraphPoint[] | null | undefined
 
-export type WXCardData = {
-  windDirection?: number
-  windSpeed: number
-  windGusts: number
-  windLull?: number
-  windDirectionText?: string
-} | null
+export type WXCardData =
+  | {
+      windDirection?: number
+      windSpeed: number
+      windGusts: number
+      windLull?: number
+      windDirectionText?: string
+    }
+  | null
+  | undefined
 
 export type SpitWindApiResponse = {
   wind_avg_data: WindDataSeriesRaw
