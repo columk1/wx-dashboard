@@ -1,7 +1,7 @@
 'use client'
 
 import styles from './Rasp.module.css'
-import { useEffect, useMemo, useState, startTransition, ViewTransition } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { addDays, format, previousDay } from 'date-fns'
 import { toZonedTime } from 'date-fns-tz'
 import sites from '@/app/lib/data/raspSites.json'
@@ -39,23 +39,11 @@ const Rasp = () => {
 
   const src = `https://canadarasp.com/windgrams-data/${period}/hrdpswindgram${site}.png`
 
-  const cyclePeriod = () => {
-    startTransition(() => {
-      updateImage((periodIndex + 1) % periods.length, siteIndex)
-    })
-  }
+  const cyclePeriod = () => updateImage((periodIndex + 1) % periods.length, siteIndex)
 
-  const handlePeriodSelection = (index: number) => {
-    startTransition(() => {
-      updateImage(index, siteIndex)
-    })
-  }
+  const handlePeriodSelection = (index: number) => updateImage(index, siteIndex)
 
-  const handleSiteSelection = (index: number) => {
-    startTransition(() => {
-      updateImage(periodIndex, index)
-    })
-  }
+  const handleSiteSelection = (index: number) => updateImage(periodIndex, index)
 
   const updateImage = (newPeriodIndex: number, newSiteIndex: number) => {
     const newPeriod = periods[newPeriodIndex][1]
@@ -64,10 +52,8 @@ const Rasp = () => {
     const img = new Image()
     img.src = newSrc
     img.onload = () => {
-      startTransition(() => {
-        setPeriodIndex(newPeriodIndex)
-        setSiteIndex(newSiteIndex)
-      })
+      setPeriodIndex(newPeriodIndex)
+      setSiteIndex(newSiteIndex)
     }
   }
 
@@ -100,27 +86,20 @@ const Rasp = () => {
             </button>
           ))}
         </div>
-        <button onClick={cyclePeriod}>
-          <div className={styles.imgShared}>
-            {imageError ? (
-              <div className={styles.error}>Keep Parawaiting</div>
-            ) : (
-              src && (
-                <ViewTransition name="rasp-image">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    key={src}
-                    src={src}
-                    alt={'Rasp Windgram'}
-                    className={styles.raspImg}
-                    width={450}
-                    height={450}
-                    onError={() => setImageError(true)}
-                  />
-                </ViewTransition>
-              )
-            )}
-          </div>
+        <button onClick={cyclePeriod} className={styles.imgShared}>
+          {imageError ? (
+            <div className={styles.error}>Keep Parawaiting</div>
+          ) : (
+            /* eslint-disable-next-line @next/next/no-img-element */
+            <img
+              src={src}
+              alt={'Rasp Windgram'}
+              className={styles.raspImg}
+              width={450}
+              height={450}
+              onError={() => setImageError(true)}
+            />
+          )}
         </button>
         <div className={styles.btnContainer}>
           <div className={styles.raspBtns}>

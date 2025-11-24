@@ -7,27 +7,32 @@
 }
 
 .imgShared {
-  width: 450px;
-  height: 450px;
+  width: min(450px, 100%);
+  height: min(450px, 100%);
   margin-top: -1px;
   background: url('/windgram-placeholder.jpg');
-  border-top: 1px solid rgb(109, 109, 255);
-  border-left: 1px solid rgb(var(--card-rgb));
-  border-right: 1px solid rgb(var(--card-rgb));
+  background-size: contain;
+  border-top: 0.5px solid rgb(109, 109, 255);
+  border-left: 0.5px solid rgb(var(--card-rgb));
+  border-right: 0.5px solid rgb(var(--card-rgb));
   transition: border 700ms;
-  &:hover {
+  /* &:hover {
     border-top: 1px solid rgb(var(--card-border-rgb));
     border-left: 1px solid rgb(var(--card-border-rgb));
     border-right: 1px solid rgb(var(--card-border-rgb));
-  }
+  } */
 }
 
 .raspImg {
   composes: imgShared;
-  width: 100%;
-  height: 100%;
+  width: min(450px, 100%);
+  height: min(450px, 100%);
   display: block;
   aspect-ratio: 1;
+  &:hover {
+    outline: 1px solid rgb(var(--card-border-rgb));
+    outline-offset: -1px;
+  }
   /* border-radius: 8px 8px 0 0; */
 }
 
