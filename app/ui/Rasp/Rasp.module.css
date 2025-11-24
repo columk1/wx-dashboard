@@ -7,33 +7,19 @@
 }
 
 .imgShared {
-  width: min(450px, 100%);
-  height: min(450px, 100%);
-  margin-top: -1px;
+  width: 100%;
+  height: auto;
   background: url('/windgram-placeholder.jpg');
   background-size: contain;
-  border-top: 0.5px solid rgb(109, 109, 255);
-  border-left: 0.5px solid rgb(var(--card-rgb));
-  border-right: 0.5px solid rgb(var(--card-rgb));
-  transition: border 700ms;
-  /* &:hover {
-    border-top: 1px solid rgb(var(--card-border-rgb));
-    border-left: 1px solid rgb(var(--card-border-rgb));
-    border-right: 1px solid rgb(var(--card-border-rgb));
-  } */
 }
 
 .raspImg {
   composes: imgShared;
-  width: min(450px, 100%);
-  height: min(450px, 100%);
   display: block;
-  aspect-ratio: 1;
   &:hover {
-    outline: 1px solid rgb(var(--card-border-rgb));
+    outline: 1px solid rgb(var(--card-border-rgb), 0.7);
     outline-offset: -1px;
   }
-  /* border-radius: 8px 8px 0 0; */
 }
 
 .error {
@@ -55,7 +41,44 @@
 .periodBtns {
   max-width: 100%;
   display: flex;
-  align-items: center;
+}
+
+.periodBtn {
+  width: 100%;
+  border: 1px solid rgb(var(--border-rgb));
+  margin-left: -1px;
+  padding: 0.5rem;
+  font-size: 0.7rem;
+  background-color: rgba(var(--callout-rgb), 0.4);
+  cursor: pointer;
+  transition: background-color, border-color;
+  transition-duration: 200ms;
+  &:first-child {
+    border-radius: 8px 0 0 0;
+  }
+  &:last-child {
+    border-radius: 0 8px 0 0;
+  }
+}
+
+.periodBtn:first-child {
+  margin-left: 0;
+}
+
+.periodBtn:hover {
+  background-color: rgba(var(--card-rgb), 0.3);
+  border-color: rgb(var(--card-rgb));
+  z-index: 2; /* Hovered is highest priority */
+}
+
+.periodBtn.active {
+  background-color: rgba(var(--card-rgb), 0.3);
+  border-color: rgb(var(--card-rgb));
+  z-index: 1; /* Active is above default, but below hover */
+}
+
+.periodBtn:active {
+  background-color: rgba(var(--card-rgb), 0.3);
 }
 
 .raspBtns {
@@ -66,87 +89,52 @@
   flex-wrap: wrap;
 }
 
-.periodBtn {
-  width: 100%;
-  padding: 0.5rem;
-  font-size: 0.7rem;
-  border: none;
-  border-top: 1px solid rgb(var(--border-rgb));
-  border-left: 1px solid rgb(var(--border-rgb));
-  border-bottom: 1px solid rgb(var(--border-rgb));
-  background-color: rgba(var(--callout-rgb), 0.4);
-  cursor: pointer;
-  transition: background-color 500ms, border 700ms;
-  &.active {
-    background-color: rgba(var(--card-rgb), 0.3);
-    border-color: rgb(var(--card-rgb));
-    & + .periodBtn {
-      border-left: 1px solid rgb(var(--card-rgb));
-    }
-  }
-  &:first-of-type {
-    border-radius: 8px 0 0 0;
-  }
-  &:last-of-type {
-    border-radius: 0 8px 0 0;
-    border-right: 1px solid rgb(var(--border-rgb));
-    &.active {
-      border-right: 1px solid rgb(var(--card-rgb));
-    }
-  }
-  &:hover {
-    background-color: rgba(var(--card-rgb), 0.4);
-    border-color: rgb(var(--card-rgb));
-    & + .periodBtn {
-      border-left: 1px solid rgb(var(--card-rgb));
-    }
-  }
-  &:active {
-    background-color: rgba(var(--card-rgb), 0.3);
-  }
-}
-
-/* TODO: Fragile border states, need more robust solution */
 .raspBtn {
   flex: 1 1 20%;
   width: 100%;
   padding: 1rem 0.9rem;
+  margin-top: -1px;
+  margin-left: -1px;
+  position: relative;
   font-size: 0.65rem;
-  border: none;
-  border-top: 1px solid rgb(var(--border-rgb));
-  border-left: 1px solid rgb(var(--border-rgb));
-  border-bottom: 1px solid rgb(var(--border-rgb));
+  border: 1px solid rgb(var(--border-rgb));
   background-color: rgba(var(--callout-rgb), 0.4);
-  cursor: pointer;
-  transition: background-color 500ms, border 700ms;
-  &.active {
-    background-color: rgba(var(--card-rgb), 0.3);
-    border-color: rgb(var(--card-rgb));
-    & + .raspBtn {
-      border-left: 1px solid rgb(var(--card-rgb));
-    }
+  transition: background-color, border;
+  transition-duration: 200ms;
+
+  /* --- Edge and Corner Corrections --- */
+
+  /* Correct margin for the first column */
+  &:nth-child(5n + 1) {
+    margin-left: 0;
   }
+
+  /* Correct the margin for the first row of buttons (1st through 5th) */
+  &:nth-child(-n + 5) {
+    margin-top: 0;
+  }
+
   &:nth-of-type(11) {
     border-radius: 0 0 0 8px;
   }
   &:last-of-type {
     border-radius: 0 0 8px 0;
   }
-  &:last-of-type,
-  &:nth-of-type(5),
-  &:nth-of-type(10) {
-    border-right: 1px solid rgb(var(--border-rgb));
-    &.active {
-      border-right: 1px solid rgb(var(--card-rgb));
-    }
-  }
+
+  /* On hover, bring the button to the very top and change its border color */
   &:hover {
     background-color: rgba(var(--card-rgb), 0.4);
     border-color: rgb(var(--card-rgb));
-    & + .raspBtn:not(.raspBtn:nth-of-type(6)):not(.raspBtn:nth-of-type(11)) {
-      border-left: 1px solid rgb(var(--card-rgb));
-    }
+    z-index: 2; /* Hover state has the highest priority */
   }
+
+  /* The .active class sits above default buttons but below a hovered one */
+  &.active {
+    background-color: rgba(var(--card-rgb), 0.3);
+    border-color: rgb(var(--card-rgb));
+    z-index: 1;
+  }
+
   &:active {
     background-color: rgba(var(--card-rgb), 0.3);
   }
