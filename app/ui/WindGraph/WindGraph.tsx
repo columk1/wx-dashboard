@@ -39,7 +39,7 @@ const WindGraph = ({ data }: { data: WindGraphData }) => {
     </div>
   ) : (
     <div className={styles.wrapper}>
-      <div ref={containerRef} className={styles.container}>
+      <div ref={containerRef} className={styles.container} >
         <LineChart
           id='wind-graph'
           width={1600}
@@ -47,6 +47,7 @@ const WindGraph = ({ data }: { data: WindGraphData }) => {
           data={data}
           // data={data.wind_avg_data}
           margin={{ top: 0, right: -10, bottom: 30, left: 20 }}
+          className={styles.lineChart}
         >
           <CartesianGrid strokeDasharray='3 3' stroke='currentColor' opacity={0.3} />
           {/* Legend which was generated and then customized and placed outside of the chart */}
