@@ -128,7 +128,7 @@ const WindGraph = ({ data }: { data: WindGraphData }) => {
             label={{
               value: 'km/h',
               angle: -90,
-              position: 'outsideLeft',
+              position: 'outside',
               dx: 5,
               style: { fontSize: '0.8rem' },
             }}
