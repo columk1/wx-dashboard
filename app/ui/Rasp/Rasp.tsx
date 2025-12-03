@@ -24,9 +24,12 @@ const Rasp = () => {
   const [siteIndex, setSiteIndex] = useState(0)
   const [periodIndex, setPeriodIndex] = useState(0)
   const [imageError, setImageError] = useState(false)
-  // const [src, setSrc] = useState<string | null>(null)
+  const [nowPT, setNowPT] = useState(getPacificTimestamp())
 
-  const nowPT = getPacificTimestamp()
+  // Set the time on the client to prevent pre-rendering on the server (otherwise you end up with the date from build)
+  useEffect(() => {
+    setNowPT(getPacificTimestamp())
+  }, [])
 
   const periods = useMemo(() => [
     ['Today', `oneDay/${format(nowPT, 'yyyy-MM-dd')}`],
@@ -56,12 +59,6 @@ const Rasp = () => {
       setSiteIndex(newSiteIndex)
     }
   }
-
-  // Set the src on the client to prevent pre-rendering on the server (for caching/timing consistency)
-  // useEffect(() => {
-  //   setSrc(`https://canadarasp.com/windgrams-data/${period}/hrdpswindgram${site}.png`)
-  // }, [site, period])
-
 
   // Preload next site and next period of to pre-empt RASP navigation
   useEffect(() => {
