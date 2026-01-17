@@ -49,10 +49,12 @@ const Rasp = () => {
     const newSrc = `https://canadarasp.com/windgrams-data/${newPeriod}/hrdpswindgram${newSite}.png`
     const img = new Image()
     img.src = newSrc
-    img.onload = () => {
-      setPeriodIndex(newPeriodIndex)
-      setSiteIndex(newSiteIndex)
-    }
+    // img.onload = () => {
+    //   setPeriodIndex(newPeriodIndex)
+    //   setSiteIndex(newSiteIndex)
+    // }
+    setPeriodIndex(newPeriodIndex)
+    setSiteIndex(newSiteIndex)
   }
 
   // Set the time on the client to prevent pre-rendering on the server (otherwise you end up with the date from build)
