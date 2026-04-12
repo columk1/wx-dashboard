@@ -3,7 +3,7 @@ import WXCard from '@/app/ui/WXCard/WXCard'
 import styles from './Wind.module.css'
 import WindGraph from '@/app/ui/WindGraph/WindGraph'
 import { useEffect } from 'react'
-import { WXCardData, WindGraphData } from '@/app/lib/definitions'
+import { SpitWindForecastData, WXCardData, WindGraphData } from '@/app/lib/definitions'
 import { getWindDirectionText } from '@/app/lib/utils/wind'
 import useSWR from 'swr'
 
@@ -35,6 +35,12 @@ const Wind = () => {
     refreshInterval: SPIT_INTERVAL,
   })
 
+  const { data: spitForecastData } = useSWR<SpitWindForecastData>('/api/spit/forecast', fetcher, {
+    revalidateIfStale: false,
+    revalidateOnFocus: false,
+    revalidateOnReconnect: false,
+  })
+
   // Gondola data
   const { data: gondolaData } = useSWR<WXCardData>('/api/gondola', fetcher, {
     refreshInterval: GONDOLA_INTERVAL,
@@ -61,7 +67,7 @@ const Wind = () => {
           data={gondolaData}
         />
       </div>
-      <WindGraph data={spitData} />
+      <WindGraph data={spitData} forecastData={spitForecastData} />
     </>
   )
 }

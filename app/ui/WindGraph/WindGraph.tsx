@@ -1,26 +1,68 @@
 'use client'
 
 import styles from './WindGraph.module.css'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts'
 import Legend from '@/app/ui/Legend'
 import CustomXAxisTick from '@/app/ui/CustomXAxisTick'
 import Spinner from '@/app/ui/Spinner/Spinner'
-import type { WindGraphData } from '@/app/lib/definitions'
+import type { SpitWindForecastData, WindGraphChartPoint, WindGraphData } from '@/app/lib/definitions'
 
-const WindGraph = ({ data }: { data: WindGraphData }) => {
+const mergeChartData = (
+  observedData: WindGraphData,
+  forecastData: SpitWindForecastData
+): WindGraphChartPoint[] => {
+  const chartData: WindGraphChartPoint[] = [...(observedData ?? [])]
+
+  forecastData?.forEach((point) => {
+    const existingPoint = chartData.find((chartPoint) => chartPoint.time === point.time)
+
+    if (existingPoint) {
+      existingPoint.predicted = point.predicted
+      existingPoint.predictedDir = point.dir
+      return
+    }
+
+    chartData.push({
+      time: point.time,
+      predicted: point.predicted,
+      predictedDir: point.dir,
+    })
+  })
+
+  return chartData.sort((left, right) => left.time - right.time)
+}
+
+const WindGraph = ({
+  data,
+  forecastData,
+}: {
+  data: WindGraphData
+  forecastData?: SpitWindForecastData
+}) => {
   const containerRef = useRef<HTMLDivElement>(null)
+  const chartData = mergeChartData(data, forecastData)
 
   useEffect(() => {
     containerRef.current && (containerRef.current.scrollLeft = containerRef?.current?.scrollWidth)
-  }, [data])
+  }, [chartData])
 
-  const maxGust = data?.reduce((acc, curr) => Math.max(acc, curr.gust), -Infinity) || 40
+  const maxWindValue = Math.max(
+    40,
+    ...chartData.map((point) =>
+      Math.max(point.avg ?? 0, point.gust ?? 0, point.lull ?? 0, point.predicted ?? 0)
+    )
+  )
+
+  const defaultTooltipIndex = Math.max(
+    0,
+    chartData.findLastIndex((point) => point.avg != null)
+  )
 
   const getTimeTicks = useCallback(() => {
     const ONE_HOUR = 3600000
-    const startTime = data?.[0]?.time || 0
-    const endTime = data?.[data.length - 1]?.time || 0
+    const startTime = chartData[0]?.time || 0
+    const endTime = chartData[chartData.length - 1]?.time || 0
 
     // Round the startTime up to the nearest whole hour
     const firstHour = Math.ceil(startTime / ONE_HOUR) * ONE_HOUR
@@ -31,7 +73,7 @@ const WindGraph = ({ data }: { data: WindGraphData }) => {
     // Generate an array of timestamps for each hour
     // return Array.from(Array(hourlyTicks).keys()).map((i) => firstHour + i * ONE_HOUR)
     return Array.from({ length: hourlyTicks }, (_, i) => firstHour + i * ONE_HOUR)
-  }, [data])
+  }, [chartData])
 
   return !data || data.length === 0 ? (
     <div className={styles.fallback}>
@@ -39,12 +81,12 @@ const WindGraph = ({ data }: { data: WindGraphData }) => {
     </div>
   ) : (
     <div className={styles.wrapper}>
-      <div ref={containerRef} className={styles.container} >
+      <div ref={containerRef} className={styles.container}>
         <LineChart
           id='wind-graph'
           width={1600}
           height={300}
-          data={data}
+          data={chartData}
           // data={data.wind_avg_data}
           margin={{ top: 0, right: -10, bottom: 30, left: 20 }}
           className={styles.lineChart}
@@ -65,7 +107,7 @@ const WindGraph = ({ data }: { data: WindGraphData }) => {
           /> */}
           <Tooltip
             // offset={50}
-            defaultIndex={data.length - 1}
+            defaultIndex={defaultTooltipIndex}
             formatter={(value: number, name: string) => [
               value + 'km/h',
               name[0].toUpperCase() + name.slice(1),
@@ -87,8 +129,10 @@ const WindGraph = ({ data }: { data: WindGraphData }) => {
                   return 0
                 case 'avg':
                   return 1
-                default:
+                case 'predicted':
                   return 2
+                default:
+                  return 3
               }
             }}
           />
@@ -110,19 +154,25 @@ const WindGraph = ({ data }: { data: WindGraphData }) => {
           {/* Wind Direction X-Axis */}
           <XAxis
             xAxisId={1}
-            dataKey='dir'
-            tickFormatter={(time) => ''}
-            tick={<CustomXAxisTick directionArray={data} />}
             axisLine={false}
+            dataKey='time'
+            domain={['auto', 'auto']}
+            scale='time'
+            ticks={chartData
+              .filter((point) => point.dir != null || point.predictedDir != null)
+              .map((point) => point.time)}
+            tickFormatter={(time) => ''}
+            tick={<CustomXAxisTick directionArray={chartData} />}
             tickLine={false}
             mirror={true}
             tickMargin={-8}
+            type='number'
           />
           <YAxis
             domain={[0, (dataMax: number) => Math.ceil(dataMax / 10) * 10]}
             padding={{ top: 0, bottom: 0 }}
             ticks={Array.from(
-              { length: Math.ceil((maxGust + 10) / 20) }, // count multiples of 20
+              { length: Math.ceil((maxWindValue + 10) / 20) }, // count multiples of 20
               (_, index) => index * 20 // multiply each index by 20
             )}
             label={{
@@ -143,6 +193,7 @@ const WindGraph = ({ data }: { data: WindGraphData }) => {
             dot={false}
             activeDot={{ strokeWidth: 1, r: 4 }}
             xAxisId={0}
+            connectNulls={true}
             isAnimationActive={false}
           />
           <Line
@@ -159,6 +210,16 @@ const WindGraph = ({ data }: { data: WindGraphData }) => {
             dataKey='lull'
             stroke='#0f6b8a'
             dot={false}
+            activeDot={{ strokeWidth: 1, r: 4 }}
+            connectNulls={true}
+            isAnimationActive={false}
+          />
+          <Line
+            type='monotone'
+            dataKey='predicted'
+            stroke='rgb(var(--wind-predicted-rgb))'
+            strokeDasharray='5 4'
+            dot={{ r: 2, strokeWidth: 0, fill: 'rgb(var(--wind-predicted-rgb))' }}
             activeDot={{ strokeWidth: 1, r: 4 }}
             connectNulls={true}
             isAnimationActive={false}

@@ -24,6 +24,7 @@
   --card-rgb: 180, 185, 188;
   --card-border-rgb: 131, 134, 135;
   --border-rgb: 213, 217, 218;
+  --wind-predicted-rgb: 114, 127, 138;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -46,6 +47,7 @@
     --card-border-rgb: 200, 200, 200;
     --border-rgb: 40, 40, 40;
     --webkit-outline-rgb: 153, 200, 255;
+    --wind-predicted-rgb: 152, 164, 175;
   }
 }
 

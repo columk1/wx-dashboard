@@ -112,6 +112,35 @@ const Legend = () => {
             Direction
           </span>
         </li>
+        <li
+          className='recharts-legend-item'
+          style={{ display: 'inline-block', marginRight: '10px' }}
+        >
+          <svg
+            className='recharts-surface'
+            width='8'
+            height='8'
+            viewBox='0 0 32 32'
+            style={{ display: 'inline-block', verticalAlign: 'middle', marginRight: '4px' }}
+          >
+            <title></title>
+            <desc></desc>
+            <path
+              fill='rgb(var(--wind-predicted-rgb))'
+              cx='16'
+              cy='16'
+              className='recharts-symbols'
+              transform='translate(16, 16)'
+              d='M16,0A16,16,0,1,1,-16,0A16,16,0,1,1,16,0'
+            ></path>
+          </svg>
+          <span
+            className='recharts-legend-item-text'
+            style={{ color: 'rgb(var(--wind-predicted-rgb))' }}
+          >
+            Predicted
+          </span>
+        </li>
       </ul>
     </div>
   )
