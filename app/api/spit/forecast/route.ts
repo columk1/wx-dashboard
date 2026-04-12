@@ -1,9 +1,12 @@
 import { NextResponse } from 'next/server'
+import { unstable_cache } from 'next/cache'
 import testData from '@/app/lib/data/testData.json'
 import type {
   SpitWindForecastApiResponse,
   SpitWindForecastData,
 } from '@/app/lib/definitions'
+
+const FORECAST_CACHE_TTL_SECONDS = 60 * 60
 
 const normalizeForecastTime = (value: string) =>
   value.replace(' ', 'T').replace(/([+-]\d{2})(\d{2})$/, '$1:$2')
@@ -72,8 +75,13 @@ const fetchForecast = async (): Promise<SpitWindForecastApiResponse | null> => {
   }
 }
 
+const getCachedForecast = unstable_cache(fetchForecast, ['spit-forecast-data-store'], {
+  tags: ['spit-forecast'],
+  revalidate: FORECAST_CACHE_TTL_SECONDS,
+})
+
 export async function GET() {
-  const forecast = await fetchForecast()
+  const forecast = await getCachedForecast()
 
   if (!forecast) {
     return NextResponse.json({ error: 'Failed to fetch Spit forecast data' }, { status: 500 })
