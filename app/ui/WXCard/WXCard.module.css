@@ -47,8 +47,10 @@
 }
 
 .directionText {
+	flex-shrink: 0;
 	font-size: 2.5rem;
 	font-weight: 400;
+	min-width: 25px;
 }
 
 .windSpeedContainer {

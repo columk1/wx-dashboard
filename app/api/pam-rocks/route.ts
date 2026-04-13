@@ -72,7 +72,7 @@ const parseWindCell = (windCell: string): WXCardData => {
 	if (normalizedWindCell === 'CALM') {
 		return {
 			windDirection: 0,
-			windDirectionText: 'CALM',
+			windDirectionText: '',
 			windSpeed: 0,
 		}
 	}
