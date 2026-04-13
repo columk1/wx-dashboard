@@ -128,9 +128,11 @@ const WindGraph = ({
 					<Tooltip
 						// offset={50}
 						defaultIndex={defaultTooltipIndex}
-						formatter={(value: number, name: string) => [
-							`${value}km/h`,
-							name[0].toUpperCase() + name.slice(1),
+						formatter={(value, name) => [
+							`${value ?? 0}km/h`,
+							typeof name === 'string'
+								? name[0].toUpperCase() + name.slice(1)
+								: String(name),
 						]}
 						labelFormatter={(label) =>
 							new Date(label).toLocaleTimeString('en-US', {
