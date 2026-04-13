@@ -11,16 +11,19 @@ const FORECAST_CACHE_TTL_SECONDS = 60 * 60
 const normalizeForecastTime = (value: string) =>
 	value.replace(' ', 'T').replace(/([+-]\d{2})(\d{2})$/, '$1:$2')
 
-const parseJsonp = <T>(responseText: string): T | null => {
+const parseJsonp = <T>(responseText: string): T => {
 	const match = responseText.match(/^[^(]+\(([\s\S]*)\)\s*$/)
 
-	if (!match) return null
+	if (!match) {
+		throw new Error('Invalid JSONP response from Spit forecast API')
+	}
 
 	try {
 		return JSON.parse(match[1]) as T
 	} catch (error) {
-		console.log(error)
-		return null
+		throw new Error('Failed to parse Spit forecast JSONP response', {
+			cause: error,
+		})
 	}
 }
 
@@ -44,7 +47,7 @@ const buildForecastSeries = (
 		dir: point.wind_dir,
 	}))
 
-const fetchForecast = async (): Promise<SpitWindForecastApiResponse | null> => {
+const fetchForecast = async (): Promise<SpitWindForecastApiResponse> => {
 	if (process.env.NODE_ENV === 'development') {
 		return testData.spit_wind_forecast as SpitWindForecastApiResponse
 	}
@@ -52,29 +55,24 @@ const fetchForecast = async (): Promise<SpitWindForecastApiResponse | null> => {
 	const endpoint = process.env.SPIT_WIND_FORECAST_API
 
 	if (!endpoint) {
-		console.log('Missing SPIT_WIND_FORECAST_API')
-		return null
+		throw new Error('Missing SPIT_WIND_FORECAST_API')
 	}
 
-	try {
-		const response = await fetch(buildForecastRequestUrl(endpoint), {
-			cache: 'no-store',
-			headers: {
-				accept: '*/*',
-			},
-		})
+	const response = await fetch(buildForecastRequestUrl(endpoint), {
+		cache: 'no-store',
+		headers: {
+			accept: '*/*',
+		},
+	})
 
-		if (!response.ok) {
-			console.log(response.statusText)
-			return null
-		}
-
-		const responseText = await response.text()
-		return parseJsonp<SpitWindForecastApiResponse>(responseText)
-	} catch (error) {
-		console.log(error)
-		return null
+	if (!response.ok) {
+		throw new Error(
+			`Spit forecast request failed with ${response.status} ${response.statusText}`,
+		)
 	}
+
+	const responseText = await response.text()
+	return parseJsonp<SpitWindForecastApiResponse>(responseText)
 }
 
 const getCachedForecast = unstable_cache(
@@ -87,14 +85,14 @@ const getCachedForecast = unstable_cache(
 )
 
 export async function GET() {
-	const forecast = await getCachedForecast()
-
-	if (!forecast) {
+	try {
+		const forecast = await getCachedForecast()
+		return NextResponse.json(buildForecastSeries(forecast))
+	} catch (error) {
+		console.log('Spit forecast route failed', error)
 		return NextResponse.json(
 			{ error: 'Failed to fetch Spit forecast data' },
 			{ status: 500 },
 		)
 	}
-
-	return NextResponse.json(buildForecastSeries(forecast))
 }

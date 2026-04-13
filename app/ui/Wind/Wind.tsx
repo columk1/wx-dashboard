@@ -28,7 +28,15 @@ const getSpitCardData = (spitData: WindGraphData): WXCardData => {
 	}
 }
 
-const fetcher = (url: string) => fetch(url).then((res) => res.json())
+const fetcher = async <T,>(url: string): Promise<T | null> => {
+	const res = await fetch(url)
+
+	if (!res.ok) {
+		return null
+	}
+
+	return res.json()
+}
 
 const Wind = () => {
 	// const lastSpitUpdate = spitData?.[spitData.length - 1]?.time

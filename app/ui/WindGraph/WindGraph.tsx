@@ -17,8 +17,9 @@ const mergeChartData = (
 	forecastData: SpitWindForecastData,
 ): WindGraphChartPoint[] => {
 	const chartData: WindGraphChartPoint[] = [...(observedData ?? [])]
+	const safeForecastData = Array.isArray(forecastData) ? forecastData : []
 
-	forecastData?.forEach((point) => {
+	safeForecastData.forEach((point) => {
 		const existingPoint = chartData.find(
 			(chartPoint) => chartPoint.time === point.time,
 		)
