@@ -1,203 +1,209 @@
 .main {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: center;
-  gap: 1rem;
-  padding: 2rem 6rem;
-  min-height: 100vh;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	align-items: center;
+	gap: 1rem;
+	padding: 2rem 6rem;
+	min-height: 100vh;
 }
 
 .section,
 .header {
-  display: inherit;
-  justify-content: inherit;
-  align-items: inherit;
-  max-width: var(--max-width);
-  width: 100%;
+	display: inherit;
+	justify-content: inherit;
+	align-items: inherit;
+	max-width: var(--max-width);
+	width: 100%;
 }
 
 .header {
-  font-size: 0.85rem;
-  z-index: 2;
-  font-family: var(--font-mono);
+	font-size: 0.85rem;
+	z-index: 2;
+	font-family: var(--font-mono);
 }
 
 .header h1 {
-  position: relative;
-  margin: 0 auto;
-  padding: 1rem;
-  display: inline;
-  font-size: 0.85rem;
-  font-weight: 400;
-  background-color: rgba(var(--callout-rgb), 0.5);
-  border: 1px solid rgba(var(--callout-border-rgb), 0.3);
-  border-radius: var(--border-radius);
+	position: relative;
+	margin: 0 auto;
+	padding: 1rem;
+	display: inline;
+	font-size: 0.85rem;
+	font-weight: 400;
+	background-color: rgba(var(--callout-rgb), 0.5);
+	border: 1px solid rgba(var(--callout-border-rgb), 0.3);
+	border-radius: var(--border-radius);
 }
 
 .code {
-  font-weight: 700;
-  font-family: var(--font-mono);
+	font-weight: 700;
+	font-family: var(--font-mono);
 }
 
 .grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  max-width: 100%;
-  width: var(--max-width);
-  margin: 1rem;
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+	max-width: 100%;
+	width: var(--max-width);
+	margin: 1rem;
 }
 
 .card {
-  padding: 0.5rem 0.75rem;
-  border-radius: var(--border-radius);
-  background: rgba(var(--card-rgb), 0);
-  border: 1px solid rgba(var(--card-border-rgb), 0);
-  transition: background 200ms, border 200ms;
+	padding: 0.5rem 0.75rem;
+	border-radius: var(--border-radius);
+	background: rgba(var(--card-rgb), 0);
+	border: 1px solid rgba(var(--card-border-rgb), 0);
+	transition:
+		background 200ms,
+		border 200ms;
 }
 
 .card span {
-  display: inline-block;
-  transition: transform 200ms;
+	display: inline-block;
+	transition: transform 200ms;
 }
 
 .card h4 {
-  font-size: 1.2rem;
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-  text-wrap: balance;
+	font-size: 1.2rem;
+	font-weight: 600;
+	margin-bottom: 0.5rem;
+	text-wrap: balance;
 }
 
 .card p {
-  margin: 0;
-  opacity: 0.6;
-  font-size: 0.9rem;
-  line-height: 1.5;
-  max-width: 30ch;
-  text-wrap: balance;
+	margin: 0;
+	opacity: 0.6;
+	font-size: 0.9rem;
+	line-height: 1.5;
+	max-width: 30ch;
+	text-wrap: balance;
 }
 
 .center {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: relative;
-  margin-top: 2rem;
-  padding: 2rem 0;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	position: relative;
+	margin-top: 2rem;
+	padding: 2rem 0;
 }
 
 .center::before {
-  background: var(--secondary-glow);
-  border-radius: 50%;
-  width: 240px;
-  height: 120px;
-  margin-left: -400px;
+	background: var(--secondary-glow);
+	border-radius: 50%;
+	width: 240px;
+	height: 120px;
+	margin-left: -400px;
 }
 
 .center::after {
-  background: var(--primary-glow);
-  width: 200px;
-  height: 140px;
-  z-index: -1;
+	background: var(--primary-glow);
+	width: 200px;
+	height: 140px;
+	z-index: -1;
 }
 
 .center::before,
 .center::after {
-  content: '';
-  left: 50%;
-  position: absolute;
-  filter: blur(35px);
-  transform: translateZ(0);
+	content: "";
+	left: 50%;
+	position: absolute;
+	filter: blur(35px);
+	transform: translateZ(0);
 }
 
 /* Enable hover only on non-touch devices */
 @media (hover: hover) and (pointer: fine) {
-  .card:hover {
-    background: rgba(var(--card-rgb), 0.1);
-    border: 1px solid rgba(var(--card-border-rgb), 0.15);
-  }
+	.card:hover {
+		background: rgba(var(--card-rgb), 0.1);
+		border: 1px solid rgba(var(--card-border-rgb), 0.15);
+	}
 
-  .card:hover span {
-    transform: translateX(4px);
-  }
+	.card:hover span {
+		transform: translateX(4px);
+	}
 }
 
 @media (prefers-reduced-motion) {
-  .card:hover span {
-    transform: none;
-  }
+	.card:hover span {
+		transform: none;
+	}
 }
 
 /* Mobile */
 @media (max-width: 700px) {
-  .main {
-    margin-top: 1rem;
-    padding: 2rem 1rem;
-  }
+	.main {
+		margin-top: 1rem;
+		padding: 2rem 1rem;
+	}
 
-  .grid {
-    text-align: center;
-  }
+	.grid {
+		text-align: center;
+	}
 
-  .card {
-    padding: 0.5rem 0.75rem;
-  }
+	.card {
+		padding: 0.5rem 0.75rem;
+	}
 
-  .card h4 {
-    font-size: 1rem;
-    margin-bottom: 0.5rem;
-  }
+	.card h4 {
+		font-size: 1rem;
+		margin-bottom: 0.5rem;
+	}
 
-  .card p {
-    font-size: 0.8rem;
-  }
+	.card p {
+		font-size: 0.8rem;
+	}
 
-  .center {
-    padding: 8rem 0 6rem;
-  }
+	.center {
+		padding: 8rem 0 6rem;
+	}
 
-  .center::before {
-    transform: none;
-    height: 300px;
-  }
+	.center::before {
+		transform: none;
+		height: 300px;
+	}
 
-  .header {
-    font-size: 0.8rem;
-  }
+	.header {
+		font-size: 0.8rem;
+	}
 
-  .header h1,
-  .header div {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-  }
+	.header h1,
+	.header div {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		width: 100%;
+	}
 
-  .header h1 {
-    position: fixed;
-    align-items: center;
-    inset: 0 0 auto;
-    padding: 1.25rem 1rem 1rem;
-    border-radius: 0;
-    border: none;
-    border-bottom: 1px solid rgba(var(--callout-border-rgb), 0.25);
-    background: linear-gradient(
-      to bottom,
-      rgba(var(--background-start-rgb), 1),
-      rgba(var(--callout-rgb), 0.5)
-    );
-    background-clip: padding-box;
-    backdrop-filter: blur(24px);
-  }
+	.header h1 {
+		position: fixed;
+		align-items: center;
+		inset: 0 0 auto;
+		padding: 1.25rem 1rem 1rem;
+		border-radius: 0;
+		border: none;
+		border-bottom: 1px solid rgba(var(--callout-border-rgb), 0.25);
+		background: linear-gradient(
+			to bottom,
+			rgba(var(--background-start-rgb), 1),
+			rgba(var(--callout-rgb), 0.5)
+		);
+		background-clip: padding-box;
+		backdrop-filter: blur(24px);
+	}
 
-  .header div {
-    pointer-events: none;
-    inset: auto 0 0;
-    padding: 2rem;
-    height: 200px;
-    background: linear-gradient(to bottom, transparent 0%, rgb(var(--background-end-rgb)) 40%);
-    z-index: 1;
-  }
+	.header div {
+		pointer-events: none;
+		inset: auto 0 0;
+		padding: 2rem;
+		height: 200px;
+		background: linear-gradient(
+			to bottom,
+			transparent 0%,
+			rgb(var(--background-end-rgb)) 40%
+		);
+		z-index: 1;
+	}
 }
 
 /* Tablet and Smaller Desktop */

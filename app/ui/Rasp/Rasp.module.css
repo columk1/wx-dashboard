@@ -1,149 +1,149 @@
 .raspWrapper {
-  overflow: hidden;
-  border-radius: 8px;
-  width: min(450px, 100%);
-  max-width: 100%;
-  margin: 1rem 0;
+	overflow: hidden;
+	border-radius: 8px;
+	width: min(450px, 100%);
+	max-width: 100%;
+	margin: 1rem 0;
 }
 
 .imgShared {
-  width: 100%;
-  height: auto;
-  background: url('/windgram-placeholder.jpg');
-  background-size: contain;
+	width: 100%;
+	height: auto;
+	background: url("/windgram-placeholder.jpg");
+	background-size: contain;
 }
 
 .raspImg {
-  composes: imgShared;
-  display: block;
-  &:hover {
-    outline: 1px solid rgb(var(--card-border-rgb), 0.7);
-    outline-offset: -1px;
-  }
+	composes: imgShared;
+	display: block;
+	&:hover {
+		outline: 1px solid rgb(var(--card-border-rgb), 0.7);
+		outline-offset: -1px;
+	}
 }
 
 .error {
-  composes: imgShared;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 450px;
-  font-size: 1.5rem;
-  font-weight: bold;
-  background-color: rgb(var(--callout-rgb));
+	composes: imgShared;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 450px;
+	font-size: 1.5rem;
+	font-weight: bold;
+	background-color: rgb(var(--callout-rgb));
 }
 
 .btnContainer {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
 }
 
 .periodBtns {
-  max-width: 100%;
-  display: flex;
+	max-width: 100%;
+	display: flex;
 }
 
 .periodBtn {
-  width: 100%;
-  border: 1px solid rgb(var(--border-rgb));
-  margin-left: -1px;
-  padding: 0.5rem;
-  font-size: 0.7rem;
-  background-color: rgba(var(--callout-rgb), 0.4);
-  cursor: pointer;
-  transition: background-color, border-color;
-  transition-duration: 200ms;
-  &:first-child {
-    border-radius: 8px 0 0 0;
-  }
-  &:last-child {
-    border-radius: 0 8px 0 0;
-  }
+	width: 100%;
+	border: 1px solid rgb(var(--border-rgb));
+	margin-left: -1px;
+	padding: 0.5rem;
+	font-size: 0.7rem;
+	background-color: rgba(var(--callout-rgb), 0.4);
+	cursor: pointer;
+	transition: background-color, border-color;
+	transition-duration: 200ms;
+	&:first-child {
+		border-radius: 8px 0 0 0;
+	}
+	&:last-child {
+		border-radius: 0 8px 0 0;
+	}
 }
 
 .periodBtn:first-child {
-  margin-left: 0;
+	margin-left: 0;
 }
 
 .periodBtn:hover {
-  background-color: rgba(var(--card-rgb), 0.3);
-  border-color: rgb(var(--card-rgb));
-  z-index: 2; /* Hovered is highest priority */
+	background-color: rgba(var(--card-rgb), 0.3);
+	border-color: rgb(var(--card-rgb));
+	z-index: 2; /* Hovered is highest priority */
 }
 
 .periodBtn.active {
-  background-color: rgba(var(--card-rgb), 0.3);
-  border-color: rgb(var(--card-rgb));
-  z-index: 1; /* Active is above default, but below hover */
+	background-color: rgba(var(--card-rgb), 0.3);
+	border-color: rgb(var(--card-rgb));
+	z-index: 1; /* Active is above default, but below hover */
 }
 
 .periodBtn:active {
-  background-color: rgba(var(--card-rgb), 0.3);
+	background-color: rgba(var(--card-rgb), 0.3);
 }
 
 .raspBtns {
-  max-width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
+	max-width: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex-wrap: wrap;
 }
 
 .raspBtn {
-  flex: 1 1 20%;
-  width: 100%;
-  padding: 1rem 0.9rem;
-  margin-top: -1px;
-  margin-left: -1px;
-  position: relative;
-  font-size: 0.65rem;
-  border: 1px solid rgb(var(--border-rgb));
-  background-color: rgba(var(--callout-rgb), 0.4);
-  transition: background-color, border;
-  transition-duration: 200ms;
+	flex: 1 1 20%;
+	width: 100%;
+	padding: 1rem 0.9rem;
+	margin-top: -1px;
+	margin-left: -1px;
+	position: relative;
+	font-size: 0.65rem;
+	border: 1px solid rgb(var(--border-rgb));
+	background-color: rgba(var(--callout-rgb), 0.4);
+	transition: background-color, border;
+	transition-duration: 200ms;
 
-  /* --- Edge and Corner Corrections --- */
+	/* --- Edge and Corner Corrections --- */
 
-  /* Correct margin for the first column */
-  &:nth-child(5n + 1) {
-    margin-left: 0;
-  }
+	/* Correct margin for the first column */
+	&:nth-child(5n + 1) {
+		margin-left: 0;
+	}
 
-  /* Correct the margin for the first row of buttons (1st through 5th) */
-  &:nth-child(-n + 5) {
-    margin-top: 0;
-  }
+	/* Correct the margin for the first row of buttons (1st through 5th) */
+	&:nth-child(-n + 5) {
+		margin-top: 0;
+	}
 
-  &:nth-of-type(11) {
-    border-radius: 0 0 0 8px;
-  }
-  &:last-of-type {
-    border-radius: 0 0 8px 0;
-  }
+	&:nth-of-type(11) {
+		border-radius: 0 0 0 8px;
+	}
+	&:last-of-type {
+		border-radius: 0 0 8px 0;
+	}
 
-  /* On hover, bring the button to the very top and change its border color */
-  &:hover {
-    background-color: rgba(var(--card-rgb), 0.4);
-    border-color: rgb(var(--card-rgb));
-    z-index: 2; /* Hover state has the highest priority */
-  }
+	/* On hover, bring the button to the very top and change its border color */
+	&:hover {
+		background-color: rgba(var(--card-rgb), 0.4);
+		border-color: rgb(var(--card-rgb));
+		z-index: 2; /* Hover state has the highest priority */
+	}
 
-  /* The .active class sits above default buttons but below a hovered one */
-  &.active {
-    background-color: rgba(var(--card-rgb), 0.3);
-    border-color: rgb(var(--card-rgb));
-    z-index: 1;
-  }
+	/* The .active class sits above default buttons but below a hovered one */
+	&.active {
+		background-color: rgba(var(--card-rgb), 0.3);
+		border-color: rgb(var(--card-rgb));
+		z-index: 1;
+	}
 
-  &:active {
-    background-color: rgba(var(--card-rgb), 0.3);
-  }
+	&:active {
+		background-color: rgba(var(--card-rgb), 0.3);
+	}
 }
 
 @media (max-width: 500px) {
-  .raspBtn {
-    font-size: calc(0.5rem + 0.5vw);
-    padding: 1rem 0.25rem;
-  }
+	.raspBtn {
+		font-size: calc(0.5rem + 0.5vw);
+		padding: 1rem 0.25rem;
+	}
 }

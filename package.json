@@ -1,41 +1,41 @@
 {
-  "name": "wx-dashboard",
-  "version": "0.1.0",
-  "private": true,
-  "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
-  },
-  "dependencies": {
-    "@vercel/analytics": "^1.5.0",
-    "date-fns": "^3.6.0",
-    "date-fns-tz": "^3.2.0",
-    "next": "^16.0.7",
-    "react": "^19.2.1",
-    "react-dom": "^19.2.1",
-    "recharts": "~3.5.1",
-    "swr": "^2.3.6"
-  },
-  "devDependencies": {
-    "@types/node": "^20.19.25",
-    "@types/react": "19.2.6",
-    "@types/react-dom": "19.2.3",
-    "babel-plugin-react-compiler": "^1.0.0",
-    "eslint": "^8.57.1",
-    "eslint-config-next": "15.2.4",
-    "postcss-preset-env": "^9.6.0",
-    "typescript": "^5.9.3"
-  },
-  "pnpm": {
-    "overrides": {
-      "@types/react": "19.2.6",
-      "@types/react-dom": "19.2.3"
-    },
-    "onlyBuiltDependencies": [
-      "sharp",
-      "unrs-resolver"
-    ]
-  }
+	"name": "wx-dashboard",
+	"version": "0.1.0",
+	"private": true,
+	"scripts": {
+		"dev": "next dev",
+		"build": "next build",
+		"start": "next start",
+		"check": "biome check --write",
+		"typecheck": "tsc --noEmit"
+	},
+	"dependencies": {
+		"@vercel/analytics": "^1.5.0",
+		"date-fns": "^3.6.0",
+		"date-fns-tz": "^3.2.0",
+		"next": "^16.0.7",
+		"react": "^19.2.1",
+		"react-dom": "^19.2.1",
+		"recharts": "~3.5.1",
+		"swr": "^2.3.6"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "2.4.11",
+		"@types/node": "^20.19.25",
+		"@types/react": "19.2.6",
+		"@types/react-dom": "19.2.3",
+		"babel-plugin-react-compiler": "^1.0.0",
+		"postcss-preset-env": "^9.6.0",
+		"typescript": "^5.9.3"
+	},
+	"pnpm": {
+		"overrides": {
+			"@types/react": "19.2.6",
+			"@types/react-dom": "19.2.3"
+		},
+		"onlyBuiltDependencies": [
+			"sharp",
+			"unrs-resolver"
+		]
+	}
 }

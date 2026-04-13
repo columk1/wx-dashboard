@@ -1,17 +1,17 @@
 .wxCards {
-  width: 100%;
-  max-width: 450px;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.25rem;
+	width: 100%;
+	max-width: 450px;
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 0.25rem;
 }
 
 .wxCards > :first-child {
-  grid-column: span 2;
+	grid-column: span 2;
 }
 
 @media (max-width: 480px) {
-  .wxCards > * {
-    grid-column: span 2;
-  }
+	.wxCards > * {
+		grid-column: span 2;
+	}
 }

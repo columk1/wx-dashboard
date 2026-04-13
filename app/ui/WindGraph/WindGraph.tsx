@@ -1,99 +1,119 @@
 'use client'
 
-import styles from './WindGraph.module.css'
 import { useCallback, useEffect, useRef } from 'react'
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts'
-import Legend from '@/app/ui/Legend'
+import { CartesianGrid, Line, LineChart, Tooltip, XAxis, YAxis } from 'recharts'
+import type {
+	SpitWindForecastData,
+	WindGraphChartPoint,
+	WindGraphData,
+} from '@/app/lib/definitions'
 import CustomXAxisTick from '@/app/ui/CustomXAxisTick'
+import Legend from '@/app/ui/Legend'
 import Spinner from '@/app/ui/Spinner/Spinner'
-import type { SpitWindForecastData, WindGraphChartPoint, WindGraphData } from '@/app/lib/definitions'
+import styles from './WindGraph.module.css'
 
 const mergeChartData = (
-  observedData: WindGraphData,
-  forecastData: SpitWindForecastData
+	observedData: WindGraphData,
+	forecastData: SpitWindForecastData,
 ): WindGraphChartPoint[] => {
-  const chartData: WindGraphChartPoint[] = [...(observedData ?? [])]
+	const chartData: WindGraphChartPoint[] = [...(observedData ?? [])]
 
-  forecastData?.forEach((point) => {
-    const existingPoint = chartData.find((chartPoint) => chartPoint.time === point.time)
+	forecastData?.forEach((point) => {
+		const existingPoint = chartData.find(
+			(chartPoint) => chartPoint.time === point.time,
+		)
 
-    if (existingPoint) {
-      existingPoint.predicted = point.predicted
-      existingPoint.predictedDir = point.dir
-      return
-    }
+		if (existingPoint) {
+			existingPoint.predicted = point.predicted
+			existingPoint.predictedDir = point.dir
+			return
+		}
 
-    chartData.push({
-      time: point.time,
-      predicted: point.predicted,
-      predictedDir: point.dir,
-    })
-  })
+		chartData.push({
+			time: point.time,
+			predicted: point.predicted,
+			predictedDir: point.dir,
+		})
+	})
 
-  return chartData.sort((left, right) => left.time - right.time)
+	return chartData.sort((left, right) => left.time - right.time)
 }
 
 const WindGraph = ({
-  data,
-  forecastData,
+	data,
+	forecastData,
 }: {
-  data: WindGraphData
-  forecastData?: SpitWindForecastData
+	data: WindGraphData
+	forecastData?: SpitWindForecastData
 }) => {
-  const containerRef = useRef<HTMLDivElement>(null)
-  const chartData = mergeChartData(data, forecastData)
+	const containerRef = useRef<HTMLDivElement>(null)
+	const chartData = mergeChartData(data, forecastData)
 
-  useEffect(() => {
-    containerRef.current && (containerRef.current.scrollLeft = containerRef?.current?.scrollWidth)
-  }, [chartData])
+	useEffect(() => {
+		if (containerRef.current && chartData.length > 0) {
+			containerRef.current.scrollLeft = containerRef.current.scrollWidth
+		}
+	}, [chartData])
 
-  const maxWindValue = Math.max(
-    40,
-    ...chartData.map((point) =>
-      Math.max(point.avg ?? 0, point.gust ?? 0, point.lull ?? 0, point.predicted ?? 0)
-    )
-  )
+	const maxWindValue = Math.max(
+		40,
+		...chartData.map((point) =>
+			Math.max(
+				point.avg ?? 0,
+				point.gust ?? 0,
+				point.lull ?? 0,
+				point.predicted ?? 0,
+			),
+		),
+	)
 
-  const defaultTooltipIndex = Math.max(
-    0,
-    chartData.findLastIndex((point) => point.avg != null)
-  )
+	const defaultTooltipIndex = Math.max(
+		0,
+		chartData.findLastIndex((point) => point.avg != null),
+	)
 
-  const getTimeTicks = useCallback(() => {
-    const ONE_HOUR = 3600000
-    const startTime = chartData[0]?.time || 0
-    const endTime = chartData[chartData.length - 1]?.time || 0
+	const getTimeTicks = useCallback(() => {
+		const ONE_HOUR = 3600000
+		const startTime = chartData[0]?.time || 0
+		const endTime = chartData[chartData.length - 1]?.time || 0
 
-    // Round the startTime up to the nearest whole hour
-    const firstHour = Math.ceil(startTime / ONE_HOUR) * ONE_HOUR
+		// Round the startTime up to the nearest whole hour
+		const firstHour = Math.ceil(startTime / ONE_HOUR) * ONE_HOUR
 
-    // Calculate the number of hours between the rounded start time and the end time
-    const hourlyTicks = Math.ceil((endTime - firstHour) / ONE_HOUR)
+		// Calculate the number of hours between the rounded start time and the end time
+		const hourlyTicks = Math.ceil((endTime - firstHour) / ONE_HOUR)
 
-    // Generate an array of timestamps for each hour
-    // return Array.from(Array(hourlyTicks).keys()).map((i) => firstHour + i * ONE_HOUR)
-    return Array.from({ length: hourlyTicks }, (_, i) => firstHour + i * ONE_HOUR)
-  }, [chartData])
+		// Generate an array of timestamps for each hour
+		// return Array.from(Array(hourlyTicks).keys()).map((i) => firstHour + i * ONE_HOUR)
+		return Array.from(
+			{ length: hourlyTicks },
+			(_, i) => firstHour + i * ONE_HOUR,
+		)
+	}, [chartData])
 
-  return !data || data.length === 0 ? (
-    <div className={styles.fallback}>
-      <Spinner />
-    </div>
-  ) : (
-    <div className={styles.wrapper}>
-      <div ref={containerRef} className={styles.container}>
-        <LineChart
-          id='wind-graph'
-          width={1600}
-          height={300}
-          data={chartData}
-          // data={data.wind_avg_data}
-          margin={{ top: 0, right: -10, bottom: 30, left: 20 }}
-          className={styles.lineChart}
-        >
-          <CartesianGrid strokeDasharray='3 3' stroke='currentColor' opacity={0.3} />
-          {/* Legend which was generated and then customized and placed outside of the chart */}
-          {/* <Legend
+	return !data || data.length === 0 ? (
+		<div className={styles.fallback}>
+			<Spinner />
+		</div>
+	) : (
+		<div className={styles.wrapper}>
+			<div ref={containerRef} className={styles.container}>
+				<LineChart
+					id="wind-graph"
+					width={1600}
+					height={300}
+					data={chartData}
+					// data={data.wind_avg_data}
+					margin={{ top: 0, right: -10, bottom: 30, left: 20 }}
+					className={styles.lineChart}
+				>
+					<CartesianGrid
+						strokeDasharray="3 3"
+						stroke="currentColor"
+						opacity={0.3}
+					/>
+					{/* Legend which was generated and then customized and placed outside of the chart */}
+					{/* <Legend
             align='right'
             iconSize={8}
             iconType='circle'
@@ -105,131 +125,147 @@ const WindGraph = ({
             }}
             formatter={(value) => value[0].toUpperCase() + value.slice(1)}
           /> */}
-          <Tooltip
-            // offset={50}
-            defaultIndex={defaultTooltipIndex}
-            formatter={(value: number, name: string) => [
-              value + 'km/h',
-              name[0].toUpperCase() + name.slice(1),
-            ]}
-            labelFormatter={(label) =>
-              new Date(label).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
-            }
-            labelStyle={{ display: 'block', color: 'rgb(var(--background-start-rgb))' }}
-            contentStyle={{
-              padding: '0.5rem 0.75rem',
-              fontSize: '0.9rem',
-              backgroundColor: 'color-mix(in srgb, currentColor 90%, transparent)',
-              borderRadius: '5px',
-            }}
-            itemStyle={{ padding: '0.15rem' }}
-            itemSorter={(item) => {
-              switch (item.dataKey) {
-                case 'gust':
-                  return 0
-                case 'avg':
-                  return 1
-                case 'predicted':
-                  return 2
-                default:
-                  return 3
-              }
-            }}
-          />
-          {/* Time X-Axis */}
-          <XAxis
-            xAxisId={0}
-            axisLine={false}
-            dataKey='time'
-            domain={['auto', 'auto']}
-            orientation='top'
-            scale='time'
-            tickFormatter={(time) =>
-              new Date(time).toLocaleString('en-US', { hour: 'numeric', hour12: true })
-            }
-            ticks={getTimeTicks()}
-            type='number'
-            style={{ fontSize: '0.8rem' }}
-          />
-          {/* Wind Direction X-Axis */}
-          <XAxis
-            xAxisId={1}
-            axisLine={false}
-            dataKey='time'
-            domain={['auto', 'auto']}
-            scale='time'
-            ticks={chartData
-              .filter((point) => point.dir != null || point.predictedDir != null)
-              .map((point) => point.time)}
-            tickFormatter={(time) => ''}
-            tick={<CustomXAxisTick directionArray={chartData} />}
-            tickLine={false}
-            mirror={true}
-            tickMargin={-8}
-            type='number'
-          />
-          <YAxis
-            domain={[0, (dataMax: number) => Math.ceil(dataMax / 10) * 10]}
-            padding={{ top: 0, bottom: 0 }}
-            ticks={Array.from(
-              { length: Math.ceil((maxWindValue + 10) / 20) }, // count multiples of 20
-              (_, index) => index * 20 // multiply each index by 20
-            )}
-            label={{
-              value: 'km/h',
-              angle: -90,
-              position: 'outside',
-              dx: 5,
-              style: { fontSize: '0.8rem' },
-            }}
-            width={70}
-            orientation='right'
-            style={{ fontSize: '0.9rem' }}
-          />
-          <Line
-            type='monotone'
-            dataKey='avg'
-            stroke='rgb(var(--wind-avg-rgb))'
-            dot={false}
-            activeDot={{ strokeWidth: 1, r: 4 }}
-            xAxisId={0}
-            connectNulls={true}
-            isAnimationActive={false}
-          />
-          <Line
-            type='monotone'
-            dataKey='gust'
-            stroke='rgb(var(--wind-gust-rgb))'
-            dot={false}
-            activeDot={{ strokeWidth: 1, r: 4 }}
-            connectNulls={true}
-            isAnimationActive={false}
-          />
-          <Line
-            type='monotone'
-            dataKey='lull'
-            stroke='rgb(var(--wind-lull-rgb))'
-            dot={false}
-            activeDot={{ strokeWidth: 1, r: 4 }}
-            connectNulls={true}
-            isAnimationActive={false}
-          />
-          <Line
-            type='monotone'
-            dataKey='predicted'
-            stroke='rgb(var(--wind-predicted-rgb))'
-            strokeDasharray='5 4'
-            dot={{ r: 2, strokeWidth: 0, fill: 'rgb(var(--wind-predicted-rgb))' }}
-            activeDot={{ strokeWidth: 1, r: 4 }}
-            connectNulls={true}
-            isAnimationActive={false}
-          />
-        </LineChart>
-      </div>
-      {/* Custom version of the generated legend, placed outside the scrollable container */}
-      <Legend />
-    </div>
-  )
+					<Tooltip
+						// offset={50}
+						defaultIndex={defaultTooltipIndex}
+						formatter={(value: number, name: string) => [
+							`${value}km/h`,
+							name[0].toUpperCase() + name.slice(1),
+						]}
+						labelFormatter={(label) =>
+							new Date(label).toLocaleTimeString('en-US', {
+								hour: '2-digit',
+								minute: '2-digit',
+							})
+						}
+						labelStyle={{
+							display: 'block',
+							color: 'rgb(var(--background-start-rgb))',
+						}}
+						contentStyle={{
+							padding: '0.5rem 0.75rem',
+							fontSize: '0.9rem',
+							backgroundColor:
+								'color-mix(in srgb, currentColor 90%, transparent)',
+							borderRadius: '5px',
+						}}
+						itemStyle={{ padding: '0.15rem' }}
+						itemSorter={(item) => {
+							switch (item.dataKey) {
+								case 'gust':
+									return 0
+								case 'avg':
+									return 1
+								case 'predicted':
+									return 2
+								default:
+									return 3
+							}
+						}}
+					/>
+					{/* Time X-Axis */}
+					<XAxis
+						xAxisId={0}
+						axisLine={false}
+						dataKey="time"
+						domain={['auto', 'auto']}
+						orientation="top"
+						scale="time"
+						tickFormatter={(time) =>
+							new Date(time).toLocaleString('en-US', {
+								hour: 'numeric',
+								hour12: true,
+							})
+						}
+						ticks={getTimeTicks()}
+						type="number"
+						style={{ fontSize: '0.8rem' }}
+					/>
+					{/* Wind Direction X-Axis */}
+					<XAxis
+						xAxisId={1}
+						axisLine={false}
+						dataKey="time"
+						domain={['auto', 'auto']}
+						scale="time"
+						ticks={chartData
+							.filter(
+								(point) => point.dir != null || point.predictedDir != null,
+							)
+							.map((point) => point.time)}
+						tickFormatter={(_time) => ''}
+						tick={<CustomXAxisTick directionArray={chartData} />}
+						tickLine={false}
+						mirror={true}
+						tickMargin={-8}
+						type="number"
+					/>
+					<YAxis
+						domain={[0, (dataMax: number) => Math.ceil(dataMax / 10) * 10]}
+						padding={{ top: 0, bottom: 0 }}
+						ticks={Array.from(
+							{ length: Math.ceil((maxWindValue + 10) / 20) }, // count multiples of 20
+							(_, index) => index * 20, // multiply each index by 20
+						)}
+						label={{
+							value: 'km/h',
+							angle: -90,
+							position: 'outside',
+							dx: 5,
+							style: { fontSize: '0.8rem' },
+						}}
+						width={70}
+						orientation="right"
+						style={{ fontSize: '0.9rem' }}
+					/>
+					<Line
+						type="monotone"
+						dataKey="avg"
+						stroke="rgb(var(--wind-avg-rgb))"
+						dot={false}
+						activeDot={{ strokeWidth: 1, r: 4 }}
+						xAxisId={0}
+						connectNulls={true}
+						isAnimationActive={false}
+					/>
+					<Line
+						type="monotone"
+						dataKey="gust"
+						stroke="rgb(var(--wind-gust-rgb))"
+						dot={false}
+						activeDot={{ strokeWidth: 1, r: 4 }}
+						connectNulls={true}
+						isAnimationActive={false}
+					/>
+					<Line
+						type="monotone"
+						dataKey="lull"
+						stroke="rgb(var(--wind-lull-rgb))"
+						dot={false}
+						activeDot={{ strokeWidth: 1, r: 4 }}
+						connectNulls={true}
+						isAnimationActive={false}
+					/>
+					<Line
+						type="monotone"
+						dataKey="predicted"
+						stroke="rgb(var(--wind-predicted-rgb))"
+						strokeDasharray="5 4"
+						dot={{
+							r: 2,
+							strokeWidth: 0,
+							fill: 'rgb(var(--wind-predicted-rgb))',
+						}}
+						activeDot={{ strokeWidth: 1, r: 4 }}
+						connectNulls={true}
+						isAnimationActive={false}
+					/>
+				</LineChart>
+			</div>
+			{/* Custom version of the generated legend, placed outside the scrollable container */}
+			<Legend />
+		</div>
+	)
 }
 
 export default WindGraph

@@ -1,90 +1,90 @@
 .container {
-  width: 100%;
-  min-height: 70px;
+	width: 100%;
+	min-height: 70px;
 }
 
 .card {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  height: 100%;
-  padding: 0.3rem 0.75rem 0.1rem;
-  border: 1px solid rgba(var(--card-border-rgb), 0.3);
-  border-radius: 10px;
-  color: rgb(var(--card-border-rgb));
-  &:hover {
-    background-color: rgba(var(--card-rgb), 0.3);
-  }
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	height: 100%;
+	padding: 0.3rem 0.75rem 0.1rem;
+	border: 1px solid rgba(var(--card-border-rgb), 0.3);
+	border-radius: 10px;
+	color: rgb(var(--card-border-rgb));
+	&:hover {
+		background-color: rgba(var(--card-rgb), 0.3);
+	}
 }
 
 .flexContainer {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
+	display: flex;
+	align-items: center;
+	gap: 1rem;
 }
 
 .titleContainer {
-  display: flex;
-  align-items: start;
-  justify-content: space-between;
+	display: flex;
+	align-items: start;
+	justify-content: space-between;
 }
 
 .arrowBorder {
-  border: 1px solid rgb(var(--wind-avg-rgb));
-  border-radius: 50%;
+	border: 1px solid rgb(var(--wind-avg-rgb));
+	border-radius: 50%;
 }
 
 .title {
-  margin: 0;
-  font-size: 0.7rem;
+	margin: 0;
+	font-size: 0.7rem;
 }
 
 .updatedAt {
-  margin: 0;
-  font-size: 0.7rem;
-  color: rgb(var(--foreground-muted-rgb));
-  font-weight: 300;
+	margin: 0;
+	font-size: 0.7rem;
+	color: rgb(var(--foreground-muted-rgb));
+	font-weight: 300;
 }
 
 .directionText {
-  font-size: 2.5rem;
-  font-weight: 400;
+	font-size: 2.5rem;
+	font-weight: 400;
 }
 
 .windSpeedContainer {
-  width: 100%;
-  display: flex;
-  gap: 0.5rem;
-  align-items: center;
-  justify-content: space-between;
+	width: 100%;
+	display: flex;
+	gap: 0.5rem;
+	align-items: center;
+	justify-content: space-between;
 }
 
 .avg {
-  font-size: 2.5rem;
-  font-weight: 400;
+	font-size: 2.5rem;
+	font-weight: 400;
 }
 
 .gustContainer {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
 }
 
 .item {
-  font-size: 0.75rem;
-  color: rgb(var(--foreground-muted-rgb));
+	font-size: 0.75rem;
+	color: rgb(var(--foreground-muted-rgb));
 }
 
 .gust {
-  font-size: 1.4rem;
+	font-size: 1.4rem;
 }
 
 .small {
-  font-size: 0.75rem;
+	font-size: 0.75rem;
 }
 
 .spinnerContainer {
-  width: 20px;
-  height: 50%;
-  margin: 0 auto;
+	width: 20px;
+	height: 50%;
+	margin: 0 auto;
 }
