@@ -1,14 +1,17 @@
-.flexContainer {
+.wxCards {
   width: 100%;
   max-width: 450px;
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 0.25rem;
-  flex-wrap: wrap;
 }
 
-@media (max-width: 500px) {
-  .flexContainer {
-    /* flex-direction: column; */
-    gap: 0.25rem;
+.wxCards > :first-child {
+  grid-column: span 2;
+}
+
+@media (max-width: 480px) {
+  .wxCards > * {
+    grid-column: span 2;
   }
 }

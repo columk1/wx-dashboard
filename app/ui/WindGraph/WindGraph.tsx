@@ -189,7 +189,7 @@ const WindGraph = ({
           <Line
             type='monotone'
             dataKey='avg'
-            stroke='#1d91a0'
+            stroke='rgb(var(--wind-avg-rgb))'
             dot={false}
             activeDot={{ strokeWidth: 1, r: 4 }}
             xAxisId={0}
@@ -199,7 +199,7 @@ const WindGraph = ({
           <Line
             type='monotone'
             dataKey='gust'
-            stroke='#f84c56'
+            stroke='rgb(var(--wind-gust-rgb))'
             dot={false}
             activeDot={{ strokeWidth: 1, r: 4 }}
             connectNulls={true}
@@ -208,7 +208,7 @@ const WindGraph = ({
           <Line
             type='monotone'
             dataKey='lull'
-            stroke='#0f6b8a'
+            stroke='rgb(var(--wind-lull-rgb))'
             dot={false}
             activeDot={{ strokeWidth: 1, r: 4 }}
             connectNulls={true}

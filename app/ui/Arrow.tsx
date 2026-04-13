@@ -4,7 +4,7 @@ const Arrow = ({ size = '12', angle }: { size?: string; angle: number }) => {
       // x={x}
       // y={y}
       stroke='currentColor'
-      fill='#1d91a0'
+      fill='rgb(var(--wind-avg-rgb))'
       strokeWidth='0'
       version='1.2'
       baseProfile='tiny'

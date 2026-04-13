@@ -21,7 +21,7 @@ const Legend = () => {
             width='8'
             height='8'
             viewBox='0 0 32 32'
-            style={{ display: 'inline-block', verticalAlign: 'middle', marginRight: '4px' }}
+            style={{ display: 'inline-block', verticalAlign: 'middle', marginRight: '4px', marginTop: '-2px' }}
           >
             <title></title>
             <desc></desc>
@@ -47,7 +47,7 @@ const Legend = () => {
             width='8'
             height='8'
             viewBox='0 0 32 32'
-            style={{ display: 'inline-block', verticalAlign: 'middle', marginRight: '4px' }}
+            style={{ display: 'inline-block', verticalAlign: 'middle', marginRight: '4px', marginTop: '-2px' }}
           >
             <title></title>
             <desc></desc>
@@ -73,7 +73,7 @@ const Legend = () => {
             width='8'
             height='8'
             viewBox='0 0 32 32'
-            style={{ display: 'inline-block', verticalAlign: 'middle', marginRight: '4px' }}
+            style={{ display: 'inline-block', verticalAlign: 'middle', marginRight: '4px', marginTop: '-2px' }}
           >
             <title></title>
             <desc></desc>
@@ -121,7 +121,7 @@ const Legend = () => {
             width='8'
             height='8'
             viewBox='0 0 32 32'
-            style={{ display: 'inline-block', verticalAlign: 'middle', marginRight: '4px' }}
+            style={{ display: 'inline-block', verticalAlign: 'middle', marginRight: '4px', marginTop: '-2px' }}
           >
             <title></title>
             <desc></desc>
