@@ -9,7 +9,6 @@ import useSWR from 'swr'
 
 const SPIT_INTERVAL = 30000 // 30 seconds
 const GONDOLA_INTERVAL = 10000 // 10 seconds
-const MAX_INTERVAL = 300000 // 5 minutes
 
 const getSpitCardData = (spitData: WindGraphData): WXCardData => {
   if (!spitData || spitData.length === 0) return null
@@ -46,6 +45,12 @@ const Wind = () => {
     refreshInterval: GONDOLA_INTERVAL,
   })
 
+  const { data: pamRocksData } = useSWR<WXCardData>('/api/pam-rocks', fetcher, {
+    revalidateOnFocus: true,
+    revalidateOnReconnect: true,
+    refreshInterval: 0,
+  })
+
   // Update the document title with the current wind speed average
   useEffect(() => {
     const lastPoint = spitData?.[spitData?.length - 1]
@@ -55,16 +60,21 @@ const Wind = () => {
 
   return (
     <>
-      <div className={styles.flexContainer}>
+      <div className={styles.wxCards}>
         <WXCard
           title='Spit'
-          url='https://rugged-nimbus-599635289503.us-west1.run.app/?spot=1436'
+          url='https://squamishwindsports.com/conditions/wind/'
           data={getSpitCardData(spitData)}
         />
         <WXCard
           title='Gondola'
           url='https://www.seatoskygondola.com/weather-and-cams/'
           data={gondolaData}
+        />
+        <WXCard
+          title='Pam Rocks'
+          url='https://weather.gc.ca/past_conditions/index_e.html?station=was'
+          data={pamRocksData}
         />
       </div>
       <WindGraph data={spitData} forecastData={spitForecastData} />
