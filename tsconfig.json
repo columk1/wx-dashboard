@@ -1,6 +1,6 @@
 {
 	"compilerOptions": {
-		"lib": ["dom", "dom.iterable", "esnext"],
+		"lib": ["dom", "esnext"],
 		"allowJs": true,
 		"skipLibCheck": true,
 		"strict": true,
@@ -20,7 +20,10 @@
 		"paths": {
 			"@/*": ["./*"]
 		},
-		"target": "ES2017"
+		"target": "esnext",
+		"types": ["node"],
+		"rootDir": ".",
+		"noUncheckedSideEffectImports": false
 	},
 	"include": [
 		"next-env.d.ts",
