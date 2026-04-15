@@ -65,10 +65,11 @@ const Wind = ({ activeView }: { activeView: WXView }) => {
 	})
 
 	const { data: gondolaGraphData } = useSWR<WindGraphData>(
-		activeView === 'gondola' ? '/api/gondola/history' : null,
+		'/api/gondola/history',
 		fetcher,
 		{
-			refreshInterval: GONDOLA_GRAPH_INTERVAL,
+			refreshInterval:
+				activeView === 'gondola' ? GONDOLA_GRAPH_INTERVAL : 0,
 		},
 	)
 
