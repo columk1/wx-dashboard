@@ -6,6 +6,12 @@
 		"description": "Wind Meter"
 	},
 	{
+		"name": "Gondola",
+		"url": "https://www.seatoskygondola.com/weather-and-cams/",
+		"emoji": "🚠",
+		"description": "Gondola Weather & Cams"
+	},
+	{
 		"name": "Windy",
 		"url": "https://www.windy.com/49.682/-123.144/airgram?clouds,49.653,-123.167,12",
 		"emoji": "🪂",
