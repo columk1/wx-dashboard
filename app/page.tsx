@@ -1,7 +1,6 @@
 import links from '@/app/lib/data/links.json'
 import type { WXView } from '@/app/lib/definitions'
-import ChiefCam from '@/app/ui/ChiefCam/ChiefCam'
-import GondolaWebcam from '@/app/ui/GondolaWebcam/GondolaWebcam'
+import CameraPanel from '@/app/ui/CameraPanel/CameraPanel'
 import Wind from '@/app/ui/Wind/Wind'
 import styles from './page.module.css'
 import Rasp from './ui/Rasp/Rasp'
@@ -25,7 +24,7 @@ export default async function Home({
 
 			{/* Chief Cam / Gondola Webcam */}
 			<section className={styles.cameraFrame}>
-				{activeView === 'spit' ? <ChiefCam /> : <GondolaWebcam />}
+				<CameraPanel activeView={activeView} />
 			</section>
 
 			{/* Wind cards and wind graph */}
