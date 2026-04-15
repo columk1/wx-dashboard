@@ -1,21 +1,33 @@
 import links from '@/app/lib/data/links.json'
+import type { WXView } from '@/app/lib/definitions'
 import ChiefCam from '@/app/ui/ChiefCam/ChiefCam'
+import GondolaWebcam from '@/app/ui/GondolaWebcam/GondolaWebcam'
 import Wind from '@/app/ui/Wind/Wind'
 import styles from './page.module.css'
 import Rasp from './ui/Rasp/Rasp'
 
-export default function Home() {
+const getActiveView = (view?: string): WXView =>
+	view === 'gondola' ? 'gondola' : 'spit'
+
+export default async function Home({
+	searchParams,
+}: {
+	searchParams: Promise<{ view?: string }>
+}) {
+	const { view } = await searchParams
+	const activeView = getActiveView(view)
+
 	return (
 		<main className={styles.main}>
 			<header className={styles.header}>
 				<h1>Chief Lap Copilot&nbsp;</h1>
 			</header>
 
-			{/* Chief Cam */}
-			<ChiefCam />
+			{/* Chief Cam / Gondola Webcam */}
+			{activeView === 'spit' ? <ChiefCam /> : <GondolaWebcam />}
 
 			{/* Wind cards and wind graph */}
-			<Wind />
+			<Wind activeView={activeView} />
 
 			{/* Canada Rasp Windgram selector */}
 			<Rasp />

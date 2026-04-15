@@ -4,12 +4,14 @@ export type WindDataSeries = WindDataPoint[]
 export type WindDataPointRaw = (number | null)[]
 export type WindDataSeriesRaw = WindDataPointRaw[]
 
+export type WXView = 'spit' | 'gondola'
+
 export type WindGraphPoint = {
 	time: number
 	avg: number
 	gust: number
-	lull: number
-	dir: number
+	lull?: number | null
+	dir?: number | null
 }
 
 export type WindGraphData = WindGraphPoint[] | null | undefined
@@ -74,4 +76,17 @@ export type GondolaObservation = {
 
 export type GondolaApiResponse = {
 	observations: GondolaObservation[]
+}
+
+export type GondolaHistoryObservation = {
+	epoch: number
+	winddirAvg?: number | null
+	metric: {
+		windspeedAvg?: number | null
+		windgustHigh?: number | null
+	}
+}
+
+export type GondolaHistoryApiResponse = {
+	observations: GondolaHistoryObservation[]
 }

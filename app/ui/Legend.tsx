@@ -1,4 +1,10 @@
-const Legend = () => {
+const Legend = ({
+	showLull = true,
+	showPredicted = true,
+}: {
+	showLull?: boolean
+	showPredicted?: boolean
+}) => {
 	return (
 		<div
 			className="recharts-legend-wrapper"
@@ -78,39 +84,41 @@ const Legend = () => {
 						Gust
 					</span>
 				</li>
-				<li
-					className="recharts-legend-item legend-item-2"
-					style={{ display: 'inline-block', marginRight: '10px' }}
-				>
-					<svg
-						className="recharts-surface"
-						width="8"
-						height="8"
-						viewBox="0 0 32 32"
-						style={{
-							display: 'inline-block',
-							verticalAlign: 'middle',
-							marginRight: '4px',
-							marginTop: '-2px',
-						}}
+				{showLull && (
+					<li
+						className="recharts-legend-item legend-item-2"
+						style={{ display: 'inline-block', marginRight: '10px' }}
 					>
-						<title>Wind lull</title>
-						<path
-							fill="#0f6b8a"
-							cx="16"
-							cy="16"
-							className="recharts-symbols"
-							transform="translate(16, 16)"
-							d="M16,0A16,16,0,1,1,-16,0A16,16,0,1,1,16,0"
-						></path>
-					</svg>
-					<span
-						className="recharts-legend-item-text"
-						style={{ color: 'rgb(15, 107, 138)' }}
-					>
-						Lull
-					</span>
-				</li>
+						<svg
+							className="recharts-surface"
+							width="8"
+							height="8"
+							viewBox="0 0 32 32"
+							style={{
+								display: 'inline-block',
+								verticalAlign: 'middle',
+								marginRight: '4px',
+								marginTop: '-2px',
+							}}
+						>
+							<title>Wind lull</title>
+							<path
+								fill="#0f6b8a"
+								cx="16"
+								cy="16"
+								className="recharts-symbols"
+								transform="translate(16, 16)"
+								d="M16,0A16,16,0,1,1,-16,0A16,16,0,1,1,16,0"
+							></path>
+						</svg>
+						<span
+							className="recharts-legend-item-text"
+							style={{ color: 'rgb(15, 107, 138)' }}
+						>
+							Lull
+						</span>
+					</li>
+				)}
 				<li
 					className="recharts-legend-item"
 					style={{ display: 'inline-block', marginRight: '10px' }}
@@ -137,39 +145,41 @@ const Legend = () => {
 						Direction
 					</span>
 				</li>
-				<li
-					className="recharts-legend-item"
-					style={{ display: 'inline-block', marginRight: '10px' }}
-				>
-					<svg
-						className="recharts-surface"
-						width="8"
-						height="8"
-						viewBox="0 0 32 32"
-						style={{
-							display: 'inline-block',
-							verticalAlign: 'middle',
-							marginRight: '4px',
-							marginTop: '-2px',
-						}}
+				{showPredicted && (
+					<li
+						className="recharts-legend-item"
+						style={{ display: 'inline-block', marginRight: '10px' }}
 					>
-						<title>Predicted wind</title>
-						<path
-							fill="rgb(var(--wind-predicted-rgb))"
-							cx="16"
-							cy="16"
-							className="recharts-symbols"
-							transform="translate(16, 16)"
-							d="M16,0A16,16,0,1,1,-16,0A16,16,0,1,1,16,0"
-						></path>
-					</svg>
-					<span
-						className="recharts-legend-item-text"
-						style={{ color: 'rgb(var(--wind-predicted-rgb))' }}
-					>
-						Predicted
-					</span>
-				</li>
+						<svg
+							className="recharts-surface"
+							width="8"
+							height="8"
+							viewBox="0 0 32 32"
+							style={{
+								display: 'inline-block',
+								verticalAlign: 'middle',
+								marginRight: '4px',
+								marginTop: '-2px',
+							}}
+						>
+							<title>Predicted wind</title>
+							<path
+								fill="rgb(var(--wind-predicted-rgb))"
+								cx="16"
+								cy="16"
+								className="recharts-symbols"
+								transform="translate(16, 16)"
+								d="M16,0A16,16,0,1,1,-16,0A16,16,0,1,1,16,0"
+							></path>
+						</svg>
+						<span
+							className="recharts-legend-item-text"
+							style={{ color: 'rgb(var(--wind-predicted-rgb))' }}
+						>
+							Predicted
+						</span>
+					</li>
+				)}
 			</ul>
 		</div>
 	)

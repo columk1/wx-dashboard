@@ -6,6 +6,7 @@ import type {
 	SpitWindForecastData,
 	WindGraphChartPoint,
 	WindGraphData,
+	WXView,
 } from '@/app/lib/definitions'
 import CustomXAxisTick from '@/app/ui/CustomXAxisTick'
 import Legend from '@/app/ui/Legend'
@@ -14,7 +15,7 @@ import styles from './WindGraph.module.css'
 
 const mergeChartData = (
 	observedData: WindGraphData,
-	forecastData: SpitWindForecastData,
+	forecastData?: SpitWindForecastData,
 ): WindGraphChartPoint[] => {
 	const chartData: WindGraphChartPoint[] = [...(observedData ?? [])]
 	const safeForecastData = Array.isArray(forecastData) ? forecastData : []
@@ -43,12 +44,16 @@ const mergeChartData = (
 const WindGraph = ({
 	data,
 	forecastData,
+	view = 'spit',
 }: {
 	data: WindGraphData
 	forecastData?: SpitWindForecastData
+	view?: WXView
 }) => {
 	const containerRef = useRef<HTMLDivElement>(null)
 	const chartData = mergeChartData(data, forecastData)
+	const showLull = view === 'spit'
+	const showPredicted = view === 'spit'
 
 	useEffect(() => {
 		if (containerRef.current && chartData.length > 0) {
@@ -62,8 +67,8 @@ const WindGraph = ({
 			Math.max(
 				point.avg ?? 0,
 				point.gust ?? 0,
-				point.lull ?? 0,
-				point.predicted ?? 0,
+				showLull ? (point.lull ?? 0) : 0,
+				showPredicted ? (point.predicted ?? 0) : 0,
 			),
 		),
 	)
@@ -159,10 +164,12 @@ const WindGraph = ({
 									return 0
 								case 'avg':
 									return 1
-								case 'predicted':
+								case 'lull':
 									return 2
-								default:
+								case 'predicted':
 									return 3
+								default:
+									return 4
 							}
 						}}
 					/>
@@ -240,33 +247,37 @@ const WindGraph = ({
 						connectNulls={true}
 						isAnimationActive={false}
 					/>
-					<Line
-						type="monotone"
-						dataKey="lull"
-						stroke="rgb(var(--wind-lull-rgb))"
-						dot={false}
-						activeDot={{ strokeWidth: 1, r: 4 }}
-						connectNulls={true}
-						isAnimationActive={false}
-					/>
-					<Line
-						type="monotone"
-						dataKey="predicted"
-						stroke="rgb(var(--wind-predicted-rgb))"
-						strokeDasharray="5 4"
-						dot={{
-							r: 2,
-							strokeWidth: 0,
-							fill: 'rgb(var(--wind-predicted-rgb))',
-						}}
-						activeDot={{ strokeWidth: 1, r: 4 }}
-						connectNulls={true}
-						isAnimationActive={false}
-					/>
+					{showLull && (
+						<Line
+							type="monotone"
+							dataKey="lull"
+							stroke="rgb(var(--wind-lull-rgb))"
+							dot={false}
+							activeDot={{ strokeWidth: 1, r: 4 }}
+							connectNulls={true}
+							isAnimationActive={false}
+						/>
+					)}
+					{showPredicted && (
+						<Line
+							type="monotone"
+							dataKey="predicted"
+							stroke="rgb(var(--wind-predicted-rgb))"
+							strokeDasharray="5 4"
+							dot={{
+								r: 2,
+								strokeWidth: 0,
+								fill: 'rgb(var(--wind-predicted-rgb))',
+							}}
+							activeDot={{ strokeWidth: 1, r: 4 }}
+							connectNulls={true}
+							isAnimationActive={false}
+						/>
+					)}
 				</LineChart>
 			</div>
 			{/* Custom version of the generated legend, placed outside the scrollable container */}
-			<Legend />
+			<Legend showLull={showLull} showPredicted={showPredicted} />
 		</div>
 	)
 }

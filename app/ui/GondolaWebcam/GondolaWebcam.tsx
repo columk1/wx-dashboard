@@ -20,10 +20,6 @@ const GondolaWebcam = () => {
 
 	return (
 		<section className={styles.wrapper}>
-			<div className={styles.heading}>
-				<h2>Sea to Sky Gondola Webcam</h2>
-				<p>Temporary test embed, refreshed every 5 minutes.</p>
-			</div>
 			{/** biome-ignore lint/performance/noImgElement: external image */}
 			<img
 				src={src}
