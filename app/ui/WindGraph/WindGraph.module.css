@@ -20,6 +20,11 @@
 	outline: none;
 }
 
+.lineChart {
+	/* prevent scroll container growing as tooltip animates in */
+	overflow: hidden;
+}
+
 .container::-webkit-scrollbar {
 	width: 20px;
 }

@@ -41,7 +41,7 @@ const buildForecastRequestUrl = (endpoint: string) => {
 const buildForecastSeries = (
 	forecast: SpitWindForecastApiResponse,
 ): SpitWindForecastData =>
-	forecast.model_data.slice(0, 3).map((point) => ({
+	forecast.model_data.slice(0, 5).map((point) => ({
 		time: new Date(normalizeForecastTime(point.model_time_utc)).getTime(),
 		predicted: Math.round(point.wind_speed),
 		dir: point.wind_dir,
