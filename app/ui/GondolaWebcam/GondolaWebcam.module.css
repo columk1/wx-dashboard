@@ -1,23 +1,6 @@
-.wrapper {
-	width: 100%;
-	display: flex;
-	justify-content: center;
-}
-
 .image {
 	width: 100%;
-	max-width: 450px;
-	aspect-ratio: 2.12 / 1;
-	height: auto;
+	height: 100%;
 	display: block;
-	border-radius: 12px;
-	border: 1px solid rgba(var(--callout-border-rgb), 0.3);
-	background-color: rgba(var(--callout-border-rgb), 0.3);
 	object-fit: cover;
-}
-
-@media (max-width: 700px) {
-	.wrapper {
-		padding: 0.6rem;
-	}
 }

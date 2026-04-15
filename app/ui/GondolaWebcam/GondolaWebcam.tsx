@@ -19,14 +19,12 @@ const GondolaWebcam = () => {
 	}, [])
 
 	return (
-		<section className={styles.wrapper}>
-			{/** biome-ignore lint/performance/noImgElement: external image */}
-			<img
-				src={src}
-				alt="Sea to Sky Gondola summit webcam"
-				className={styles.image}
-			/>
-		</section>
+		/* biome-ignore lint/performance/noImgElement: external image */
+		<img
+			src={src}
+			alt="Sea to Sky Gondola summit webcam"
+			className={styles.image}
+		/>
 	)
 }
 

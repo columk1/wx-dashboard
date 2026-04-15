@@ -13,18 +13,14 @@ const ChiefCam = () => {
 	}, [])
 
 	return (
-		<div className={styles.iFrameWrapper}>
-			<iframe
-				title="Chief Cam"
-				ref={iframeRef}
-				className={styles.iFrame}
-				// width='450'
-				// height='211'
-				src="https://chiefcam.com/embed/live"
-				allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
-				style={{ visibility: 'hidden' }}
-			></iframe>
-		</div>
+		<iframe
+			title="Chief Cam"
+			ref={iframeRef}
+			className={styles.iFrame}
+			src="https://chiefcam.com/embed/live"
+			allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
+			style={{ visibility: 'hidden' }}
+		></iframe>
 	)
 }
 

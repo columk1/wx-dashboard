@@ -24,7 +24,9 @@ export default async function Home({
 			</header>
 
 			{/* Chief Cam / Gondola Webcam */}
-			{activeView === 'spit' ? <ChiefCam /> : <GondolaWebcam />}
+			<section className={styles.cameraFrame}>
+				{activeView === 'spit' ? <ChiefCam /> : <GondolaWebcam />}
+			</section>
 
 			{/* Wind cards and wind graph */}
 			<Wind activeView={activeView} />

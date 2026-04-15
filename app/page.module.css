@@ -17,6 +17,16 @@
 	width: 100%;
 }
 
+.cameraFrame {
+	width: 100%;
+	max-width: 450px;
+	aspect-ratio: 2.12 / 1;
+	overflow: hidden;
+	border-radius: 12px;
+	border: 1px solid rgba(var(--callout-border-rgb), 0.3);
+	background-color: rgba(var(--callout-border-rgb), 0.3);
+}
+
 .header {
 	font-size: 0.85rem;
 	z-index: 2;
