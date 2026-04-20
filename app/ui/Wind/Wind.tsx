@@ -2,6 +2,7 @@
 import { useEffect } from 'react'
 import useSWR from 'swr'
 import type {
+	PamRocksApiResponse,
 	SpitWindForecastData,
 	WindGraphData,
 	WXCardData,
@@ -26,7 +27,7 @@ const getSpitCardData = (spitData: WindGraphData): WXCardData => {
 		windSpeed: lastPoint.avg,
 		windDirection: direction,
 		windLull: lastPoint.lull ?? undefined,
-		windGusts: lastPoint.gust,
+		windGusts: lastPoint.gust ?? undefined,
 		windDirectionText: getWindDirectionText(direction),
 	}
 }
@@ -72,17 +73,30 @@ const Wind = ({ activeView }: { activeView: WXView }) => {
 		},
 	)
 
-	const { data: pamRocksData } = useSWR<WXCardData>('/api/pam-rocks', fetcher, {
-		revalidateOnFocus: true,
-		revalidateOnReconnect: true,
-		refreshInterval: 0,
-	})
+	const { data: pamRocksData } = useSWR<PamRocksApiResponse | null>(
+		'/api/pam-rocks',
+		fetcher,
+		{
+			revalidateOnFocus: true,
+			revalidateOnReconnect: true,
+			refreshInterval: 0,
+		},
+	)
 
-	const activeGraphData = activeView === 'gondola' ? gondolaGraphData : spitData
+	const activeGraphData =
+		activeView === 'gondola'
+			? gondolaGraphData
+			: activeView === 'pam-rocks'
+				? pamRocksData?.points
+				: spitData
 	const activeForecastData =
 		activeView === 'spit' ? spitForecastData : undefined
 	const activeCardData =
-		activeView === 'gondola' ? gondolaData : getSpitCardData(spitData)
+		activeView === 'gondola'
+			? gondolaData
+			: activeView === 'pam-rocks'
+				? pamRocksData?.current
+				: getSpitCardData(spitData)
 
 	useEffect(() => {
 		const windSpeed = activeCardData?.windSpeed
@@ -92,7 +106,12 @@ const Wind = ({ activeView }: { activeView: WXView }) => {
 			return
 		}
 
-		const viewLabel = activeView === 'gondola' ? 'Gondola' : 'Spit'
+		const viewLabel =
+			activeView === 'gondola'
+				? 'Gondola'
+				: activeView === 'pam-rocks'
+					? 'Pam Rocks'
+					: 'Spit'
 		document.title = `${windSpeed} km/h | ${viewLabel} | Chief Lap Copilot`
 	}, [activeCardData, activeView])
 
@@ -113,9 +132,9 @@ const Wind = ({ activeView }: { activeView: WXView }) => {
 				/>
 				<WXCard
 					title="Pam Rocks"
-					href="https://weather.gc.ca/past_conditions/index_e.html?station=was"
-					data={pamRocksData}
-					external={true}
+					href="/?view=pam-rocks"
+					data={pamRocksData?.current}
+					isActive={activeView === 'pam-rocks'}
 				/>
 			</div>
 			<WindGraph

@@ -6,7 +6,7 @@ import styles from './page.module.css'
 import Rasp from './ui/Rasp/Rasp'
 
 const getActiveView = (view?: string): WXView =>
-	view === 'gondola' ? 'gondola' : 'spit'
+	view === 'gondola' || view === 'pam-rocks' ? view : 'spit'
 
 export default async function Home({
 	searchParams,

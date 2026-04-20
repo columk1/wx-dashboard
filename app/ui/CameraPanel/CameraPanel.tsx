@@ -11,7 +11,7 @@ type CameraPanelProps = {
 }
 
 const CameraPanel = ({ activeView }: CameraPanelProps) => {
-	const isChiefCamVisible = activeView === 'spit'
+	const isChiefCamVisible = activeView !== 'gondola'
 
 	return (
 		<div className={styles.panel}>

@@ -2,7 +2,11 @@ import { parse } from 'date-fns'
 import { formatInTimeZone, fromZonedTime } from 'date-fns-tz'
 import { revalidateTag, unstable_cache } from 'next/cache'
 import { NextResponse } from 'next/server'
-import type { WXCardData } from '@/app/lib/definitions'
+import type {
+	PamRocksApiResponse,
+	WindGraphPoint,
+	WXCardData,
+} from '@/app/lib/definitions'
 
 const PAM_ROCKS_URL =
 	'https://weather.gc.ca/past_conditions/index_e.html?station=was'
@@ -15,11 +19,8 @@ type PamRocksObservation = {
 	data: WXCardData
 }
 
-const withoutGusts = (data: WXCardData): WXCardData => {
-	if (!data) return data
-
-	const { windGusts: _windGusts, ...rest } = data
-	return rest
+type PamRocksParsedObservation = PamRocksObservation & {
+	point: WindGraphPoint
 }
 
 const withUpdatedAtText = (
@@ -77,21 +78,35 @@ const parseWindCell = (windCell: string): WXCardData => {
 		}
 	}
 
-	const match = normalizedWindCell.match(/^([A-Z]{1,3})\s+(\d+)$/)
+	const match = normalizedWindCell.match(
+		/^([A-Z]{1,3})\s+(\d+)(?:\s+GUSTS\s+(\d+))?$/,
+	)
 
 	if (!match) return null
 
-	const [, directionText, speedText] = match
+	const [, directionText, speedText, gustText] = match
 	const speed = Number.parseInt(speedText, 10)
+	const gust = gustText ? Number.parseInt(gustText, 10) : undefined
 
 	return {
 		windDirection: windDirectionToDegrees(directionText),
 		windDirectionText: directionText,
 		windSpeed: speed,
+		...(gust !== undefined ? { windGusts: gust } : {}),
 	}
 }
 
-const parsePamRocksObservation = (html: string): PamRocksObservation | null => {
+const toGraphPoint = (
+	observedAt: number,
+	data: WXCardData,
+): WindGraphPoint => ({
+	time: observedAt,
+	avg: data?.windSpeed ?? 0,
+	gust: data?.windGusts ?? null,
+	dir: data?.windDirection ?? null,
+})
+
+const parsePamRocksObservation = (html: string): PamRocksApiResponse | null => {
 	const tableMatch = html.match(
 		/<table[^>]*id="past24Table"[\s\S]*?<tbody>([\s\S]*?)<\/tbody>/i,
 	)
@@ -102,6 +117,7 @@ const parsePamRocksObservation = (html: string): PamRocksObservation | null => {
 	const rowMatches = [...tableBody.matchAll(/<tr>([\s\S]*?)<\/tr>/gi)]
 
 	let currentDateLabel = ''
+	const observations: PamRocksParsedObservation[] = []
 
 	for (const [, rowHtml] of rowMatches) {
 		const dateMatch = rowHtml.match(/table-date[^>]*>([\s\S]*?)<\/th>/i)
@@ -132,13 +148,26 @@ const parsePamRocksObservation = (html: string): PamRocksObservation | null => {
 			PACIFIC_TIMEZONE,
 		).getTime()
 
-		return {
+		observations.push({
 			observedAt,
 			data,
-		}
+			point: toGraphPoint(observedAt, data),
+		})
 	}
 
-	return null
+	const currentObservation = observations[0]
+
+	if (!currentObservation?.data) return null
+
+	return {
+		current: withUpdatedAtText(
+			currentObservation.data,
+			currentObservation.observedAt,
+		),
+		points: observations
+			.map((observation) => observation.point)
+			.sort((left, right) => left.time - right.time),
+	}
 }
 
 const fetchPamRocksData = async () => {
@@ -168,27 +197,28 @@ const getCachedPamRocksData = unstable_cache(
 
 export async function GET() {
 	try {
-		let observation = await getCachedPamRocksData()
+		let pamRocksData = await getCachedPamRocksData()
 
-		if (!observation?.data) {
+		if (!pamRocksData?.current || pamRocksData.points.length === 0) {
 			revalidateTag(PAM_ROCKS_TAG, { expire: 0 })
-			observation = await fetchPamRocksData()
+			pamRocksData = await fetchPamRocksData()
 		}
 
-		if (!observation?.data) {
+		if (!pamRocksData?.current || pamRocksData.points.length === 0) {
 			return NextResponse.json(
 				{ error: 'Failed to fetch Pam Rocks data' },
 				{ status: 500 },
 			)
 		}
 
-		if (Date.now() >= observation.observedAt + HOUR_IN_MS) {
+		const lastObservedAt =
+			pamRocksData.points[pamRocksData.points.length - 1].time
+
+		if (Date.now() >= lastObservedAt + HOUR_IN_MS) {
 			revalidateTag(PAM_ROCKS_TAG, { expire: 0 })
 		}
 
-		return NextResponse.json(
-			withUpdatedAtText(withoutGusts(observation.data), observation.observedAt),
-		)
+		return NextResponse.json(pamRocksData)
 	} catch (error) {
 		console.error('Pam Rocks route failed', error)
 		return NextResponse.json(

@@ -16,6 +16,7 @@ import styles from './WindGraph.module.css'
 const mergeChartData = (
 	observedData: WindGraphData,
 	forecastData?: SpitWindForecastData,
+	extendToCurrentTime = false,
 ): WindGraphChartPoint[] => {
 	const chartData: WindGraphChartPoint[] = [...(observedData ?? [])]
 	const safeForecastData = Array.isArray(forecastData) ? forecastData : []
@@ -38,7 +39,20 @@ const mergeChartData = (
 		})
 	})
 
-	return chartData.sort((left, right) => left.time - right.time)
+	const sortedData = chartData.sort((left, right) => left.time - right.time)
+
+	if (extendToCurrentTime) {
+		const latestTime = sortedData[sortedData.length - 1]?.time ?? 0
+		const currentTime = Date.now()
+
+		if (latestTime < currentTime) {
+			sortedData.push({
+				time: currentTime,
+			})
+		}
+	}
+
+	return sortedData
 }
 
 const WindGraph = ({
@@ -52,8 +66,9 @@ const WindGraph = ({
 }) => {
 	const containerRef = useRef<HTMLDivElement>(null)
 	const [showPredictedWind, setShowPredictedWind] = useState(true)
-	const chartData = mergeChartData(data, forecastData)
+	const chartData = mergeChartData(data, forecastData, view === 'pam-rocks')
 	const showLull = view === 'spit'
+	const showGustDotsOnly = view === 'pam-rocks'
 	const hasPredictedWind =
 		view === 'spit' && chartData.some((point) => point.predicted != null)
 	const showPredicted = hasPredictedWind && showPredictedWind
@@ -252,9 +267,18 @@ const WindGraph = ({
 						type="monotone"
 						dataKey="gust"
 						stroke="rgb(var(--wind-gust-rgb))"
-						dot={false}
+						strokeOpacity={showGustDotsOnly ? 0 : 1}
+						dot={
+							showGustDotsOnly
+								? {
+										r: 3,
+										strokeWidth: 0,
+										fill: 'rgb(var(--wind-gust-rgb))',
+									}
+								: false
+						}
 						activeDot={{ strokeWidth: 1, r: 4 }}
-						connectNulls={true}
+						connectNulls={!showGustDotsOnly}
 						isAnimationActive={false}
 					/>
 					{showLull && (

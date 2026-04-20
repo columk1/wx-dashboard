@@ -4,12 +4,12 @@ export type WindDataSeries = WindDataPoint[]
 export type WindDataPointRaw = (number | null)[]
 export type WindDataSeriesRaw = WindDataPointRaw[]
 
-export type WXView = 'spit' | 'gondola'
+export type WXView = 'spit' | 'gondola' | 'pam-rocks'
 
 export type WindGraphPoint = {
 	time: number
 	avg: number
-	gust: number
+	gust?: number | null
 	lull?: number | null
 	dir?: number | null
 }
@@ -55,6 +55,11 @@ export type WXCardData =
 	  }
 	| null
 	| undefined
+
+export type PamRocksApiResponse = {
+	current: WXCardData
+	points: WindGraphPoint[]
+}
 
 export type SpitWindApiResponse = {
 	wind_avg_data: WindDataSeriesRaw
