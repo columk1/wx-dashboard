@@ -13,12 +13,11 @@ import Legend from '@/app/ui/Legend'
 import Spinner from '@/app/ui/Spinner/Spinner'
 import styles from './WindGraph.module.css'
 
-const mergeChartData = (
-	observedData: WindGraphData,
+const mergeForecastData = (
+	observedData: WindGraphChartPoint[],
 	forecastData?: SpitWindForecastData,
-	options: { extendToCurrentTime?: boolean } = {},
 ): WindGraphChartPoint[] => {
-	const chartData: WindGraphChartPoint[] = [...(observedData ?? [])]
+	const chartData: WindGraphChartPoint[] = [...observedData]
 	const safeForecastData = Array.isArray(forecastData) ? forecastData : []
 
 	safeForecastData.forEach((point) => {
@@ -39,20 +38,48 @@ const mergeChartData = (
 		})
 	})
 
-	const sortedData = chartData.sort((left, right) => left.time - right.time)
+	return chartData.sort((left, right) => left.time - right.time)
+}
 
-	if (options.extendToCurrentTime) {
-		const latestTime = sortedData[sortedData.length - 1]?.time ?? 0
-		const currentTime = Date.now()
+const extendChartToCurrentTime = (
+	chartData: WindGraphChartPoint[],
+): WindGraphChartPoint[] => {
+	const latestTime = chartData[chartData.length - 1]?.time ?? 0
+	const currentTime = Date.now()
 
-		if (latestTime < currentTime) {
-			sortedData.push({
-				time: currentTime,
-			})
-		}
+	if (latestTime >= currentTime) {
+		return chartData
 	}
 
-	return sortedData
+	return [
+		...chartData,
+		{
+			time: currentTime,
+		},
+	]
+}
+
+const buildChartData = (
+	observedData: WindGraphData,
+	forecastData: SpitWindForecastData,
+	options: {
+		includeForecast?: boolean
+		extendDomainToCurrentTime?: boolean
+	},
+): WindGraphChartPoint[] => {
+	let chartData: WindGraphChartPoint[] = [...(observedData ?? [])].sort(
+		(left, right) => left.time - right.time,
+	)
+
+	if (options.includeForecast) {
+		chartData = mergeForecastData(chartData, forecastData)
+	}
+
+	if (options.extendDomainToCurrentTime) {
+		chartData = extendChartToCurrentTime(chartData)
+	}
+
+	return chartData
 }
 
 const WindGraph = ({
@@ -66,8 +93,9 @@ const WindGraph = ({
 }) => {
 	const containerRef = useRef<HTMLDivElement>(null)
 	const [showPredictedWind, setShowPredictedWind] = useState(true)
-	const chartData = mergeChartData(data, forecastData, {
-		extendToCurrentTime: view === 'pam-rocks',
+	const chartData = buildChartData(data, forecastData, {
+		includeForecast: view === 'spit',
+		extendDomainToCurrentTime: view === 'pam-rocks',
 	})
 	const showLull = view === 'spit'
 	const showGustDotsOnly = view === 'pam-rocks'
