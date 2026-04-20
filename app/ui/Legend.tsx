@@ -171,6 +171,7 @@ const Legend = ({
 								display: 'inline-flex',
 								font: 'inherit',
 								gap: '4px',
+								marginTop: '-2px',
 								opacity: predictedEnabled ? 1 : 0.45,
 								padding: 0,
 								verticalAlign: 'middle',
@@ -184,7 +185,6 @@ const Legend = ({
 								style={{
 									display: 'inline-block',
 									verticalAlign: 'middle',
-									marginTop: '-2px',
 								}}
 							>
 								<title>Toggle predicted wind</title>
