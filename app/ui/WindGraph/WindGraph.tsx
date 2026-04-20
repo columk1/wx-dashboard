@@ -16,7 +16,7 @@ import styles from './WindGraph.module.css'
 const mergeChartData = (
 	observedData: WindGraphData,
 	forecastData?: SpitWindForecastData,
-	extendToCurrentTime = false,
+	options: { extendToCurrentTime?: boolean } = {},
 ): WindGraphChartPoint[] => {
 	const chartData: WindGraphChartPoint[] = [...(observedData ?? [])]
 	const safeForecastData = Array.isArray(forecastData) ? forecastData : []
@@ -41,7 +41,7 @@ const mergeChartData = (
 
 	const sortedData = chartData.sort((left, right) => left.time - right.time)
 
-	if (extendToCurrentTime) {
+	if (options.extendToCurrentTime) {
 		const latestTime = sortedData[sortedData.length - 1]?.time ?? 0
 		const currentTime = Date.now()
 
@@ -66,7 +66,9 @@ const WindGraph = ({
 }) => {
 	const containerRef = useRef<HTMLDivElement>(null)
 	const [showPredictedWind, setShowPredictedWind] = useState(true)
-	const chartData = mergeChartData(data, forecastData, view === 'pam-rocks')
+	const chartData = mergeChartData(data, forecastData, {
+		extendToCurrentTime: view === 'pam-rocks',
+	})
 	const showLull = view === 'spit'
 	const showGustDotsOnly = view === 'pam-rocks'
 	const hasPredictedWind =
