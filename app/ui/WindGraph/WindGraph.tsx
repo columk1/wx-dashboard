@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 import { CartesianGrid, Line, LineChart, Tooltip, XAxis, YAxis } from 'recharts'
 import type {
 	SpitWindForecastData,
@@ -8,6 +8,10 @@ import type {
 	WindGraphData,
 	WXView,
 } from '@/app/lib/definitions'
+import {
+	setUserPreference,
+	useShowPredictedWindPreference,
+} from '@/app/lib/preferences'
 import CustomXAxisTick from '@/app/ui/CustomXAxisTick'
 import Legend from '@/app/ui/Legend'
 import Spinner from '@/app/ui/Spinner/Spinner'
@@ -92,7 +96,7 @@ const WindGraph = ({
 	view?: WXView
 }) => {
 	const containerRef = useRef<HTMLDivElement>(null)
-	const [showPredictedWind, setShowPredictedWind] = useState(true)
+	const showPredictedWind = useShowPredictedWindPreference()
 	const chartData = buildChartData(data, forecastData, {
 		includeForecast: view === 'spit',
 		extendDomainToCurrentTime: view === 'pam-rocks',
@@ -346,7 +350,7 @@ const WindGraph = ({
 				showPredicted={hasPredictedWind}
 				predictedEnabled={showPredictedWind}
 				onPredictedToggle={() =>
-					setShowPredictedWind((currentValue) => !currentValue)
+					setUserPreference('showPredictedWind', !showPredictedWind)
 				}
 			/>
 		</div>
