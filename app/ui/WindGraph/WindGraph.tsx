@@ -150,8 +150,11 @@ const WindGraph = ({
 	}, [chartData])
 
 	return !data || data.length === 0 ? (
-		<div className={styles.fallback}>
-			<Spinner />
+		<div className={styles.wrapper}>
+			<div className={`${styles.container} ${styles.fallback}`}>
+				<Spinner />
+			</div>
+			<div className={styles.legendPlaceholder} aria-hidden="true" />
 		</div>
 	) : (
 		<div className={styles.wrapper}>

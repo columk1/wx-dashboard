@@ -7,19 +7,27 @@
 }
 
 .imgShared {
+	display: block;
 	width: 100%;
-	height: auto;
+	aspect-ratio: 1;
+	padding: 0;
+	border: 0;
 	background: url("/windgram-placeholder.jpg");
 	background-size: contain;
 }
 
 .raspImg {
 	composes: imgShared;
-	display: block;
+	height: auto;
+	object-fit: contain;
 	&:hover {
 		outline: 1px solid rgb(var(--card-border-rgb), 0.7);
 		outline-offset: -1px;
 	}
+}
+
+.placeholder {
+	composes: imgShared;
 }
 
 .error {
@@ -27,7 +35,6 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	height: 450px;
 	font-size: 1.5rem;
 	font-weight: bold;
 	background-color: rgb(var(--callout-rgb));
@@ -42,6 +49,7 @@
 .periodBtns {
 	max-width: 100%;
 	display: flex;
+	min-height: calc(1rem + 0.7rem * 1.2);
 }
 
 .periodBtn {

@@ -11,6 +11,8 @@ const getNextItem = <T,>(array: T[], currentIndex: number) =>
 
 const getPacificTimestamp = () => toZonedTime(Date.now(), 'America/Los_Angeles')
 
+const periodLabels = ['Today', 'Tomorrow', 'Two Day']
+
 // const getTimeSuffix = (date: Date) =>
 //   date.getDay() + date.getHours() > 6 && date.getHours() < 19 ? 'am' : 'pm'
 
@@ -42,16 +44,28 @@ const Rasp = () => {
 	const period = periods[periodIndex]?.[1]
 	const site = sites[siteIndex][1]
 
-	const src = `https://canadarasp.com/windgrams-data/${period}/hrdpswindgram${site}.png`
+	const src = period
+		? `https://canadarasp.com/windgrams-data/${period}/hrdpswindgram${site}.png`
+		: null
 
 	const cyclePeriod = () =>
 		updateImage((periodIndex + 1) % periods.length, siteIndex)
 
-	const handlePeriodSelection = (index: number) => updateImage(index, siteIndex)
+	const handlePeriodSelection = (index: number) => {
+		if (periods.length === 0) return
 
-	const handleSiteSelection = (index: number) => updateImage(periodIndex, index)
+		updateImage(index, siteIndex)
+	}
+
+	const handleSiteSelection = (index: number) => {
+		if (periods.length === 0) return
+
+		updateImage(periodIndex, index)
+	}
 
 	const updateImage = (newPeriodIndex: number, newSiteIndex: number) => {
+		if (periods.length === 0) return
+
 		const newPeriod = periods[newPeriodIndex][1]
 		const newSite = sites[newSiteIndex][1]
 		const newSrc = `https://canadarasp.com/windgrams-data/${newPeriod}/hrdpswindgram${newSite}.png`
@@ -72,6 +86,8 @@ const Rasp = () => {
 
 	// Preload next site and next period of to pre-empt RASP navigation
 	useEffect(() => {
+		if (!period) return
+
 		const preloadImageSrcs = [
 			`https://canadarasp.com/windgrams-data/${getNextItem(periods, periodIndex)?.[1]}/hrdpswindgram${site}.png`,
 			`https://canadarasp.com/windgrams-data/${period}/hrdpswindgram${getNextItem(sites, siteIndex)[1]}.png`,
@@ -94,21 +110,26 @@ const Rasp = () => {
 			role="button"
 		>
 			<div className={styles.periodBtns}>
-				{periods.map((e, i) => (
+				{periodLabels.map((label, i) => (
 					<button
 						type="button"
-						key={e[0]}
+						key={label}
 						onClick={() => handlePeriodSelection(i)}
 						className={`${styles.periodBtn} ${periodIndex === i ? styles.active : ''}`}
 					>
-						{e[0]}
+						{label}
 					</button>
 				))}
 			</div>
-			<button type="button" onClick={cyclePeriod} className={styles.imgShared}>
+			<button
+				type="button"
+				onClick={cyclePeriod}
+				className={styles.imgShared}
+				disabled={!src}
+			>
 				{imageError ? (
 					<div className={styles.error}>Keep Parawaiting</div>
-				) : (
+				) : src ? (
 					// biome-ignore lint/performance/noImgElement: upstream cache
 					<img
 						src={src}
@@ -118,6 +139,8 @@ const Rasp = () => {
 						height={450}
 						onError={() => setImageError(true)}
 					/>
+				) : (
+					<div className={styles.placeholder} />
 				)}
 			</button>
 			<div className={styles.btnContainer}>
