@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useRef } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { CartesianGrid, Line, LineChart, Tooltip, XAxis, YAxis } from 'recharts'
 import type {
 	SpitWindForecastData,
@@ -51,9 +51,12 @@ const WindGraph = ({
 	view?: WXView
 }) => {
 	const containerRef = useRef<HTMLDivElement>(null)
+	const [showPredictedWind, setShowPredictedWind] = useState(true)
 	const chartData = mergeChartData(data, forecastData)
 	const showLull = view === 'spit'
-	const showPredicted = view === 'spit'
+	const hasPredictedWind =
+		view === 'spit' && chartData.some((point) => point.predicted != null)
+	const showPredicted = hasPredictedWind && showPredictedWind
 
 	useEffect(() => {
 		if (containerRef.current && chartData.length > 0) {
@@ -200,11 +203,18 @@ const WindGraph = ({
 						scale="time"
 						ticks={chartData
 							.filter(
-								(point) => point.dir != null || point.predictedDir != null,
+								(point) =>
+									point.dir != null ||
+									(showPredicted && point.predictedDir != null),
 							)
 							.map((point) => point.time)}
 						tickFormatter={(_time) => ''}
-						tick={<CustomXAxisTick directionArray={chartData} />}
+						tick={
+							<CustomXAxisTick
+								directionArray={chartData}
+								showPredicted={showPredicted}
+							/>
+						}
 						tickLine={false}
 						mirror={true}
 						tickMargin={-8}
@@ -277,7 +287,14 @@ const WindGraph = ({
 				</LineChart>
 			</div>
 			{/* Custom version of the generated legend, placed outside the scrollable container */}
-			<Legend showLull={showLull} showPredicted={showPredicted} />
+			<Legend
+				showLull={showLull}
+				showPredicted={hasPredictedWind}
+				predictedEnabled={showPredictedWind}
+				onPredictedToggle={() =>
+					setShowPredictedWind((currentValue) => !currentValue)
+				}
+			/>
 		</div>
 	)
 }

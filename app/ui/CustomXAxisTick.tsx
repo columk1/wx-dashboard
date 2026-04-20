@@ -12,19 +12,32 @@ type CustomXAxisTickProps = {
 		value: number
 	}
 	directionArray: WindGraphChartPoint[]
+	showPredicted?: boolean
 	size?: number
 }
 
 const CustomXAxisTick = (props: CustomXAxisTickProps) => {
-	const { x, y, payload, directionArray, size = 12 } = props
+	const {
+		x,
+		y,
+		payload,
+		directionArray,
+		showPredicted = true,
+		size = 12,
+	} = props
 	const point = payload
 		? directionArray.find(
 				(directionPoint) => directionPoint.time === payload.value,
 			)
 		: null
-	const direction = point?.predictedDir ?? point?.dir ?? null
+	const direction =
+		showPredicted && point?.predictedDir != null
+			? point.predictedDir
+			: (point?.dir ?? null)
 	const fill =
-		point?.predictedDir != null ? 'rgb(var(--wind-predicted-rgb))' : '#1d91a0'
+		showPredicted && point?.predictedDir != null
+			? 'rgb(var(--wind-predicted-rgb))'
+			: '#1d91a0'
 
 	if (!payload || direction == null) return null
 

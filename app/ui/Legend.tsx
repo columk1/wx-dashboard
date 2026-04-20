@@ -1,10 +1,20 @@
 const Legend = ({
 	showLull = true,
 	showPredicted = true,
+	predictedEnabled = true,
+	onPredictedToggle,
 }: {
 	showLull?: boolean
 	showPredicted?: boolean
+	predictedEnabled?: boolean
+	onPredictedToggle?: () => void
 }) => {
+	const avgColor = 'rgb(var(--wind-avg-rgb))'
+	const gustColor = 'rgb(var(--wind-gust-rgb))'
+	const lullColor = 'rgb(var(--wind-lull-rgb))'
+	const predictedColor = 'rgb(var(--wind-predicted-rgb))'
+	const directionColor = avgColor
+
 	return (
 		<div
 			className="recharts-legend-wrapper"
@@ -36,7 +46,7 @@ const Legend = ({
 					>
 						<title>Average wind speed</title>
 						<path
-							fill="rgb(29, 145, 160)"
+							fill={avgColor}
 							cx="16"
 							cy="16"
 							className="recharts-symbols"
@@ -46,7 +56,7 @@ const Legend = ({
 					</svg>
 					<span
 						className="recharts-legend-item-text"
-						style={{ color: 'rgb(29, 145, 160)' }}
+						style={{ color: avgColor }}
 					>
 						Avg
 					</span>
@@ -69,7 +79,7 @@ const Legend = ({
 					>
 						<title>Wind gust</title>
 						<path
-							fill="#f84c56"
+							fill={gustColor}
 							cx="16"
 							cy="16"
 							className="recharts-symbols"
@@ -79,7 +89,7 @@ const Legend = ({
 					</svg>
 					<span
 						className="recharts-legend-item-text"
-						style={{ color: 'rgb(248, 76, 86)' }}
+						style={{ color: gustColor }}
 					>
 						Gust
 					</span>
@@ -103,7 +113,7 @@ const Legend = ({
 						>
 							<title>Wind lull</title>
 							<path
-								fill="#0f6b8a"
+								fill={lullColor}
 								cx="16"
 								cy="16"
 								className="recharts-symbols"
@@ -113,7 +123,7 @@ const Legend = ({
 						</svg>
 						<span
 							className="recharts-legend-item-text"
-							style={{ color: 'rgb(15, 107, 138)' }}
+							style={{ color: lullColor }}
 						>
 							Lull
 						</span>
@@ -125,7 +135,7 @@ const Legend = ({
 				>
 					<svg
 						stroke="currentColor"
-						fill="#1d91a0"
+						fill={directionColor}
 						strokeWidth="0"
 						version="1.2"
 						baseProfile="tiny"
@@ -140,7 +150,7 @@ const Legend = ({
 					</svg>
 					<span
 						className="recharts-legend-item-text"
-						style={{ color: '#1d91a0' }}
+						style={{ color: directionColor }}
 					>
 						Direction
 					</span>
@@ -150,34 +160,53 @@ const Legend = ({
 						className="recharts-legend-item"
 						style={{ display: 'inline-block', marginRight: '10px' }}
 					>
-						<svg
-							className="recharts-surface"
-							width="8"
-							height="8"
-							viewBox="0 0 32 32"
+						<button
+							type="button"
+							aria-pressed={predictedEnabled}
+							onClick={onPredictedToggle}
 							style={{
-								display: 'inline-block',
+								alignItems: 'center',
+								background: 'transparent',
+								color: predictedColor,
+								display: 'inline-flex',
+								font: 'inherit',
+								gap: '4px',
+								opacity: predictedEnabled ? 1 : 0.45,
+								padding: 0,
 								verticalAlign: 'middle',
-								marginRight: '4px',
-								marginTop: '-2px',
 							}}
 						>
-							<title>Predicted wind</title>
-							<path
-								fill="rgb(var(--wind-predicted-rgb))"
-								cx="16"
-								cy="16"
-								className="recharts-symbols"
-								transform="translate(16, 16)"
-								d="M16,0A16,16,0,1,1,-16,0A16,16,0,1,1,16,0"
-							></path>
-						</svg>
-						<span
-							className="recharts-legend-item-text"
-							style={{ color: 'rgb(var(--wind-predicted-rgb))' }}
-						>
-							Predicted
-						</span>
+							<svg
+								className="recharts-surface"
+								width="8"
+								height="8"
+								viewBox="0 0 32 32"
+								style={{
+									display: 'inline-block',
+									verticalAlign: 'middle',
+									marginTop: '-2px',
+								}}
+							>
+								<title>Toggle predicted wind</title>
+								<path
+									fill={predictedColor}
+									cx="16"
+									cy="16"
+									className="recharts-symbols"
+									transform="translate(16, 16)"
+									d="M16,0A16,16,0,1,1,-16,0A16,16,0,1,1,16,0"
+								></path>
+							</svg>
+							<span
+								className="recharts-legend-item-text"
+								style={{
+									color: predictedColor,
+									textDecoration: predictedEnabled ? 'none' : 'line-through',
+								}}
+							>
+								Predicted
+							</span>
+						</button>
 					</li>
 				)}
 			</ul>

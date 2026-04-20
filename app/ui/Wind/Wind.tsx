@@ -68,8 +68,7 @@ const Wind = ({ activeView }: { activeView: WXView }) => {
 		'/api/gondola/history',
 		fetcher,
 		{
-			refreshInterval:
-				activeView === 'gondola' ? GONDOLA_GRAPH_INTERVAL : 0,
+			refreshInterval: activeView === 'gondola' ? GONDOLA_GRAPH_INTERVAL : 0,
 		},
 	)
 
