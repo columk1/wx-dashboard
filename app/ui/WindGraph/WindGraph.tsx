@@ -12,78 +12,108 @@ import {
 	setUserPreference,
 	useShowPredictedWindPreference,
 } from '@/app/lib/preferences'
-import CustomXAxisTick from '@/app/ui/CustomXAxisTick'
+import CustomXAxisTick, { type DirectionTick } from '@/app/ui/CustomXAxisTick'
 import Legend from '@/app/ui/Legend'
 import Spinner from '@/app/ui/Spinner/Spinner'
 import styles from './WindGraph.module.css'
 
-const mergeForecastData = (
-	observedData: WindGraphChartPoint[],
-	forecastData?: SpitWindForecastData,
+const sortByTime = (left: WindGraphChartPoint, right: WindGraphChartPoint) =>
+	left.time - right.time
+
+// const extendChartToCurrentTime = (
+// 	chartData: WindGraphChartPoint[],
+// ): WindGraphChartPoint[] => {
+// 	const latestTime = chartData[chartData.length - 1]?.time ?? 0
+// 	const currentTime = Date.now()
+
+// 	if (latestTime >= currentTime) {
+// 		return chartData
+// 	}
+
+// 	return [
+// 		...chartData,
+// 		{
+// 			time: currentTime,
+// 		},
+// 	]
+// }
+
+const buildObservedChartData = (
+	observedData: WindGraphData,
 ): WindGraphChartPoint[] => {
-	const chartData: WindGraphChartPoint[] = [...observedData]
-	const safeForecastData = Array.isArray(forecastData) ? forecastData : []
+	return [...(observedData ?? [])].sort(sortByTime)
+}
 
-	safeForecastData.forEach((point) => {
-		const existingPoint = chartData.find(
-			(chartPoint) => chartPoint.time === point.time,
-		)
-
-		if (existingPoint) {
-			existingPoint.predicted = point.predicted
-			existingPoint.predictedDir = point.dir
-			return
-		}
-
-		chartData.push({
+const buildForecastChartData = (
+	forecastData?: SpitWindForecastData,
+): WindGraphChartPoint[] =>
+	(Array.isArray(forecastData) ? forecastData : [])
+		.map((point) => ({
 			time: point.time,
 			predicted: point.predicted,
 			predictedDir: point.dir,
+		}))
+		.sort(sortByTime)
+
+const buildVisibleChartData = (
+	observedChartData: WindGraphChartPoint[],
+	forecastChartData: WindGraphChartPoint[],
+	showPredicted: boolean,
+): WindGraphChartPoint[] => {
+	if (!showPredicted) return observedChartData
+
+	// Recharts tooltips resolve against chart rows, so visible forecast values
+	// need to be overlaid into `data`. Hidden forecast rows are never included.
+	const chartDataByTime = new Map<number, WindGraphChartPoint>(
+		observedChartData.map((point) => [point.time, { ...point }]),
+	)
+
+	forecastChartData.forEach((point) => {
+		const observedPoint = chartDataByTime.get(point.time)
+
+		chartDataByTime.set(point.time, {
+			...observedPoint,
+			time: point.time,
+			predicted: point.predicted,
+			predictedDir: point.predictedDir,
 		})
 	})
 
-	return chartData.sort((left, right) => left.time - right.time)
+	return Array.from(chartDataByTime.values()).sort(sortByTime)
 }
 
-const extendChartToCurrentTime = (
-	chartData: WindGraphChartPoint[],
-): WindGraphChartPoint[] => {
-	const latestTime = chartData[chartData.length - 1]?.time ?? 0
-	const currentTime = Date.now()
+const buildDirectionTicks = (
+	observedChartData: WindGraphChartPoint[],
+	forecastChartData: WindGraphChartPoint[],
+	showPredicted: boolean,
+): DirectionTick[] => {
+	const ticksByTime = new Map<number, DirectionTick>()
 
-	if (latestTime >= currentTime) {
-		return chartData
+	observedChartData.forEach((point) => {
+		if (point.dir == null) return
+
+		ticksByTime.set(point.time, {
+			time: point.time,
+			direction: point.dir,
+			isPredicted: false,
+		})
+	})
+
+	if (showPredicted) {
+		forecastChartData.forEach((point) => {
+			if (point.predictedDir == null) return
+
+			ticksByTime.set(point.time, {
+				time: point.time,
+				direction: point.predictedDir,
+				isPredicted: true,
+			})
+		})
 	}
 
-	return [
-		...chartData,
-		{
-			time: currentTime,
-		},
-	]
-}
-
-const buildChartData = (
-	observedData: WindGraphData,
-	forecastData: SpitWindForecastData,
-	options: {
-		includeForecast?: boolean
-		extendDomainToCurrentTime?: boolean
-	},
-): WindGraphChartPoint[] => {
-	let chartData: WindGraphChartPoint[] = [...(observedData ?? [])].sort(
+	return Array.from(ticksByTime.values()).sort(
 		(left, right) => left.time - right.time,
 	)
-
-	if (options.includeForecast) {
-		chartData = mergeForecastData(chartData, forecastData)
-	}
-
-	if (options.extendDomainToCurrentTime) {
-		chartData = extendChartToCurrentTime(chartData)
-	}
-
-	return chartData
 }
 
 const WindGraph = ({
@@ -97,25 +127,35 @@ const WindGraph = ({
 }) => {
 	const containerRef = useRef<HTMLDivElement>(null)
 	const showPredictedWind = useShowPredictedWindPreference()
-	const chartData = buildChartData(data, forecastData, {
-		includeForecast: view === 'spit',
-		extendDomainToCurrentTime: view === 'pam-rocks',
-	})
+	const observedChartData = buildObservedChartData(data)
+	const forecastChartData = buildForecastChartData(forecastData)
 	const showLull = view === 'spit'
 	const showGustDotsOnly = view === 'pam-rocks'
-	const hasPredictedWind =
-		view === 'spit' && chartData.some((point) => point.predicted != null)
+	const hasPredictedWind = view === 'spit' && forecastChartData.length > 0
 	const showPredicted = hasPredictedWind && showPredictedWind
+	const visibleChartData = buildVisibleChartData(
+		observedChartData,
+		forecastChartData,
+		showPredicted,
+	)
+	const directionTicks = buildDirectionTicks(
+		observedChartData,
+		forecastChartData,
+		showPredicted,
+	)
+	const startTime = visibleChartData[0]?.time ?? 0
+	const endTime = visibleChartData[visibleChartData.length - 1]?.time ?? 0
+	const timeDomain: [number, number] = [startTime, endTime]
 
 	useEffect(() => {
-		if (containerRef.current && chartData.length > 0) {
+		if (containerRef.current && visibleChartData.length > 0 && endTime > 0) {
 			containerRef.current.scrollLeft = containerRef.current.scrollWidth
 		}
-	}, [chartData])
+	}, [endTime, visibleChartData.length])
 
 	const maxWindValue = Math.max(
 		40,
-		...chartData.map((point) =>
+		...visibleChartData.map((point) =>
 			Math.max(
 				point.avg ?? 0,
 				point.gust ?? 0,
@@ -127,13 +167,11 @@ const WindGraph = ({
 
 	const defaultTooltipIndex = Math.max(
 		0,
-		chartData.findLastIndex((point) => point.avg != null),
+		observedChartData.findLastIndex((point) => point.avg != null),
 	)
 
 	const getTimeTicks = useCallback(() => {
 		const ONE_HOUR = 3600000
-		const startTime = chartData[0]?.time || 0
-		const endTime = chartData[chartData.length - 1]?.time || 0
 
 		// Round the startTime up to the nearest whole hour
 		const firstHour = Math.ceil(startTime / ONE_HOUR) * ONE_HOUR
@@ -147,7 +185,7 @@ const WindGraph = ({
 			{ length: hourlyTicks },
 			(_, i) => firstHour + i * ONE_HOUR,
 		)
-	}, [chartData])
+	}, [startTime, endTime])
 
 	return !data || data.length === 0 ? (
 		<div className={styles.wrapper}>
@@ -163,7 +201,7 @@ const WindGraph = ({
 					id="wind-graph"
 					width={1600}
 					height={300}
-					data={chartData}
+					data={visibleChartData}
 					// data={data.wind_avg_data}
 					margin={{ top: 0, right: -10, bottom: 30, left: 20 }}
 					className={styles.lineChart}
@@ -233,7 +271,7 @@ const WindGraph = ({
 						xAxisId={0}
 						axisLine={false}
 						dataKey="time"
-						domain={['auto', 'auto']}
+						domain={timeDomain}
 						orientation="top"
 						scale="time"
 						tickFormatter={(time) =>
@@ -251,22 +289,11 @@ const WindGraph = ({
 						xAxisId={1}
 						axisLine={false}
 						dataKey="time"
-						domain={['auto', 'auto']}
+						domain={timeDomain}
 						scale="time"
-						ticks={chartData
-							.filter(
-								(point) =>
-									point.dir != null ||
-									(showPredicted && point.predictedDir != null),
-							)
-							.map((point) => point.time)}
+						ticks={directionTicks.map((tick) => tick.time)}
 						tickFormatter={(_time) => ''}
-						tick={
-							<CustomXAxisTick
-								directionArray={chartData}
-								showPredicted={showPredicted}
-							/>
-						}
+						tick={<CustomXAxisTick directionTicks={directionTicks} />}
 						tickLine={false}
 						mirror={true}
 						tickMargin={-8}

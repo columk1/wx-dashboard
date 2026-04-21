@@ -1,4 +1,8 @@
-import type { WindGraphChartPoint } from '@/app/lib/definitions'
+export type DirectionTick = {
+	time: number
+	direction: number
+	isPredicted: boolean
+}
 
 type CustomXAxisTickProps = {
 	x?: number
@@ -11,35 +15,25 @@ type CustomXAxisTickProps = {
 		tickCoord: number
 		value: number
 	}
-	directionArray: WindGraphChartPoint[]
-	showPredicted?: boolean
+	directionTicks: DirectionTick[]
 	size?: number
 }
 
-const CustomXAxisTick = (props: CustomXAxisTickProps) => {
-	const {
-		x,
-		y,
-		payload,
-		directionArray,
-		showPredicted = true,
-		size = 12,
-	} = props
-	const point = payload
-		? directionArray.find(
-				(directionPoint) => directionPoint.time === payload.value,
-			)
+const CustomXAxisTick = ({
+	x,
+	y,
+	payload,
+	directionTicks,
+	size = 12,
+}: CustomXAxisTickProps) => {
+	const directionTick = payload
+		? directionTicks.find((tick) => tick.time === payload.value)
 		: null
-	const direction =
-		showPredicted && point?.predictedDir != null
-			? point.predictedDir
-			: (point?.dir ?? null)
-	const fill =
-		showPredicted && point?.predictedDir != null
-			? 'rgb(var(--wind-predicted-rgb))'
-			: '#1d91a0'
+	const fill = directionTick?.isPredicted
+		? 'rgb(var(--wind-predicted-rgb))'
+		: '#1d91a0'
 
-	if (!payload || direction == null) return null
+	if (!payload || !directionTick) return null
 
 	return (
 		<svg
@@ -54,8 +48,8 @@ const CustomXAxisTick = (props: CustomXAxisTickProps) => {
 			height={size}
 			width={size}
 		>
-			<title>Wind direction: {direction}°</title>
-			<g transform={`rotate(${direction + 135} ${size} ${size})`}>
+			<title>Wind direction: {directionTick.direction}°</title>
+			<g transform={`rotate(${directionTick.direction + 135} ${size} ${size})`}>
 				<path d="M10.368 19.102c.349 1.049 1.011 1.086 1.478.086l5.309-11.375c.467-1.002.034-1.434-.967-.967l-11.376 5.308c-1.001.467-.963 1.129.085 1.479l4.103 1.367 1.368 4.102z"></path>
 			</g>
 		</svg>
