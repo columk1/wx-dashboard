@@ -4,6 +4,7 @@
 	"private": true,
 	"scripts": {
 		"dev": "next dev",
+		"dev:prod": "next build && next start",
 		"build": "next build",
 		"start": "next start",
 		"check": "biome check --write",

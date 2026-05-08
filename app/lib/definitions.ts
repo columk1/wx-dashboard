@@ -26,6 +26,16 @@ export type SpitWindForecastApiResponse = {
 	model_data: SpitWindForecastApiPoint[]
 }
 
+export type ParaglidingWxForecastHour = {
+	local_iso: string
+	avg_p50: number
+	wind_dir_deg: number
+}
+
+export type ParaglidingWxForecastApiResponse = {
+	forecast_hours: ParaglidingWxForecastHour[]
+}
+
 export type SpitWindForecastPoint = {
 	time: number
 	predicted: number
