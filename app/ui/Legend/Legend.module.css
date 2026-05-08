@@ -1,0 +1,42 @@
+.predictedToggle {
+	align-items: center;
+	background-color: rgba(var(--foreground-muted-rgb), 0.28);
+	border: 1px solid rgba(var(--foreground-muted-rgb), 0.55);
+	border-radius: 999px;
+	display: inline-flex;
+	height: 11px;
+	padding: 1px;
+	transition:
+		background-color 160ms ease,
+		border-color 160ms ease;
+	width: 21px;
+}
+
+.predictedToggleKnob {
+	background-color: rgba(var(--foreground-muted-rgb), 0.8);
+	border-radius: 50%;
+	display: block;
+	height: 7px;
+	transform: translateX(0);
+	transition:
+		background-color 160ms ease,
+		transform 160ms ease;
+	width: 7px;
+}
+
+.predictedToggleEnabled {
+	background-color: rgba(var(--wind-predicted-rgb), 0.32);
+	border-color: rgb(var(--wind-predicted-rgb));
+}
+
+.predictedToggleEnabled .predictedToggleKnob {
+	background-color: rgb(var(--wind-predicted-rgb));
+	transform: translateX(10px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.predictedToggle,
+	.predictedToggleKnob {
+		transition-duration: 1ms;
+	}
+}

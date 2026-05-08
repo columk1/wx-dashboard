@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useRef } from 'react'
+import { startTransition, useCallback, useEffect, useRef } from 'react'
 import { CartesianGrid, Line, LineChart, Tooltip, XAxis, YAxis } from 'recharts'
 import type {
 	SpitWindForecastData,
@@ -13,7 +13,7 @@ import {
 	useShowPredictedWindPreference,
 } from '@/app/lib/preferences'
 import CustomXAxisTick, { type DirectionTick } from '@/app/ui/CustomXAxisTick'
-import Legend from '@/app/ui/Legend'
+import Legend from '@/app/ui/Legend/Legend'
 import Spinner from '@/app/ui/Spinner/Spinner'
 import styles from './WindGraph.module.css'
 
@@ -55,12 +55,11 @@ const buildForecastChartData = (
 		}))
 		.sort(sortByTime)
 
-const buildVisibleChartData = (
+const buildPredictedChartData = (
 	observedChartData: WindGraphChartPoint[],
 	forecastChartData: WindGraphChartPoint[],
-	showPredicted: boolean,
 ): WindGraphChartPoint[] => {
-	if (!showPredicted) return observedChartData
+	if (forecastChartData.length === 0) return observedChartData
 
 	// Recharts tooltips resolve against chart rows, so visible forecast values
 	// need to be overlaid into `data`. Hidden forecast rows are never included.
@@ -84,8 +83,6 @@ const buildVisibleChartData = (
 
 const buildDirectionTicks = (
 	observedChartData: WindGraphChartPoint[],
-	forecastChartData: WindGraphChartPoint[],
-	showPredicted: boolean,
 ): DirectionTick[] => {
 	const ticksByTime = new Map<number, DirectionTick>()
 
@@ -99,22 +96,57 @@ const buildDirectionTicks = (
 		})
 	})
 
-	if (showPredicted) {
-		forecastChartData.forEach((point) => {
-			if (point.predictedDir == null) return
+	return Array.from(ticksByTime.values()).sort(
+		(left, right) => left.time - right.time,
+	)
+}
 
-			ticksByTime.set(point.time, {
-				time: point.time,
-				direction: point.predictedDir,
-				isPredicted: true,
-			})
+const buildPredictedDirectionTicks = (
+	observedDirectionTicks: DirectionTick[],
+	forecastChartData: WindGraphChartPoint[],
+): DirectionTick[] => {
+	if (forecastChartData.length === 0) return observedDirectionTicks
+
+	const ticksByTime = new Map<number, DirectionTick>(
+		observedDirectionTicks.map((tick) => [tick.time, tick]),
+	)
+
+	forecastChartData.forEach((point) => {
+		if (point.predictedDir == null) return
+
+		ticksByTime.set(point.time, {
+			time: point.time,
+			direction: point.predictedDir,
+			isPredicted: true,
 		})
-	}
+	})
 
 	return Array.from(ticksByTime.values()).sort(
 		(left, right) => left.time - right.time,
 	)
 }
+
+const buildDirectionTicksByTime = (directionTicks: DirectionTick[]) =>
+	new Map<number, DirectionTick>(
+		directionTicks.map((tick) => [tick.time, tick]),
+	)
+
+const getMaxWindValue = (
+	chartData: WindGraphChartPoint[],
+	showLull: boolean,
+	showPredicted: boolean,
+) =>
+	Math.max(
+		40,
+		...chartData.map((point) =>
+			Math.max(
+				point.avg ?? 0,
+				point.gust ?? 0,
+				showLull ? (point.lull ?? 0) : 0,
+				showPredicted ? (point.predicted ?? 0) : 0,
+			),
+		),
+	)
 
 const WindGraph = ({
 	data,
@@ -129,20 +161,39 @@ const WindGraph = ({
 	const showPredictedWind = useShowPredictedWindPreference()
 	const observedChartData = buildObservedChartData(data)
 	const forecastChartData = buildForecastChartData(forecastData)
+	const predictedChartData = buildPredictedChartData(
+		observedChartData,
+		forecastChartData,
+	)
 	const showLull = view === 'spit'
 	const showGustDotsOnly = view === 'pam-rocks'
 	const hasPredictedWind = view === 'spit' && forecastChartData.length > 0
 	const showPredicted = hasPredictedWind && showPredictedWind
-	const visibleChartData = buildVisibleChartData(
-		observedChartData,
+	const visibleChartData = showPredicted
+		? predictedChartData
+		: observedChartData
+	const observedDirectionTicks = buildDirectionTicks(observedChartData)
+	const predictedDirectionTicks = buildPredictedDirectionTicks(
+		observedDirectionTicks,
 		forecastChartData,
-		showPredicted,
 	)
-	const directionTicks = buildDirectionTicks(
+	const directionTicks = showPredicted
+		? predictedDirectionTicks
+		: observedDirectionTicks
+	const directionTicksByTime = buildDirectionTicksByTime(directionTicks)
+	const maxObservedWindValue = getMaxWindValue(
 		observedChartData,
-		forecastChartData,
-		showPredicted,
+		showLull,
+		false,
 	)
+	const maxPredictedWindValue = getMaxWindValue(
+		predictedChartData,
+		showLull,
+		true,
+	)
+	const maxWindValue = showPredicted
+		? maxPredictedWindValue
+		: maxObservedWindValue
 	const startTime = visibleChartData[0]?.time ?? 0
 	const endTime = visibleChartData[visibleChartData.length - 1]?.time ?? 0
 	const timeDomain: [number, number] = [startTime, endTime]
@@ -152,18 +203,6 @@ const WindGraph = ({
 			containerRef.current.scrollLeft = containerRef.current.scrollWidth
 		}
 	}, [endTime, visibleChartData.length])
-
-	const maxWindValue = Math.max(
-		40,
-		...visibleChartData.map((point) =>
-			Math.max(
-				point.avg ?? 0,
-				point.gust ?? 0,
-				showLull ? (point.lull ?? 0) : 0,
-				showPredicted ? (point.predicted ?? 0) : 0,
-			),
-		),
-	)
 
 	const defaultTooltipIndex = Math.max(
 		0,
@@ -293,7 +332,9 @@ const WindGraph = ({
 						scale="time"
 						ticks={directionTicks.map((tick) => tick.time)}
 						tickFormatter={(_time) => ''}
-						tick={<CustomXAxisTick directionTicks={directionTicks} />}
+						tick={
+							<CustomXAxisTick directionTicksByTime={directionTicksByTime} />
+						}
 						tickLine={false}
 						mirror={true}
 						tickMargin={-8}
@@ -380,7 +421,9 @@ const WindGraph = ({
 				showPredicted={hasPredictedWind}
 				predictedEnabled={showPredictedWind}
 				onPredictedToggle={() =>
-					setUserPreference('showPredictedWind', !showPredictedWind)
+					startTransition(() => {
+						setUserPreference('showPredictedWind', !showPredictedWind)
+					})
 				}
 			/>
 		</div>

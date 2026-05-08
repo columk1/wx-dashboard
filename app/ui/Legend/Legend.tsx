@@ -1,3 +1,5 @@
+import styles from './Legend.module.css'
+
 const Legend = ({
 	showLull = true,
 	showPredicted = true,
@@ -14,6 +16,9 @@ const Legend = ({
 	const lullColor = 'rgb(var(--wind-lull-rgb))'
 	const predictedColor = 'rgb(var(--wind-predicted-rgb))'
 	const directionColor = avgColor
+	const predictedToggleLabel = predictedEnabled
+		? 'Hide predicted wind'
+		: 'Show predicted wind'
 
 	return (
 		<div
@@ -162,8 +167,10 @@ const Legend = ({
 					>
 						<button
 							type="button"
+							aria-label={predictedToggleLabel}
 							aria-pressed={predictedEnabled}
 							onClick={onPredictedToggle}
+							title={predictedToggleLabel}
 							style={{
 								alignItems: 'center',
 								background: 'transparent',
@@ -171,37 +178,25 @@ const Legend = ({
 								display: 'inline-flex',
 								font: 'inherit',
 								gap: '4px',
+								lineHeight: 1,
 								marginTop: '-2px',
-								opacity: predictedEnabled ? 1 : 0.45,
 								padding: 0,
 								verticalAlign: 'middle',
 							}}
 						>
-							<svg
-								className="recharts-surface"
-								width="8"
-								height="8"
-								viewBox="0 0 32 32"
-								style={{
-									display: 'inline-block',
-									verticalAlign: 'middle',
-								}}
+							<span
+								aria-hidden="true"
+								className={`${styles.predictedToggle} ${
+									predictedEnabled ? styles.predictedToggleEnabled : ''
+								}`}
 							>
-								<title>Toggle predicted wind</title>
-								<path
-									fill={predictedColor}
-									cx="16"
-									cy="16"
-									className="recharts-symbols"
-									transform="translate(16, 16)"
-									d="M16,0A16,16,0,1,1,-16,0A16,16,0,1,1,16,0"
-								></path>
-							</svg>
+								<span className={styles.predictedToggleKnob} />
+							</span>
 							<span
 								className="recharts-legend-item-text"
 								style={{
 									color: predictedColor,
-									textDecoration: predictedEnabled ? 'none' : 'line-through',
+									opacity: predictedEnabled ? 1 : 0.58,
 								}}
 							>
 								Predicted

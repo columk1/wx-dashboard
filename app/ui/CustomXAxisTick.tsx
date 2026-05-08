@@ -15,7 +15,7 @@ type CustomXAxisTickProps = {
 		tickCoord: number
 		value: number
 	}
-	directionTicks: DirectionTick[]
+	directionTicksByTime: Map<number, DirectionTick>
 	size?: number
 }
 
@@ -23,12 +23,10 @@ const CustomXAxisTick = ({
 	x,
 	y,
 	payload,
-	directionTicks,
+	directionTicksByTime,
 	size = 12,
 }: CustomXAxisTickProps) => {
-	const directionTick = payload
-		? directionTicks.find((tick) => tick.time === payload.value)
-		: null
+	const directionTick = payload ? directionTicksByTime.get(payload.value) : null
 	const fill = directionTick?.isPredicted
 		? 'rgb(var(--wind-predicted-rgb))'
 		: '#1d91a0'

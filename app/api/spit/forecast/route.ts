@@ -97,7 +97,7 @@ const buildForecastSeries = (
 const buildParaglidingWxForecastSeries = (
 	forecast: ParaglidingWxForecastApiResponse,
 ): SpitWindForecastData =>
-	forecast.forecast_hours.slice(0, 3).map((point) => ({
+	forecast.forecast_hours.slice(0, 4).map((point) => ({
 		time: new Date(point.local_iso).getTime(),
 		predicted: Math.round(point.avg_p50),
 		dir: Math.round(point.wind_dir_deg),
