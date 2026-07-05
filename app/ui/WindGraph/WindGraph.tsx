@@ -148,6 +148,21 @@ const getMaxWindValue = (
 		),
 	)
 
+const getLatestObservedTooltipIndex = (
+	observedChartData: WindGraphChartPoint[],
+	visibleChartData: WindGraphChartPoint[],
+) => {
+	const latestObservedTime =
+		observedChartData.findLast((point) => point.avg != null)?.time ?? null
+
+	if (latestObservedTime == null) return 0
+
+	return Math.max(
+		0,
+		visibleChartData.findIndex((point) => point.time === latestObservedTime),
+	)
+}
+
 const WindGraph = ({
 	data,
 	forecastData,
@@ -204,9 +219,9 @@ const WindGraph = ({
 		}
 	}, [endTime, visibleChartData.length])
 
-	const defaultTooltipIndex = Math.max(
-		0,
-		observedChartData.findLastIndex((point) => point.avg != null),
+	const defaultTooltipIndex = getLatestObservedTooltipIndex(
+		observedChartData,
+		visibleChartData,
 	)
 
 	const getTimeTicks = useCallback(() => {
