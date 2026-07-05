@@ -42,6 +42,12 @@
 		"description": "Weather and Cams"
 	},
 	{
+		"name": "Paragliding WX",
+		"url": "https://paraglidingwx.com/",
+		"emoji": "🌤",
+		"description": "Paragliding Weather"
+	},
+	{
 		"name": "XC Find",
 		"url": "https://xcfind.paraglide.us/map.html?id=114",
 		"emoji": "📍",
