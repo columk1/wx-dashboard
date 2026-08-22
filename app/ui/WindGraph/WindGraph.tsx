@@ -12,9 +12,9 @@ import {
 	setUserPreference,
 	useShowPredictedWindPreference,
 } from '@/app/lib/preferences'
+import { formatWindObservationTime } from '@/app/lib/utils/wind'
 import CustomXAxisTick, { type DirectionTick } from '@/app/ui/CustomXAxisTick'
 import Legend from '@/app/ui/Legend/Legend'
-import Spinner from '@/app/ui/Spinner/Spinner'
 import styles from './WindGraph.module.css'
 
 const sortByTime = (left: WindGraphChartPoint, right: WindGraphChartPoint) =>
@@ -167,10 +167,12 @@ const WindGraph = ({
 	data,
 	forecastData,
 	view = 'spit',
+	observedAt,
 }: {
 	data: WindGraphData
 	forecastData?: SpitWindForecastData
 	view?: WXView
+	observedAt?: number
 }) => {
 	const containerRef = useRef<HTMLDivElement>(null)
 	const showPredictedWind = useShowPredictedWindPreference()
@@ -244,12 +246,17 @@ const WindGraph = ({
 	return !data || data.length === 0 ? (
 		<div className={styles.wrapper}>
 			<div className={`${styles.container} ${styles.fallback}`}>
-				<Spinner />
+				<p className={styles.unavailable}>Wind history unavailable</p>
 			</div>
 			<div className={styles.legendPlaceholder} aria-hidden="true" />
 		</div>
 	) : (
 		<div className={styles.wrapper}>
+			{observedAt && (
+				<div className={styles.updatedAt}>
+					{formatWindObservationTime(observedAt)}
+				</div>
+			)}
 			<div ref={containerRef} className={styles.container}>
 				<LineChart
 					id="wind-graph"

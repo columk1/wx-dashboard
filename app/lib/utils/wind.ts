@@ -19,3 +19,10 @@ export const getWindDirectionText = (windDirection: number) => {
 	]
 	return directions[Math.round(windDirection / 22.5)]
 }
+
+export const formatWindObservationTime = (observedAt: number) =>
+	new Intl.DateTimeFormat('en-US', {
+		timeZone: 'America/Vancouver',
+		hour: 'numeric',
+		minute: '2-digit',
+	}).format(observedAt)

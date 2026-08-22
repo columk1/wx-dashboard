@@ -62,6 +62,7 @@ export type WXCardData =
 			windLull?: number
 			windDirectionText?: string
 			updatedAtText?: string
+			observedAt?: number
 	  }
 	| null
 	| undefined
@@ -82,11 +83,20 @@ export type SpitWindApiResponse = {
 }
 
 export type GondolaObservation = {
+	epoch?: number
 	winddir: number
 	metric: {
 		windSpeed: number
 		windGust: number
 	}
+}
+
+export type WindInitialData = {
+	spitData: WindGraphData
+	gondolaData: WXCardData
+	pamRocksData: PamRocksApiResponse | null
+	spitForecastData?: SpitWindForecastData
+	gondolaGraphData?: WindGraphData
 }
 
 export type GondolaApiResponse = {

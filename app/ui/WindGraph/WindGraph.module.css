@@ -60,6 +60,21 @@
 	justify-content: center;
 }
 
+.unavailable {
+	color: rgb(var(--foreground-muted-rgb));
+	font-size: 0.9rem;
+}
+
+.updatedAt {
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+	min-height: 1.25rem;
+	padding: 0 0.25rem 0.25rem;
+	color: rgb(var(--foreground-muted-rgb));
+	font-size: 0.7rem;
+}
+
 .legendPlaceholder {
 	height: 23px;
 }

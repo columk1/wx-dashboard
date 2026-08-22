@@ -1,5 +1,12 @@
 import links from '@/app/lib/data/links.json'
-import type { WXView } from '@/app/lib/definitions'
+import type { WindInitialData, WXView } from '@/app/lib/definitions'
+import { getSpitForecastData } from '@/app/lib/services/weather/forecast'
+import {
+	getGondolaData,
+	getGondolaHistory,
+} from '@/app/lib/services/weather/gondola'
+import { getPamRocksData } from '@/app/lib/services/weather/pam-rocks'
+import { getSpitData } from '@/app/lib/services/weather/spit'
 import CameraPanel from '@/app/ui/CameraPanel/CameraPanel'
 import Wind from '@/app/ui/Wind/Wind'
 import styles from './page.module.css'
@@ -15,6 +22,30 @@ export default async function Home({
 }) {
 	const { view } = await searchParams
 	const activeView = getActiveView(view)
+	const spitForecastPromise =
+		activeView === 'spit' ? getSpitForecastData() : Promise.resolve(undefined)
+	const gondolaGraphPromise =
+		activeView === 'gondola' ? getGondolaHistory() : Promise.resolve(undefined)
+	const [
+		spitData,
+		gondolaData,
+		pamRocksData,
+		spitForecastData,
+		gondolaGraphData,
+	] = await Promise.all([
+		getSpitData(),
+		getGondolaData(),
+		getPamRocksData(),
+		spitForecastPromise,
+		gondolaGraphPromise,
+	])
+	const initialWindData: WindInitialData = {
+		spitData,
+		gondolaData,
+		pamRocksData,
+		spitForecastData,
+		gondolaGraphData,
+	}
 
 	return (
 		<main className={styles.main}>
@@ -28,7 +59,7 @@ export default async function Home({
 			</section>
 
 			{/* Wind cards and wind graph */}
-			<Wind activeView={activeView} />
+			<Wind activeView={activeView} initialData={initialWindData} />
 
 			{/* Canada Rasp Windgram selector */}
 			<Rasp />
