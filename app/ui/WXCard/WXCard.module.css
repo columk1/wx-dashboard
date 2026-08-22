@@ -110,8 +110,12 @@
 	font-size: 0.75rem;
 }
 
-.spinnerContainer {
-	width: 20px;
-	height: 50%;
-	margin: 0 auto;
+.unavailable {
+	justify-content: space-between;
+}
+
+.unavailableText {
+	margin: auto 0;
+	color: rgb(var(--foreground-muted-rgb));
+	font-size: 0.8rem;
 }

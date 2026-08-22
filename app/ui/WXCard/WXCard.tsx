@@ -1,7 +1,6 @@
 import Link from 'next/link'
 import type { WXCardData } from '@/app/lib/definitions'
 import Arrow from '@/app/ui/Arrow'
-import Spinner from '@/app/ui/Spinner/Spinner'
 import styles from '@/app/ui/WXCard/WXCard.module.css'
 
 const WXCard = ({
@@ -28,11 +27,9 @@ const WXCard = ({
 
 	const cardClassName = `${styles.card} ${isActive ? styles.cardActive : ''}`
 	const cardContent = !data ? (
-		<div className={cardClassName}>
+		<div className={`${cardClassName} ${styles.unavailable}`}>
 			{titleRow}
-			<div className={styles.spinnerContainer}>
-				<Spinner />
-			</div>
+			<p className={styles.unavailableText}>Weather data unavailable</p>
 		</div>
 	) : (
 		<div className={cardClassName}>
