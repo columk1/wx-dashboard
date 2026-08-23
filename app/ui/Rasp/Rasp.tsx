@@ -1,164 +1,28 @@
-'use client'
-
 import { addDays, format } from 'date-fns'
 import { toZonedTime } from 'date-fns-tz'
-import { useEffect, useMemo, useState } from 'react'
+import { connection } from 'next/server'
 import sites from '@/app/lib/data/raspSites.json'
-import styles from './Rasp.module.css'
-
-const getNextItem = <T,>(array: T[], currentIndex: number) =>
-	array[(currentIndex + 1) % array.length]
+import RaspClient, { type RaspPeriod } from './RaspClient'
 
 const getPacificTimestamp = () => toZonedTime(Date.now(), 'America/Los_Angeles')
 
-const periodLabels = ['Today', 'Tomorrow', 'Two Day']
+const getPeriods = (nowPT: Date): RaspPeriod[] => [
+	['Today', `oneDay/${format(nowPT, 'yyyy-MM-dd')}`],
+	['Tomorrow', `oneDay/${format(addDays(nowPT, 1), 'yyyy-MM-dd')}`],
+	['Two Day', 'twoDay'],
+]
 
-// const getTimeSuffix = (date: Date) =>
-//   date.getDay() + date.getHours() > 6 && date.getHours() < 19 ? 'am' : 'pm'
+const getImageUrl = (period: string, site: string) =>
+	`https://canadarasp.com/windgrams-data/${period}/hrdpswindgram${site}.png`
 
-const preloadImages = (srcs: string[]) => {
-	srcs.forEach((src) => {
-		const img = new Image()
-		img.src = src
-	})
-}
+const Rasp = async () => {
+	// Keep the date request-scoped so it can never be captured during a build.
+	await connection()
 
-const Rasp = () => {
-	const [siteIndex, setSiteIndex] = useState(0)
-	const [periodIndex, setPeriodIndex] = useState(0)
-	const [imageError, setImageError] = useState(false)
-	const [nowPT, setNowPT] = useState<Date | null>(null)
+	const periods = getPeriods(getPacificTimestamp())
+	const initialSrc = getImageUrl(periods[0][1], sites[0][1])
 
-	const periods = useMemo(
-		() =>
-			nowPT
-				? [
-						['Today', `oneDay/${format(nowPT, 'yyyy-MM-dd')}`],
-						['Tomorrow', `oneDay/${format(addDays(nowPT, 1), 'yyyy-MM-dd')}`],
-						['Two Day', 'twoDay'],
-					]
-				: [],
-		[nowPT],
-	)
-
-	const period = periods[periodIndex]?.[1]
-	const site = sites[siteIndex][1]
-
-	const src = period
-		? `https://canadarasp.com/windgrams-data/${period}/hrdpswindgram${site}.png`
-		: null
-
-	const cyclePeriod = () =>
-		updateImage((periodIndex + 1) % periods.length, siteIndex)
-
-	const handlePeriodSelection = (index: number) => {
-		if (periods.length === 0) return
-
-		updateImage(index, siteIndex)
-	}
-
-	const handleSiteSelection = (index: number) => {
-		if (periods.length === 0) return
-
-		updateImage(periodIndex, index)
-	}
-
-	const updateImage = (newPeriodIndex: number, newSiteIndex: number) => {
-		if (periods.length === 0) return
-
-		const newPeriod = periods[newPeriodIndex][1]
-		const newSite = sites[newSiteIndex][1]
-		const newSrc = `https://canadarasp.com/windgrams-data/${newPeriod}/hrdpswindgram${newSite}.png`
-		const img = new Image()
-		img.src = newSrc
-		// img.onload = () => {
-		//   setPeriodIndex(newPeriodIndex)
-		//   setSiteIndex(newSiteIndex)
-		// }
-		setPeriodIndex(newPeriodIndex)
-		setSiteIndex(newSiteIndex)
-	}
-
-	// Set the time on the client to prevent pre-rendering on the server (otherwise you end up with the date from build)
-	useEffect(() => {
-		setNowPT(getPacificTimestamp())
-	}, [])
-
-	// Preload next site and next period of to pre-empt RASP navigation
-	useEffect(() => {
-		if (!period) return
-
-		const preloadImageSrcs = [
-			`https://canadarasp.com/windgrams-data/${getNextItem(periods, periodIndex)?.[1]}/hrdpswindgram${site}.png`,
-			`https://canadarasp.com/windgrams-data/${period}/hrdpswindgram${getNextItem(sites, siteIndex)[1]}.png`,
-		]
-		preloadImages(preloadImageSrcs)
-	}, [period, periods, site, siteIndex, periodIndex])
-
-	return (
-		// biome-ignore lint/a11y/useSemanticElements: can't nest buttons
-		<div
-			className={styles.raspWrapper}
-			onClick={() => setImageError(false)}
-			onKeyDown={(e) => {
-				if (e.key === 'Enter' || e.key === ' ') {
-					e.preventDefault()
-					setImageError(false)
-				}
-			}}
-			tabIndex={0}
-			role="button"
-		>
-			<div className={styles.periodBtns}>
-				{periodLabels.map((label, i) => (
-					<button
-						type="button"
-						key={label}
-						onClick={() => handlePeriodSelection(i)}
-						className={`${styles.periodBtn} ${periodIndex === i ? styles.active : ''}`}
-					>
-						{label}
-					</button>
-				))}
-			</div>
-			<button
-				type="button"
-				onClick={cyclePeriod}
-				className={styles.imgShared}
-				disabled={!src}
-			>
-				{imageError ? (
-					<div className={styles.error}>Keep Parawaiting</div>
-				) : src ? (
-					// biome-ignore lint/performance/noImgElement: upstream cache
-					<img
-						src={src}
-						alt={'Rasp Windgram'}
-						className={styles.raspImg}
-						width={450}
-						height={450}
-						onError={() => setImageError(true)}
-					/>
-				) : (
-					<div className={styles.placeholder} />
-				)}
-			</button>
-			<div className={styles.btnContainer}>
-				<div className={styles.raspBtns}>
-					{sites.map((e, i) => (
-						<button
-							type="button"
-							key={e[0]}
-							onClick={() => handleSiteSelection(i)}
-							className={`${styles.raspBtn} ${siteIndex === i ? styles.active : ''}`}
-						>
-							<p>{e[0]}</p>
-						</button>
-					))}
-				</div>
-			</div>
-		</div>
-	)
+	return <RaspClient initialPeriods={periods} initialSrc={initialSrc} />
 }
 
 export default Rasp
