@@ -217,7 +217,7 @@ const WindGraph = ({
 
 	useEffect(() => {
 		if (containerRef.current && visibleChartData.length > 0 && endTime > 0) {
-			containerRef.current.scrollLeft = containerRef.current.scrollWidth
+			containerRef.current.scrollLeft = Number.MAX_SAFE_INTEGER
 		}
 	}, [endTime, visibleChartData.length])
 
