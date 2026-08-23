@@ -91,13 +91,7 @@ export type GondolaObservation = {
 	}
 }
 
-export type WindInitialData = {
-	spitData: WindGraphData
-	gondolaData: WXCardData
-	pamRocksData: PamRocksApiResponse | null
-	spitForecastData?: SpitWindForecastData
-	gondolaGraphData?: WindGraphData
-}
+export type WindCardSnapshot = Record<WXView, WXCardData>
 
 export type GondolaApiResponse = {
 	observations: GondolaObservation[]

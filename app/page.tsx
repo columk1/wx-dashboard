@@ -1,5 +1,5 @@
 import links from '@/app/lib/data/links.json'
-import type { WindInitialData, WXView } from '@/app/lib/definitions'
+import type { WindCardSnapshot, WXView } from '@/app/lib/definitions'
 import { getSpitForecastData } from '@/app/lib/services/weather/forecast'
 import {
 	getGondolaData,
@@ -7,6 +7,7 @@ import {
 } from '@/app/lib/services/weather/gondola'
 import { getPamRocksData } from '@/app/lib/services/weather/pam-rocks'
 import { getSpitData } from '@/app/lib/services/weather/spit'
+import { getSpitCardData, withObservationTime } from '@/app/lib/utils/wind'
 import CameraPanel from '@/app/ui/CameraPanel/CameraPanel'
 import Wind from '@/app/ui/Wind/Wind'
 import styles from './page.module.css'
@@ -39,13 +40,17 @@ export default async function Home({
 		spitForecastPromise,
 		gondolaGraphPromise,
 	])
-	const initialWindData: WindInitialData = {
-		spitData,
-		gondolaData,
-		pamRocksData,
-		spitForecastData,
-		gondolaGraphData,
+	const initialCards: WindCardSnapshot = {
+		spit: withObservationTime(getSpitCardData(spitData)),
+		gondola: withObservationTime(gondolaData),
+		'pam-rocks': withObservationTime(pamRocksData?.current),
 	}
+	const initialGraphData =
+		activeView === 'gondola'
+			? gondolaGraphData
+			: activeView === 'spit'
+				? spitData
+				: undefined
 
 	return (
 		<main className={styles.main}>
@@ -59,7 +64,15 @@ export default async function Home({
 			</section>
 
 			{/* Wind cards and wind graph */}
-			<Wind activeView={activeView} initialData={initialWindData} />
+			<Wind
+				activeView={activeView}
+				initialCards={initialCards}
+				initialGraphData={initialGraphData}
+				initialPamRocksData={
+					activeView === 'pam-rocks' ? pamRocksData : undefined
+				}
+				initialForecastData={spitForecastData}
+			/>
 
 			{/* Canada Rasp Windgram selector */}
 			<Rasp />
@@ -70,9 +83,9 @@ export default async function Home({
 					{links.map((link) => (
 						<li key={link.url} className={styles.card}>
 							<a href={link.url} target="_blank" rel="noopener noreferrer">
-								<h4>
+								<h2>
 									{link.name} <span>{link.emoji}</span>
-								</h4>
+								</h2>
 								<p>{link.description}</p>
 							</a>
 						</li>

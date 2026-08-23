@@ -22,14 +22,6 @@
 	--wind-avg-rgb: 29, 145, 160;
 	--wind-gust-rgb: 248, 76, 86;
 	--wind-lull-rgb: 15, 107, 138;
-
-	--primary-glow: radial-gradient(rgba(1, 65, 255, 0.4), rgba(1, 65, 255, 0));
-	--secondary-glow: linear-gradient(
-		to bottom right,
-		rgba(1, 65, 255, 0),
-		rgba(1, 65, 255, 0),
-		rgba(1, 65, 255, 0.3)
-	);
 }
 
 * {

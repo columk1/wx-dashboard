@@ -38,7 +38,7 @@ const WXCard = ({
 				<div className={styles.arrowBorder}>
 					<Arrow size={'1.6em'} angle={data?.windDirection || 0} />
 				</div>
-				<h2 className={styles.directionText}>{data?.windDirectionText}</h2>
+				<p className={styles.directionText}>{data?.windDirectionText}</p>
 				<div className={styles.windSpeedContainer}>
 					<p className={styles.avg}>
 						{data?.windSpeed}
