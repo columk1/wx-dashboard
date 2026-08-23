@@ -1,6 +1,23 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
 	reactCompiler: true,
+	async headers() {
+		return [
+			{
+				source: '/:path*',
+				headers: [
+					{
+						key: 'Cross-Origin-Opener-Policy',
+						value: 'same-origin',
+					},
+					{
+						key: 'X-Frame-Options',
+						value: 'DENY',
+					},
+				],
+			},
+		]
+	},
 	images: {
 		remotePatterns: [
 			{
