@@ -15,10 +15,8 @@ import {
 import { formatWindObservationTime } from '@/app/lib/utils/wind'
 import CustomXAxisTick, { type DirectionTick } from '@/app/ui/CustomXAxisTick'
 import Legend from '@/app/ui/Legend/Legend'
+import { buildWindChartData, getChartTimeDomain } from './chart-data'
 import styles from './WindGraph.module.css'
-
-const sortByTime = (left: WindGraphChartPoint, right: WindGraphChartPoint) =>
-	left.time - right.time
 
 // const extendChartToCurrentTime = (
 // 	chartData: WindGraphChartPoint[],
@@ -37,49 +35,6 @@ const sortByTime = (left: WindGraphChartPoint, right: WindGraphChartPoint) =>
 // 		},
 // 	]
 // }
-
-const buildObservedChartData = (
-	observedData: WindGraphData,
-): WindGraphChartPoint[] => {
-	return [...(observedData ?? [])].sort(sortByTime)
-}
-
-const buildForecastChartData = (
-	forecastData?: SpitWindForecastData,
-): WindGraphChartPoint[] =>
-	(Array.isArray(forecastData) ? forecastData : [])
-		.map((point) => ({
-			time: point.time,
-			predicted: point.predicted,
-			predictedDir: point.dir,
-		}))
-		.sort(sortByTime)
-
-const buildPredictedChartData = (
-	observedChartData: WindGraphChartPoint[],
-	forecastChartData: WindGraphChartPoint[],
-): WindGraphChartPoint[] => {
-	if (forecastChartData.length === 0) return observedChartData
-
-	// Recharts tooltips resolve against chart rows, so visible forecast values
-	// need to be overlaid into `data`. Hidden forecast rows are never included.
-	const chartDataByTime = new Map<number, WindGraphChartPoint>(
-		observedChartData.map((point) => [point.time, { ...point }]),
-	)
-
-	forecastChartData.forEach((point) => {
-		const observedPoint = chartDataByTime.get(point.time)
-
-		chartDataByTime.set(point.time, {
-			...observedPoint,
-			time: point.time,
-			predicted: point.predicted,
-			predictedDir: point.predictedDir,
-		})
-	})
-
-	return Array.from(chartDataByTime.values()).sort(sortByTime)
-}
 
 const buildDirectionTicks = (
 	observedChartData: WindGraphChartPoint[],
@@ -176,12 +131,8 @@ const WindGraph = ({
 }) => {
 	const containerRef = useRef<HTMLDivElement>(null)
 	const showPredictedWind = useShowPredictedWindPreference()
-	const observedChartData = buildObservedChartData(data)
-	const forecastChartData = buildForecastChartData(forecastData)
-	const predictedChartData = buildPredictedChartData(
-		observedChartData,
-		forecastChartData,
-	)
+	const { observedChartData, forecastChartData, predictedChartData } =
+		buildWindChartData(data, forecastData)
 	const showLull = view === 'spit'
 	const showGustDotsOnly = view === 'pam-rocks'
 	const hasPredictedWind = view === 'spit' && forecastChartData.length > 0
@@ -211,8 +162,7 @@ const WindGraph = ({
 	const maxWindValue = showPredicted
 		? maxPredictedWindValue
 		: maxObservedWindValue
-	const startTime = visibleChartData[0]?.time ?? 0
-	const endTime = visibleChartData[visibleChartData.length - 1]?.time ?? 0
+	const [startTime, endTime] = getChartTimeDomain(visibleChartData)
 	const timeDomain: [number, number] = [startTime, endTime]
 
 	useEffect(() => {

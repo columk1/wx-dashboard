@@ -3,8 +3,7 @@
 import { useEffect, useState } from 'react'
 import sites from '@/app/lib/data/raspSites.json'
 import styles from './Rasp.module.css'
-
-export type RaspPeriod = [label: string, path: string]
+import { getRaspImageUrl, type RaspPeriod } from './rasp-data'
 
 type RaspClientProps = {
 	initialPeriods: RaspPeriod[]
@@ -26,9 +25,6 @@ const preloadImages = (srcs: string[]) => {
 	})
 }
 
-const getImageUrl = (period: string, site: string) =>
-	`https://canadarasp.com/windgrams-data/${period}/hrdpswindgram${site}.png`
-
 const RaspClient = ({ initialPeriods, initialSrc }: RaspClientProps) => {
 	const [siteIndex, setSiteIndex] = useState(0)
 	const [periodIndex, setPeriodIndex] = useState(0)
@@ -41,7 +37,7 @@ const RaspClient = ({ initialPeriods, initialSrc }: RaspClientProps) => {
 	const src =
 		periodIndex === 0 && siteIndex === 0
 			? initialSrc
-			: getImageUrl(period, site)
+			: getRaspImageUrl(period, site)
 
 	const cyclePeriod = () =>
 		updateImage((periodIndex + 1) % periods.length, siteIndex)
@@ -63,7 +59,7 @@ const RaspClient = ({ initialPeriods, initialSrc }: RaspClientProps) => {
 
 		const newPeriod = periods[newPeriodIndex][1]
 		const newSite = sites[newSiteIndex][1]
-		const newSrc = getImageUrl(newPeriod, newSite)
+		const newSrc = getRaspImageUrl(newPeriod, newSite)
 		const img = new Image()
 		img.src = newSrc
 		// img.onload = () => {
@@ -80,8 +76,8 @@ const RaspClient = ({ initialPeriods, initialSrc }: RaspClientProps) => {
 	// Preload next site and next period of to pre-empt RASP navigation
 	useEffect(() => {
 		const preloadImageSrcs = [
-			getImageUrl(getNextItem(periods, periodIndex)[1], site),
-			getImageUrl(period, getNextItem(sites, siteIndex)[1]),
+			getRaspImageUrl(getNextItem(periods, periodIndex)[1], site),
+			getRaspImageUrl(period, getNextItem(sites, siteIndex)[1]),
 		]
 		preloadImages(preloadImageSrcs)
 	}, [period, periods, site, siteIndex, periodIndex])
