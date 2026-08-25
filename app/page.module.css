@@ -28,7 +28,6 @@
 }
 
 .header {
-	font-size: 0.85rem;
 	z-index: 2;
 	font-family: var(--font-mono);
 }
@@ -126,12 +125,7 @@
 		font-size: 0.8rem;
 	}
 
-	.header {
-		font-size: 0.8rem;
-	}
-
-	.header h1,
-	.header div {
+	.header h1 {
 		display: flex;
 		justify-content: center;
 		align-items: center;
@@ -153,19 +147,6 @@
 		);
 		background-clip: padding-box;
 		backdrop-filter: blur(24px);
-	}
-
-	.header div {
-		pointer-events: none;
-		inset: auto 0 0;
-		padding: 2rem;
-		height: 200px;
-		background: linear-gradient(
-			to bottom,
-			transparent 0%,
-			rgb(var(--background-end-rgb)) 40%
-		);
-		z-index: 1;
 	}
 }
 

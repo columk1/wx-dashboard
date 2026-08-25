@@ -26,10 +26,6 @@
 	}
 }
 
-.placeholder {
-	composes: imgShared;
-}
-
 .error {
 	composes: imgShared;
 	display: flex;

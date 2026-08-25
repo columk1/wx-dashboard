@@ -47,13 +47,6 @@
 	background-color: #888;
 }
 
-.y-axis-wrapper {
-	background: white;
-	position: sticky;
-	left: 0;
-	z-index: 1003;
-}
-
 .fallback {
 	display: flex;
 	align-items: center;

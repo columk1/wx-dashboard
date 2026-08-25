@@ -17,7 +17,6 @@
 	--card-rgb: 100, 100, 100;
 	--card-border-rgb: 200, 200, 200;
 	--border-rgb: 40, 40, 40;
-	--webkit-outline-rgb: 153, 200, 255;
 	--wind-predicted-rgb: 152, 164, 175;
 	--wind-avg-rgb: 29, 145, 160;
 	--wind-gust-rgb: 248, 76, 86;
@@ -72,13 +71,4 @@ ul {
 	clip: rect(0, 0, 0, 0);
 	white-space: nowrap;
 	border-width: 0;
-}
-
-@keyframes rotate {
-	from {
-		transform: rotate(360deg);
-	}
-	to {
-		transform: rotate(0deg);
-	}
 }
