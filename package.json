@@ -2,6 +2,7 @@
 	"name": "wx-dashboard",
 	"version": "0.1.0",
 	"private": true,
+	"type": "module",
 	"packageManager": "pnpm@11.22.0",
 	"scripts": {
 		"dev": "next dev",
@@ -36,7 +37,6 @@
 		"@vitejs/plugin-react": "^6.0.0",
 		"@vitest/browser-playwright": "^4.1.0",
 		"babel-plugin-react-compiler": "^1.0.0",
-		"postcss-preset-env": "^11.2.1",
 		"typescript": "^6.0.2",
 		"vitest": "^4.1.0",
 		"vitest-browser-react": "^2.2.0"
