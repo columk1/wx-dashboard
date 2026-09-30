@@ -19,7 +19,7 @@ export const getWindDirectionText = (windDirection: number) => {
 		'NW',
 		'NNW',
 	]
-	return directions[Math.round(windDirection / 22.5)]
+	return directions[Math.round(windDirection / 22.5) % directions.length]
 }
 
 export const formatWindObservationTime = (observedAt: number) =>
