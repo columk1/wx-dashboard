@@ -29,22 +29,22 @@ describe('Pam Rocks API observations', () => {
 				windSpeed: 22,
 				windDirection: 358,
 				windDirectionText: 'N',
-				windGusts: 26.1,
+				windGusts: 26,
 				observedAt: Date.parse('2026-09-30T17:00:00Z'),
 				updatedAtText: '10:00 AM',
 			},
 			points: [
 				{
 					time: Date.parse('2026-09-30T16:00:00Z'),
-					avg: 26.7,
+					avg: 27,
 					dir: 5,
-					gust: 30.6,
+					gust: 31,
 				},
 				{
 					time: Date.parse('2026-09-30T17:00:00Z'),
 					avg: 22,
 					dir: 358,
-					gust: 26.1,
+					gust: 26,
 				},
 			],
 		})

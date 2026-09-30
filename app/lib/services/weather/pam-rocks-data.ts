@@ -37,8 +37,8 @@ export const parsePamRocksObservations = (
 		const gust = properties.max_wnd_spd_10m_pst10mts
 		points.push({
 			time,
-			avg,
-			gust: isWindSpeed(gust) ? gust : null,
+			avg: Math.round(avg),
+			gust: isWindSpeed(gust) ? Math.round(gust) : null,
 			dir:
 				typeof dir === 'number' &&
 				Number.isFinite(dir) &&
